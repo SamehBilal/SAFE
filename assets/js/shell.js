@@ -81,6 +81,8 @@ export function isToday(iso) {
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', avif: 'image/avif', mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime', mp3: 'audio/mpeg', m4a: 'audio/mp4', ogg: 'audio/ogg' };
 const media = new Map();
 let masterKey;
+/** The unlocked master key (CryptoKey), for live.js. */
+export const getKey = () => masterKey;
 export const mimeOf = (ref) => MIME[(String(ref).match(/\.(\w+)$/) || [])[1]?.toLowerCase()] || 'application/octet-stream';
 export const isVideo = (ref) => /^video\//.test(mimeOf(ref));
 
@@ -366,12 +368,24 @@ export const PAGES = [
 	{ href: 'story.html', id: 'story', ic: 'book', ar: 'حكايتنا', en: 'Our story', dar: 'كل تاريخ عملنا إحنا', den: 'Every date that made us', group: 'story' },
 	{ href: 'chapters.html', id: 'chapters', ic: 'ring', ar: 'أيام فارقة', en: 'Big days', dar: 'الخطوبة، كتب الكتاب، الفرح', den: 'Engagement, wedding and more', group: 'story' },
 	{ href: 'places.html', id: 'places', ic: 'pin', ar: 'أماكننا', en: 'Our places', dar: 'أماكن فيها حتة مننا', den: 'Places that hold a piece of us', group: 'story' },
+	{ href: 'journal.html', id: 'journal', ic: 'pen', ar: 'دفترنا', en: 'Our journal', dar: 'بنكتب حكايتنا سوا، يوم بيوم', den: 'We write our story together, day by day', group: 'story' },
+	{ href: 'draw.html', id: 'draw', ic: 'dice', ar: 'قرعة الليلة', en: 'Tonight’s draw', dar: 'لبس، خروجة، دليفري، أو فيلم', den: 'Outfit, dinner out, delivery or a movie', group: 'nights' },
+	{ href: 'music.html', id: 'music', ic: 'music', ar: 'أغانينا', en: 'Our songs', dar: 'الأغاني اللي بتفكرنا ببعض', den: 'The songs that remind us of each other', group: 'nights' },
 	{ href: 'gallery.html', id: 'gallery', ic: 'image', ar: 'ألبوم الصور', en: 'Photo album', dar: 'إحنا بالصور، سنة بسنة', den: 'Us in pictures, year by year', group: 'memories' },
 	{ href: 'notes.html', id: 'notes', ic: 'note', ar: 'رسايل حب', en: 'Love notes', dar: 'كلام كتبناه لبعض', den: 'Little things we wrote', group: 'memories' },
 	{ href: 'letters.html', id: 'letters', ic: 'mail', ar: 'جوابات', en: 'Letters', dar: 'جوابات ليكي، افتحيها', den: 'Letters for you — open them', group: 'memories' },
 	{ href: 'family.html', id: 'family', ic: 'family', ar: 'عيلتنا', en: 'Our family', dar: 'فهد وعبد الرحمن وإحنا', den: 'Fahd, Abdulrahman and us', group: 'family' },
 	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'عيد ميلادك', en: 'Your birthday', dar: 'اطفي الشمع واتمني', den: 'Blow the candles, make a wish', group: 'you' },
-	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتك في أمان هنا', den: 'Your wishes, kept safe', group: 'you' }
+	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتك في أمان هنا', den: 'Your wishes, kept safe', group: 'you' },
+	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين بيكتب، والمزامنة', den: 'Who’s writing, and syncing', group: 'app' }
+];
+
+/* What a night can be drawn for (draw.html?k=…). */
+export const DRAW_KINDS = [
+	{ id: 'outfit', emoji: '👗', color: '#c2185b', ar: 'لبس الليلة', en: 'Tonight’s outfit', dar: 'ثيم نلبسه سوا الليلة', den: 'A theme we dress up in tonight', sketch: { ar: 'ارسمي اللبس', en: 'Sketch the outfit' } },
+	{ id: 'dining', emoji: '🍽️', color: '#e39b2d', ar: 'خروجة عشا', en: 'Dining out', dar: 'نتعشى برا فين؟', den: 'Where shall we eat out?', sketch: { ar: 'ارسمي المكان', en: 'Sketch the place' } },
+	{ id: 'delivery', emoji: '🛵', color: '#5a9e6f', ar: 'دليفري', en: 'Delivery night', dar: 'نطلب إيه النهارده؟', den: 'What shall we order in?', sketch: { ar: 'ارسمي الأكلة', en: 'Sketch the meal' } },
+	{ id: 'movie', emoji: '🎬', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسمي بوستر الفيلم', en: 'Sketch the poster' } }
 ];
 /* pages that are one page per item, and which menu they belong to */
 const DETAIL_OF = { moment: 'story', chapter: 'story', member: 'family' };
@@ -387,6 +401,10 @@ const ICONS = {
 	family: '<circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><circle cx="12" cy="13" r="1.8"/><path d="M3.5 20v-3.5A4 4 0 0 1 7.5 12.5h1M20.5 20v-3.5a4 4 0 0 0-4-4h-1M9 20v-1.5a3 3 0 0 1 6 0V20"/>',
 	cake: '<path d="M4 20h16v-7H4zM4 15.5c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0"/><path d="M8 13V10M12 13V10M16 13V10"/><path d="M8 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM12 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM16 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5Z"/>',
 	star: '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+	pen: '<path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M13.5 7l3 3M4 20h6"/>',
+	music: '<path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/><path d="M9 9l11-2"/>',
+	dice: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>',
+	gear: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>',
 	heart: '<path d="M12 20C6 16 3.5 12.7 3.5 9.5A4.5 4.5 0 0 1 12 7.2a4.5 4.5 0 0 1 8.5 2.3C20.5 12.7 18 16 12 20Z"/>',
 	baby: '<circle cx="12" cy="11" r="6.5"/><circle cx="9.8" cy="10.5" r=".8"/><circle cx="14.2" cy="10.5" r=".8"/><path d="M10 13.6c1.2 1 2.8 1 4 0M12 4.5c1-1 2.2-.8 2.6 0"/>'
 };
@@ -448,12 +466,21 @@ function megaHTML(s) {
 			<span class="mg-go">${L('شوفي الأرقام', 'See the numbers')} ${App.arrow}</span>
 		</a>`);
 
+	// ليالينا — the four draws as coloured cards, then the songs and the journal.
+	const kind = qs('k');
+	const nights = panel('nights', L('ليالينا', 'Our nights'),
+		`<div class="mg-kinds">${DRAW_KINDS.map((k) => `
+			<a class="mg-kind" href="draw.html?k=${k.id}" style="--c:${k.color}"${here === 'draw.html' && kind === k.id ? ' aria-current="page"' : ''}>
+				<span class="mg-kind-e" aria-hidden="true">${k.emoji}</span><b>${esc(L(k.ar, k.en))}</b><small>${esc(L(k.dar, k.den))}</small>
+			</a>`).join('')}</div>
+		<div class="mg-more"><p class="mg-h">${L('سهراتنا', 'Our evenings')}</p>${pages('nights').map(row).join('')}${row(PAGES.find((p) => p.id === 'journal'))}</div>`);
+
 	const link = (href, ar, en) => `<a class="mnav-link" href="${href}"${cur(href)}>${esc(L(ar, en))}</a>`;
 	return `<nav class="mnav" aria-label="${L('القائمة الرئيسية', 'Main')}">
 		${link('index.html', 'الرئيسية', 'Home')}
-		${top('story', L('حكايتنا', 'Our story'))}${top('memories', L('ذكرياتنا', 'Memories'))}${top('family', L('عيلتنا', 'Family'))}${top('you', L('ليكي', 'For you'))}
+		${top('story', L('حكايتنا', 'Our story'))}${top('memories', L('ذكرياتنا', 'Memories'))}${top('family', L('عيلتنا', 'Family'))}${top('nights', L('ليالينا', 'Our nights'))}${top('you', L('ليكي', 'For you'))}
 		<a class="mnav-link mnav-cta" href="birthday.html"${cur('birthday.html')}>🎂 ${L('عيد ميلادك', 'Birthday')}</a>
-		${story}${memories}${family}${you}
+		${story}${memories}${family}${nights}${you}
 	</nav>`;
 }
 
@@ -617,7 +644,8 @@ function footerHTML(s) {
 		</div>
 		${col(L('حكايتنا', 'Our story'), [PAGES[0], ...g('story')])}
 		${col(L('ذكرياتنا', 'Memories'), g('memories'))}
-		${col(L('عيلتنا وليكي', 'Family & you'), [...g('family'), ...g('you')])}
+		${col(L('ليالينا', 'Our nights'), [...g('nights'), ...DRAW_KINDS.map((k) => ({ href: `draw.html?k=${k.id}`, ar: `${k.emoji} ${k.ar}`, en: `${k.emoji} ${k.en}` }))])}
+		${col(L('عيلتنا وليكي', 'Family & you'), [...g('family'), ...g('you'), ...g('app')])}
 		<div class="ft-maker">
 			${App.lang === 'ar'
 				? `<p class="ft-copy" dir="rtl">حقوق النشر @${new Date().getFullYear()}، <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>كل الحب محفوظ. <span>صُنع بـ <span class="ft-heart">🧡</span> سامح بلال</span></p>`
@@ -646,9 +674,11 @@ function owl() {
 
 /* ------------------------------------------------------------------ the page itself */
 
-function renderPage() {
+async function renderPage() {
 	const main = $('#main');
 	const s = App.story;
+	// a page may fetch what it shows first (e.g. the journal entries the timeline includes)
+	if (page.load) { try { await page.load(s); } catch { /* render without it */ } }
 	main.innerHTML = page.render(s) || '';
 	document.title = `${t(page.title) || L('حكايتنا', 'Our story')} — ${t(s.him)} ♥ ${t(s.her)}`;
 	hydrate(main);

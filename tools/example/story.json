@@ -3,6 +3,7 @@
 	"her": { "ar": "إسراء", "en": "Esraa" },
 	"met": "2009-06-10",
 	"married": "2020-09-10",
+	"sync": { "owner": "SamehBilal", "repo": "SAFE", "branch": "main" },
 
 	"birthday": {
 		"show": true,

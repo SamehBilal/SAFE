@@ -14,6 +14,25 @@ Questions only she can answer → loader → intro → the site. Installable as 
 | `notes.html` · `letters.html` | Handwritten love notes · letters in envelopes she opens |
 | `family.html` → `member.html?id=…` | The family newspaper; one page per person with age and next birthday |
 | `birthday.html` · `wishes.html` | Candles she taps out (confetti) · the wish jar |
+| `journal.html` | **Our journal** — you both write pages from your phones (mood, sketch, optionally pinned to the timeline) |
+| `music.html` | **Our songs** — add songs with a link and why they're yours; YouTube/Spotify play right on the page; a song of the day |
+| `draw.html?k=outfit\|dining\|delivery\|movie` | **Tonight's draw** — a wheel picks from your list, you log the night (note, hearts, sketch), and recent picks are skipped |
+| `settings.html` | Whose phone this is, and the GitHub token that lets it save |
+
+## Writing from your phones
+The journal, songs, draw lists, logged nights and sketches are saved straight to this repo by the phone,
+encrypted with the same key as the story, in `content/live/` (one file per list, one per sketch). GitHub only
+ever stores unreadable data.
+
+Setup, once per phone, on **الإعدادات / Settings**:
+1. Pick whose phone it is.
+2. Make a fine-grained token at github.com/settings/personal-access-tokens/new: only the `SAFE` repo,
+   **Contents: Read and write**. One token per phone; delete it on GitHub if a phone is lost.
+3. Paste it, **Test connection**, Save.
+
+Phones without a token can still read everything (from the published site, a minute or two behind).
+Because the phones commit to `main`, run `git pull` before you push a rebuild from this PC.
+**Never replace `private/.master-key`** — everything you've written is encrypted with it.
 
 Every page shares the header (mega menus on desktop, a “الفهرس” contents menu on phones), the footer,
 and the language switch. The code: `assets/js/shell.js` (shared), `assets/js/pages/<page>.js` (one per page).

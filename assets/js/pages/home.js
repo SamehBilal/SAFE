@@ -15,7 +15,7 @@ export default {
 			[num(2 + kids.length), L('أفراد في العيلة', 'of us now')],
 			...kids.map((k) => [age(k.born), L(`عمر ${App.t(k.name)}`, `${App.t(k.name)}’s age`)])
 		].filter(Boolean);
-		const features = PAGES.filter((p) => p.id !== 'home');
+		const features = PAGES.filter((p) => p.id !== 'home' && p.group !== 'app');
 
 		return `
 		<section class="hero">
