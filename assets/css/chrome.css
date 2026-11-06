@@ -116,19 +116,25 @@
 }
 
 /* ---------- Footer ---------- */
-.site-footer { margin-top: 40px; color: #dfe9ef; }
-.ft-night { position: relative; height: clamp(220px, 34vw, 320px); overflow: hidden; background: linear-gradient(#071b26 0%, #0d3448 55%, #3b5d72 82%, #c98479 100%); }
-.ft-stars i { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; box-shadow: 0 0 6px #fff; animation: twinkle 3.4s ease-in-out infinite; }
-.ft-shoot { position: absolute; top: 30px; inset-inline-start: 12%; width: 120px; height: 2px; background: linear-gradient(90deg, #fff, transparent); border-radius: 2px; opacity: 0; transform: rotate(-18deg); animation: shoot 7s ease-in 2s infinite; }
-@keyframes shoot { 0% { opacity: 0; translate: 0 0; } 3% { opacity: 1; } 10%, 100% { opacity: 0; translate: 260px 80px; } }
-.ft-moon { position: absolute; top: 26px; inset-inline-end: 9%; width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbe8, #f2e6be 60%, #d8c890); box-shadow: 0 0 40px 10px rgba(255, 240, 200, 0.25), 0 0 120px 40px rgba(255, 240, 200, 0.08); }
-.ft-tree { position: absolute; bottom: 30px; inset-inline-start: 4%; width: clamp(150px, 26vw, 260px); }
-:root[dir='rtl'] .ft-tree { transform: scaleX(-1); }
-.ft-lights circle { animation: twinkle 2.4s ease-in-out infinite; filter: drop-shadow(0 0 3px #ffd98a); }
-.ft-couple { position: absolute; bottom: 26px; left: 50%; translate: -50% 0; width: clamp(110px, 18vw, 170px); }
-.ft-float { animation: float-heart 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes float-heart { 0% { transform: translateY(8px) scale(0.7); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-22px) scale(1.1); opacity: 0; } }
-.ft-hills { position: absolute; bottom: -1px; left: 0; width: 100%; height: 60px; fill: #06202d; }
+.site-footer { color: #dfe9ef; }
+/* the pebble portrait hanging on a pale, wood-panelled wall, like the real one */
+.ft-wall { position: relative; padding: clamp(36px, 7vw, 72px) var(--gutter) 0; background:
+	repeating-linear-gradient(180deg, transparent 0 46px, rgba(120, 100, 140, 0.07) 46px 48px),
+	linear-gradient(180deg, var(--paper), #ede6f0 30%, #e3dbe8); overflow: hidden; }
+.ft-wall::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 160px, rgba(255, 255, 255, 0.35) 160px 162px, transparent 162px 340px); mix-blend-mode: soft-light; pointer-events: none; }
+.ft-frame { position: relative; margin: 0 auto; width: min(640px, 100%); filter: drop-shadow(0 22px 26px rgba(40, 30, 60, 0.28)) drop-shadow(0 4px 6px rgba(40, 30, 60, 0.18)); transform-origin: 50% -40px; animation: hang 7s ease-in-out infinite; }
+@keyframes hang { 50% { transform: rotate(0.6deg); } }
+.pb { display: block; width: 100%; height: auto; }
+.pb-person { cursor: pointer; transition: transform 0.35s var(--ease-pop); transform-box: fill-box; transform-origin: 50% 100%; outline: none; }
+.pb-person:hover, .pb-person:focus-visible { transform: translateY(-6px); }
+.pb-person:focus-visible path { stroke: #ffd98a; stroke-width: 2; }
+.pb-smoke circle { opacity: 0; transform-box: fill-box; transform-origin: center; animation: puff 3.9s ease-out infinite; animation-delay: var(--d); }
+@keyframes puff { 0% { opacity: 0; transform: translate(0, 6px) scale(0.5); } 20% { opacity: 0.35; } 100% { opacity: 0; transform: translate(10px, -34px) scale(1.6); } }
+.pb-heart { stroke-dasharray: 90; stroke-dashoffset: 90; animation: chalk-heart 6s ease-in-out infinite; }
+@keyframes chalk-heart { 0% { stroke-dashoffset: 90; opacity: 0.9; transform: translateY(6px); } 35% { stroke-dashoffset: 0; } 70% { opacity: 0.9; } 100% { stroke-dashoffset: 0; opacity: 0; transform: translateY(-18px); } }
+.pb-chalk { fill: #f4f1ea; font: 400 26px var(--f-hand); letter-spacing: 0.02em; opacity: 0.88; }
+:root:lang(ar) .pb-chalk { font-size: 22px; }
+.ft-skirting { display: block; height: 18px; margin: clamp(32px, 6vw, 56px) calc(-1 * var(--gutter)) 0; background: linear-gradient(#f3eef5, #d9d0de 60%, #c7bdcd); box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.7) inset; }
 .ft-body { background: #06202d; padding: 28px 0 0; }
 .ft-wrap { width: min(1180px, 100% - 2 * var(--gutter)); margin-inline: auto; display: grid; gap: 28px; grid-template-columns: 1fr; }
 @media (min-width: 720px) { .ft-wrap { grid-template-columns: 1fr 1fr 1fr; } .ft-brand, .ft-maker { grid-column: 1 / -1; } }

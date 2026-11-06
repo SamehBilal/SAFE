@@ -597,38 +597,118 @@ function renderChrome() {
 	owl();
 }
 
-/* The footer: a night over the hill where he asked — the white tree with its lights, the two of them
-   (and the boys) under the moon, then the links, the motto, and the maker's line with its owl. */
+/* The footer: the pebble portrait Sameh made for Esraa after Fahd was born — a house of wooden sticks on a
+   blackboard, the family as river stones inside it — redrawn with Abdulrahman in his mother's arms.
+   Each of us is a link to our own page. Then the links, the motto, and the maker's line with its owl. */
+
+/* A smooth, slightly uneven stone: points around an ellipse, nudged by a seed, joined with curves. */
+function pebble(cx, cy, rx, ry, rot = 0, seed = 1) {
+	const n = 10;
+	const rnd = (k) => { const x = Math.sin(seed * 97.13 + k * 12.9898) * 43758.5453; return x - Math.floor(x); };
+	const a0 = (rot * Math.PI) / 180;
+	const pts = Array.from({ length: n }, (_, k) => {
+		const a = (k / n) * Math.PI * 2;
+		const w = 1 + (rnd(k) - 0.5) * 0.12;
+		const x = Math.cos(a) * rx * w, y = Math.sin(a) * ry * w;
+		return [cx + x * Math.cos(a0) - y * Math.sin(a0), cy + x * Math.sin(a0) + y * Math.cos(a0)];
+	});
+	const r = (v) => v.toFixed(1);
+	let d = 'M' + r(pts[0][0]) + ' ' + r(pts[0][1]);
+	for (let k = 0; k < n; k++) {
+		const p0 = pts[(k - 1 + n) % n], p1 = pts[k], p2 = pts[(k + 1) % n], p3 = pts[(k + 2) % n];
+		const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+		const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+		d += 'C' + [...c1, ...c2, ...p2].map(r).join(' ');
+	}
+	return d + 'Z';
+}
+
+/* A round wooden stick from (x1,y1) to (x2,y2): body, a lighter top edge, a few lines of grain, the cut end. */
+function stick(x1, y1, x2, y2, w = 26, seed = 1) {
+	const len = Math.hypot(x2 - x1, y2 - y1);
+	const ang = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
+	const grain = [0.3, 0.55, 0.75].map((f, k) => {
+		const y = (f - 0.5) * w;
+		const a = len * (0.08 + ((seed * 7 + k * 13) % 10) / 60), b = len * (0.55 + ((seed * 3 + k * 11) % 10) / 30);
+		return `<path d="M${a.toFixed(0)} ${y.toFixed(1)}q${((b - a) / 2).toFixed(0)} ${k % 2 ? 2 : -2} ${(b - a).toFixed(0)} 0"/>`;
+	}).join('');
+	return `<g transform="translate(${x1} ${y1}) rotate(${ang.toFixed(2)})">
+		<rect x="0" y="${-w / 2}" width="${len.toFixed(1)}" height="${w}" rx="5" fill="url(#pbWood)" filter="url(#pbShadow)"/>
+		<rect x="2" y="${-w / 2 + 2}" width="${(len - 4).toFixed(1)}" height="${(w * 0.28).toFixed(1)}" rx="3" fill="#fff" opacity=".22"/>
+		<g fill="none" stroke="#b58547" stroke-width=".9" opacity=".55">${grain}</g>
+		<ellipse cx="${len.toFixed(1)}" cy="0" rx="3" ry="${w / 2 - 1}" fill="#e9cf9f" opacity=".7"/></g>`;
+}
+
+const PEBBLE_COLOURS = [['pbHoney', '#f1d29a', '#d3a25c', '#9c6a2c'], ['pbOchre', '#efc77f', '#c9953d', '#8f6220'], ['pbAmber', '#e9b56a', '#c0863a', '#7f5420'],
+	['pbSage', '#eef0dc', '#cfd3b4', '#9da184'], ['pbMoss', '#cfd2b4', '#a7ad8a', '#717757'], ['pbSand', '#efe1bf', '#d2bd8e', '#9e8858'],
+	['pbOrange', '#f3c27a', '#d99a44', '#a0661f'], ['pbCream', '#fbf3df', '#e6d6b2', '#b4a37d']];
+
+function familyBoard(s) {
+	const members = s.family?.members || [];
+	const grown = members.filter((m) => !m.kid);
+	const kids = members.filter((m) => m.kid);
+	const [dad, mum] = grown;
+	const who = (m, inner, k) => (m
+		? `<a class="pb-person" href="member.html?id=${esc(m.id)}" style="--k:${k}"><title>${esc(t(m.name))}</title>${inner}</a>`
+		: `<g class="pb-person" style="--k:${k}">${inner}</g>`);
+	const stone = (d, fill) => `<path d="${d}" fill="url(#${fill})" filter="url(#pbShadow)"/>`;
+	// the shine on each stone, top-left
+	const shine = (cx, cy, r) => `<ellipse cx="${(cx - r * 0.35).toFixed(1)}" cy="${(cy - r * 0.45).toFixed(1)}" rx="${(r * 0.32).toFixed(1)}" ry="${(r * 0.18).toFixed(1)}" fill="#fff" opacity=".35" transform="rotate(-30 ${cx} ${cy})"/>`;
+
+	const people = [
+		// him: a big honey stone, head up to the side, his arm reaching across to her
+		who(dad, stone(pebble(238, 296, 39, 53, -8, 3), 'pbHoney') + shine(238, 296, 39)
+			+ stone(pebble(255, 213, 22, 25, 12, 5), 'pbOchre') + shine(255, 213, 22)
+			+ stone(pebble(264, 290, 15, 9, 38, 8), 'pbAmber'), 0),
+		// her: a pale sage stone with a grey-green head, cradling the baby
+		who(mum, stone(pebble(318, 298, 34, 49, 4, 11), 'pbSage') + shine(318, 298, 34)
+			+ stone(pebble(301, 232, 21, 21, 0, 13), 'pbMoss') + shine(301, 232, 21), 1),
+		// Fahd, standing beside his mother
+		kids[0] ? who(kids[0], stone(pebble(380, 310, 26, 31, 6, 17), 'pbSand') + shine(380, 310, 26)
+			+ stone(pebble(357, 266, 15, 15, 0, 19), 'pbOrange') + shine(357, 266, 15), 2) : '',
+		// Abdulrahman, a tiny stone in her arms, her arm wrapped round him
+		kids[1] ? who(kids[1], stone(pebble(298, 300, 17, 10, -18, 23), 'pbCream')
+			+ stone(pebble(281, 289, 8.5, 8.5, 0, 29), 'pbOrange') + shine(281, 289, 8.5), 3) : '',
+		mum ? `<path d="${pebble(306, 313, 15, 8, -12, 31)}" fill="url(#pbAmber)" filter="url(#pbShadow)"/>` : ''
+	].join('');
+	// any more children stand in a row to the right
+	const more = kids.slice(2).map((m, k) => who(m, stone(pebble(420 + k * 26, 320, 12, 16, 0, 41 + k), 'pbSand')
+		+ stone(pebble(418 + k * 26, 297, 8, 8, 0, 47 + k), 'pbOrange'), 4 + k)).join('');
+
+	const dust = [[96, 70], [170, 120], [540, 96], [470, 300], [88, 330], [380, 150], [560, 360], [250, 120], [520, 220]]
+		.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4"/>`).join('');
+	return `<svg class="pb" viewBox="0 0 640 420" role="img" aria-label="${esc(L('بيتنا: العيلة حجارة صغيرة جوه بيت من خشب', 'Our home: the family as pebbles inside a house of sticks'))}">
+		<defs>
+			<linearGradient id="pbWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0d6a6"/><stop offset=".5" stop-color="#dcb57a"/><stop offset="1" stop-color="#bf8f52"/></linearGradient>
+			<linearGradient id="pbFrame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecd0a3"/><stop offset=".5" stop-color="#d9af74"/><stop offset="1" stop-color="#c49558"/></linearGradient>
+			<radialGradient id="pbBoard" cx=".45" cy=".4" r=".8"><stop offset="0" stop-color="#1e1f21"/><stop offset="1" stop-color="#0b0b0c"/></radialGradient>
+			${PEBBLE_COLOURS.map(([id, a, b, c]) => `<radialGradient id="${id}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></radialGradient>`).join('')}
+			<filter id="pbShadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#000" flood-opacity=".65"/></filter>
+			<filter id="pbChalk"><feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.5 1.3" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter>
+		</defs>
+		<rect width="640" height="420" rx="4" fill="url(#pbFrame)"/>
+		<path d="M0 0L28 28M640 0L612 28M0 420L28 392M640 420L612 392" stroke="#a87638" stroke-width="1.5" opacity=".6"/>
+		<rect x="6" y="6" width="628" height="408" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+		<rect x="28" y="28" width="584" height="364" fill="url(#pbBoard)"/>
+		<rect x="28" y="28" width="584" height="364" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="3"/>
+		<g fill="#fff" opacity=".18">${dust}</g>
+		${stick(150, 168, 150, 342, 30, 1)}${stick(470, 160, 470, 342, 30, 2)}
+		${stick(152, 148, 312, 62, 28, 3)}${stick(320, 62, 480, 152, 28, 4)}
+		<g class="pb-smoke" fill="#fff">${[0, 1, 2].map((k) => `<circle cx="413" cy="42" r="${6 + k * 2}" style="--d:${(k * 1.3).toFixed(1)}s"/>`).join('')}</g>
+		<g><rect x="398" y="52" width="30" height="36" rx="6" fill="url(#pbWood)" filter="url(#pbShadow)"/><ellipse cx="413" cy="53" rx="15" ry="5" fill="#e9cf9f"/><ellipse cx="413" cy="53" rx="9" ry="2.8" fill="#9c7440"/></g>
+		<g class="pb-family">${people}${more}</g>
+		<path class="pb-heart" d="M310 172c-5-6-14-3-14 4 0 7 14 15 14 15s14-8 14-15c0-7-9-10-14-4Z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" filter="url(#pbChalk)"/>
+		<text class="pb-chalk" x="320" y="377" text-anchor="middle" filter="url(#pbChalk)">${esc(t(s.closing))}</text>
+	</svg>`;
+}
+
 function footerHTML(s) {
-	const stars = [[5, 16], [12, 48], [18, 26], [26, 8], [31, 60], [39, 20], [46, 44], [52, 10], [58, 34], [64, 56], [71, 14], [77, 40], [83, 24], [89, 58], [94, 10], [98, 36]]
-		.map(([x, y], k) => `<i style="inset-inline-start:${x}%;top:${y}px;animation-delay:-${((k * 0.7) % 5).toFixed(1)}s"></i>`).join('');
-	const lights = Array.from({ length: 26 }, (_, k) => `<circle cx="${(30 + ((k * 53) % 150)).toFixed(0)}" cy="${(18 + ((k * 37) % 95)).toFixed(0)}" r="${k % 3 ? 1.8 : 2.4}" style="animation-delay:-${((k * 0.37) % 3).toFixed(2)}s"/>`).join('');
-	const kids = (s.family?.members || []).filter((m) => m.kid).length;
 	const col = (title, list) => `<nav class="ft-links" aria-label="${esc(title)}"><h2>${esc(title)}</h2>${list.map((p) => `<a href="${p.href}">${esc(L(p.ar, p.en))}</a>`).join('')}</nav>`;
 	const g = (id) => PAGES.filter((p) => p.group === id);
 	return `
-	<div class="ft-night" aria-hidden="true">
-		<span class="ft-stars">${stars}</span><span class="ft-shoot"></span>
-		<span class="ft-moon"></span>
-		<svg class="ft-tree" viewBox="0 0 220 160">
-			<g fill="none" stroke="#e9eef2" stroke-linecap="round">
-				<path d="M110 160V96" stroke-width="7"/>
-				<path d="M110 120C90 100 60 92 34 66M110 112c18-22 46-30 76-56M110 100c-6-28-2-54 8-80M110 104C96 80 80 56 70 22M60 86c-14-6-24-18-30-34M152 78c18-4 32-16 40-32M90 70c-12-6-20-18-22-36M132 64c10-12 14-28 12-44" stroke-width="3"/>
-				<path d="M34 66c-10-4-18-12-22-24M186 56c10-2 18-10 24-20M118 20c4-8 10-14 18-18M70 22c-4-8-10-12-18-14" stroke-width="1.6"/>
-			</g>
-			<g class="ft-lights" fill="#ffd98a">${lights}</g>
-		</svg>
-		<svg class="ft-couple" viewBox="0 0 120 90">
-			<g fill="#06202d">
-				<circle cx="44" cy="22" r="8"/><path d="M34 34c0-4 4-6 10-6s10 2 10 6l2 30h-6l-2 24h-4l-1-22-1 22h-4l-2-24h-6z"/>
-				<path d="M76 18c-6 0-10 5-10 11v4c0 2 2 4 4 4h12c2 0 4-2 4-4v-4c0-6-4-11-10-11Z"/><path d="M66 36c2-2 6-3 10-3s8 1 10 3l6 40c-6 3-26 3-32 0z"/>
-				<path d="M54 44c4 2 8 2 12 0" stroke="#06202d" stroke-width="4" stroke-linecap="round"/>
-				${kids ? '<circle cx="20" cy="56" r="5.5"/><path d="M14 64c0-2 3-3 6-3s6 1 6 3l1 18h-3l-1 6h-2l-1-6-1 6h-2l-1-6h-3z"/>' : ''}
-				${kids > 1 ? '<ellipse cx="96" cy="44" rx="7" ry="5"/><circle cx="101" cy="40" r="3.6"/>' : ''}
-			</g>
-			<path class="ft-float" d="M60 10c-3-3-8-1-8 3 0 4 8 9 8 9s8-5 8-9c0-4-5-6-8-3Z" fill="#f2726f"/>
-		</svg>
-		<svg class="ft-hills" viewBox="0 0 1000 60" preserveAspectRatio="none"><path d="M0 60V34C120 20 220 18 340 28S560 40 680 26 880 14 1000 30V60Z"/></svg>
+	<div class="ft-wall">
+		<figure class="ft-frame">${familyBoard(s)}</figure>
+		<span class="ft-skirting" aria-hidden="true"></span>
 	</div>
 	<div class="ft-body"><div class="ft-wrap">
 		<div class="ft-brand">
