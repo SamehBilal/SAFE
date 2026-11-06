@@ -139,15 +139,20 @@ async function main() {
 	await writeFile(path.join(OUT, 'vault.json'), JSON.stringify(vault));
 	await writeFile(path.join(OUT, 'gate.json'), JSON.stringify(gate, null, '\t') + '\n');
 
-	// 4) Bump the service worker version.
+	// 4) Service worker: list every page and script to precache, and bump its version.
 	const swFile = path.join(ROOT, 'sw.js');
 	const sw = await readFile(swFile, 'utf8');
-	const hash = createHash('sha256');
-	for (const f of ['index.html', 'assets/css/app.css', 'assets/js/app.js', 'assets/js/core.js', 'manifest.webmanifest']) {
-		if (existsSync(path.join(ROOT, f))) hash.update(await readFile(path.join(ROOT, f)));
+	const pages = (await readdir(ROOT)).filter((f) => f.endsWith('.html')).sort();
+	const code = [];
+	for (const dir of ['assets/css', 'assets/js', 'assets/js/pages', 'assets/icons']) {
+		for (const f of (await readdir(path.join(ROOT, dir))).sort()) if (/\.(css|js|svg|png)$/.test(f)) code.push(`${dir}/${f}`);
 	}
-	hash.update(JSON.stringify(vault));
-	await writeFile(swFile, sw.replace(/var VERSION = '[^']*';/, `var VERSION = 'us-${hash.digest('hex').slice(0, 10)}';`));
+	const shell = ['./', ...pages, 'manifest.webmanifest', ...code, 'content/gate.json', 'content/vault.json'];
+	const hash = createHash('sha256');
+	for (const f of shell.slice(1)) if (existsSync(path.join(ROOT, f))) hash.update(await readFile(path.join(ROOT, f)));
+	await writeFile(swFile, sw
+		.replace(/var VERSION = '[^']*';/, `var VERSION = 'us-${hash.digest('hex').slice(0, 10)}';`)
+		.replace(/var SHELL = \[[\s\S]*?\];/, `var SHELL = [\n${shell.map((f) => `\t'${f}'`).join(',\n')}\n];`));
 
 	const size = (await Promise.all([...keep].map((f) => stat(path.join(MEDIA_OUT, f)).then((s) => s.size)))).reduce((a, b) => a + b, 0);
 	console.log(`✓ ${qs.length} question(s), ${used.size} media file(s) (${(size / 1048576).toFixed(1)} MB), vault ${(JSON.stringify(vault).length / 1024).toFixed(0)} KB`);

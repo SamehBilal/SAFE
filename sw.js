@@ -5,18 +5,45 @@
    VERSION is rewritten by tools/build.mjs on every build. */
 'use strict';
 
-var VERSION = 'us-df445f2a83';
+var VERSION = 'us-5c451da007';
 var SHELL = [
 	'./',
+	'birthday.html',
+	'chapter.html',
+	'chapters.html',
+	'family.html',
+	'gallery.html',
 	'index.html',
+	'letters.html',
+	'member.html',
+	'moment.html',
+	'notes.html',
+	'places.html',
+	'story.html',
+	'wishes.html',
 	'manifest.webmanifest',
 	'assets/css/app.css',
-	'assets/js/app.js',
+	'assets/css/chrome.css',
 	'assets/js/core.js',
-	'assets/icons/icon.svg',
+	'assets/js/shell.js',
+	'assets/js/pages/birthday.js',
+	'assets/js/pages/chapter.js',
+	'assets/js/pages/chapters.js',
+	'assets/js/pages/family.js',
+	'assets/js/pages/gallery.js',
+	'assets/js/pages/home.js',
+	'assets/js/pages/letters.js',
+	'assets/js/pages/member.js',
+	'assets/js/pages/moment.js',
+	'assets/js/pages/notes.js',
+	'assets/js/pages/places.js',
+	'assets/js/pages/story.js',
+	'assets/js/pages/wishes.js',
+	'assets/icons/apple-touch-icon.png',
 	'assets/icons/icon-192.png',
 	'assets/icons/icon-512.png',
-	'assets/icons/apple-touch-icon.png',
+	'assets/icons/icon.svg',
+	'assets/icons/maskable-512.png',
 	'content/gate.json',
 	'content/vault.json'
 ];
@@ -80,7 +107,9 @@ self.addEventListener('fetch', function (e) {
 		return;
 	}
 	if (req.mode === 'navigate') {
-		e.respondWith(networkFirst(req, 'index.html'));
+		// moment.html?id=… is one page filled in from the data: cache it without the query
+		var file = url.pathname.split('/').pop() || 'index.html';
+		e.respondWith(networkFirst(req, file));
 		return;
 	}
 	e.respondWith(networkFirst(req));

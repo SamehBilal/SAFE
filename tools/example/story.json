@@ -1,76 +1,123 @@
 {
-	"him": "Sameh",
-	"her": "Esraa",
+	"him": { "ar": "سامح", "en": "Sameh" },
+	"her": { "ar": "إسراء", "en": "Esraa" },
 	"met": "2009-06-10",
 	"married": "2020-09-10",
+
 	"birthday": {
 		"show": true,
-		"title": "Happy Birthday",
-		"subtitle": "ya a7la 7aga f 7yati"
+		"title": { "ar": "كل سنة وانتي طيبة", "en": "Happy Birthday" },
+		"subtitle": { "ar": "يا أحلى حاجة في حياتي", "en": "ya a7la 7aga f 7yati" },
+		"candles": 5,
+		"message": {
+			"ar": "النهارده عيد ميلاد أحلى ست في الدنيا. أم فهد وعبد الرحمن، وحبيبتي من ٢٠٠٩. اطفي الشمع واتمني، وأنا عليا أحققها.",
+			"en": "Today is the birthday of the most beautiful woman in the world. Fahd and Abdulrahman’s mum, and my love since 2009. Blow out the candles and make a wish — making it come true is on me."
+		},
+		"photo": "proposal.jpg"
 	},
 
 	"intro": [
-		"Once upon a time, in the summer of 2009…",
-		"a boy sent a girl a message.",
-		"He had no idea it would become his whole life.",
-		"This is our story, Esraa. Welcome home ♥"
+		{ "ar": "في صيف ٢٠٠٩…", "en": "Once upon a time, in the summer of 2009…" },
+		{ "ar": "ولد بعت لبنت رسالة.", "en": "a boy sent a girl a message." },
+		{ "ar": "ماكانش يعرف إنها هتبقى حياته كلها.", "en": "He had no idea it would become his whole life." },
+		{ "ar": "ودلوقتي بقينا أربعة: إحنا، وفهد، وعبد الرحمن.", "en": "Now we’re four: us, Fahd and Abdulrahman." },
+		{ "ar": "دي حكايتنا يا إسراء. أهلًا بيكي في بيتك ♥", "en": "This is our story, Esraa. Welcome home ♥" }
 	],
 
+	"closing": { "ar": "وكل يوم حكاية طول ما أنا وياكي", "en": "W kol youm 7kaya tol ma ana wyak" },
 	"poster": "poster.jpg",
 
 	"timeline": [
-		{ "date": "2009-06-10", "icon": "💬", "title": "Hello, you", "text": "It all started on Facebook. One message, and nothing was ever the same." },
-		{ "date": "2009-07-13", "icon": "❤️", "title": "I love you", "text": "The first time I said it — and meant it with everything I had." },
-		{ "date": "2009-07-14", "icon": "👫", "title": "Officially us", "text": "The day we became “we”." },
-		{ "date": "2009-08-01", "icon": "🎁", "title": "The first gift", "text": "Small box, big heart." },
-		{ "date": "2009-08-04", "icon": "📞", "title": "The first call", "text": "Hearing your voice for the first time. I still remember the butterflies." },
-		{ "date": "2009-12-06", "icon": "🌧️", "title": "Our rainy day", "text": "The sky was crying, we were laughing." },
-		{ "date": "2011-12-09", "icon": "🔐", "title": "Locked in", "text": "Your heart, my key. Forever." },
-		{ "date": "2016-09-08", "icon": "☕", "title": "A7la 5rga", "text": "Starbucks, a notebook and the best day out of my life." },
-		{ "date": "2017-06-21", "icon": "🚶", "title": "Side by side", "text": "Walking together — and we never stopped." },
-		{ "date": "2017-09-16", "icon": "👨‍👩‍👧‍👦", "title": "The families meet", "text": "Two families around one table, for one love." },
-		{ "date": "2019-01-20", "icon": "📖", "title": "Reading el Fat7a", "text": "The promise, made official." },
-		{ "date": "2019-04-25", "icon": "💍", "title": "The engagement", "text": "A ring, a yes, and my happiest tears." },
-		{ "date": "2020-08-02", "icon": "📜", "title": "A day only we know", "text": "One step closer to forever." },
-		{ "date": "2020-09-10", "icon": "👰", "title": "Our wedding", "text": "And they lived happily ever after… and it's still being written.", "photo": "proposal.jpg" }
+		{ "id": "hello", "date": "2009-06-10", "icon": "💬", "title": { "ar": "أول سلام", "en": "Hello, you" }, "text": { "ar": "كله بدأ على الفيسبوك. رسالة واحدة، ومن بعدها ولا حاجة رجعت زي ما كانت.", "en": "It all started on Facebook. One message, and nothing was ever the same." } },
+		{ "id": "iloveyou", "date": "2009-07-13", "icon": "❤️", "title": { "ar": "بحبك", "en": "I love you" }, "text": { "ar": "أول مرة قلتها، وكنت قاصد كل حرف فيها.", "en": "The first time I said it — and meant every letter." } },
+		{ "id": "us", "date": "2009-07-14", "icon": "👫", "title": { "ar": "بقينا إحنا", "en": "Officially us" }, "text": { "ar": "اليوم اللي بقينا فيه «إحنا».", "en": "The day we became “we”." } },
+		{ "id": "gift", "date": "2009-08-01", "icon": "🎁", "title": { "ar": "أول هدية", "en": "The first gift" }, "text": { "ar": "علبة صغيرة، وقلب كبير.", "en": "Small box, big heart." } },
+		{ "id": "call", "date": "2009-08-04", "icon": "📞", "title": { "ar": "أول مكالمة", "en": "The first call" }, "text": { "ar": "أول مرة أسمع صوتك. لسه فاكر الفراشات اللي في بطني.", "en": "Hearing your voice for the first time. I still remember the butterflies." } },
+		{ "id": "rain", "date": "2009-12-06", "icon": "🌧️", "title": { "ar": "يوم المطر", "en": "Our rainy day" }, "text": { "ar": "السما كانت بتعيط، وإحنا كنا بنضحك.", "en": "The sky was crying, we were laughing." } },
+		{ "id": "lock", "date": "2011-12-09", "icon": "🔐", "title": { "ar": "اتقفل علينا", "en": "Locked in" }, "text": { "ar": "قلبك، ومفتاحه معايا. للأبد.", "en": "Your heart, my key. Forever." } },
+		{ "id": "starbucks", "date": "2016-09-08", "icon": "☕", "title": { "ar": "أحلى خرجة", "en": "A7la 5rga" }, "text": { "ar": "ستاربكس، ونوتة، وأحلى خرجة في حياتي.", "en": "Starbucks, a notebook and the best day out of my life." } },
+		{ "id": "walk", "date": "2017-06-21", "icon": "🚶", "title": { "ar": "جنب بعض", "en": "Side by side" }, "text": { "ar": "مشينا جنب بعض، ومن ساعتها ما وقفناش.", "en": "Walking together — and we never stopped." } },
+		{ "id": "families", "date": "2017-09-16", "icon": "👨‍👩‍👧‍👦", "title": { "ar": "العيلتين اتقابلوا", "en": "The families meet" }, "text": { "ar": "عيلتين على ترابيزة واحدة، عشان حب واحد.", "en": "Two families around one table, for one love." } },
+		{ "id": "fatha", "date": "2019-01-20", "icon": "📖", "title": { "ar": "قرينا الفاتحة", "en": "Reading el Fat7a" }, "text": { "ar": "الوعد بقى رسمي.", "en": "The promise, made official." } },
+		{ "id": "engagement", "date": "2019-04-25", "icon": "💍", "title": { "ar": "الخطوبة", "en": "The engagement" }, "text": { "ar": "دبلة، و«أيوه»، وأحلى دموع.", "en": "A ring, a yes, and my happiest tears." }, "chapter": "proposal" },
+		{ "id": "katb", "date": "2020-08-02", "icon": "📜", "title": { "ar": "يوم يخصنا إحنا", "en": "A day only we know" }, "text": { "ar": "خطوة كمان ناحية للأبد.", "en": "One step closer to forever." } },
+		{ "id": "wedding", "date": "2020-09-10", "icon": "👰", "title": { "ar": "فرحنا", "en": "Our wedding" }, "text": { "ar": "وعاشوا في تبات ونبات… والحكاية لسه بتتكتب.", "en": "And they lived happily ever after… and it’s still being written." }, "chapter": "wedding" },
+		{ "id": "fahd", "date": "2022-03-10", "icon": "👶", "title": { "ar": "فهد نوّر الدنيا", "en": "Fahd arrives" }, "text": { "ar": "أول مرة شلته، عرفت يعني إيه قلب بيخرج برا جسمك.", "en": "The first time I held him, I learned what it means for your heart to live outside your body." }, "chapter": "fahd" },
+		{ "id": "abdulrahman", "date": "2026-07-25", "icon": "🍼", "title": { "ar": "عبد الرحمن جه", "en": "Abdulrahman arrives" }, "text": { "ar": "وبقينا أربعة. البيت بقى أدفى، والقلب بقى أوسع.", "en": "And we became four. A warmer home, a bigger heart." }, "chapter": "abdulrahman" }
 	],
 
-	"proposal": {
-		"title": "The day I asked",
-		"text": "Under the white branches and a thousand little lights, I asked, and you said yes.",
-		"photos": ["proposal.jpg"]
-	},
+	"chapters": [
+		{
+			"id": "proposal", "date": "2019-04-25", "icon": "💍",
+			"title": { "ar": "اليوم اللي طلبتك فيه", "en": "The day I asked" },
+			"sub": { "ar": "تحت الفروع البيضا وألف نور صغير", "en": "Under white branches and a thousand little lights" },
+			"text": { "ar": "كنت ماسك الموبايل وعامل نفسي مشغول، وانتي كنتي بتدوري عليا. وبعدين لفيتي… وقلتي أيوه.", "en": "I was pretending to be busy on my phone while you looked for me. Then you turned around… and said yes." },
+			"photos": [{ "photo": "proposal.jpg", "caption": { "ar": "وقالت أيوه ♥", "en": "She said yes ♥" } }]
+		},
+		{
+			"id": "wedding", "date": "2020-09-10", "icon": "👰",
+			"title": { "ar": "فرحنا", "en": "Our wedding" },
+			"sub": { "ar": "اليوم اللي استنيناه ١١ سنة", "en": "The day we waited eleven years for" },
+			"text": { "ar": "اكتبي هنا حكاية يوم الفرح، وحطي صوره في private/media.", "en": "Write the wedding day story here, and add its photos to private/media." },
+			"photos": []
+		},
+		{
+			"id": "fahd", "date": "2022-03-10", "icon": "👶",
+			"title": { "ar": "أهلًا يا فهد", "en": "Welcome, Fahd" },
+			"sub": { "ar": "أول مرة بقينا بابا وماما", "en": "The day we became Mum and Dad" },
+			"text": { "ar": "اكتب هنا حكاية يوم ولادة فهد.", "en": "Write the story of the day Fahd was born here." },
+			"photos": []
+		},
+		{
+			"id": "abdulrahman", "date": "2026-07-25", "icon": "🍼",
+			"title": { "ar": "أهلًا يا عبد الرحمن", "en": "Welcome, Abdulrahman" },
+			"sub": { "ar": "وبقينا أربعة", "en": "And then we were four" },
+			"text": { "ar": "اكتب هنا حكاية يوم ولادة عبد الرحمن.", "en": "Write the story of the day Abdulrahman was born here." },
+			"photos": []
+		}
+	],
 
-	"moments": [
-		{ "title": "Starbucks", "place": "Where we laughed for hours", "photo": "proposal.jpg" },
-		{ "title": "The Proposal", "place": "White branches, golden lights", "photo": "proposal.jpg" }
+	"places": [
+		{ "id": "starbucks", "title": { "ar": "ستاربكس", "en": "Starbucks" }, "place": { "ar": "المكان اللي ضحكنا فيه ساعات", "en": "Where we laughed for hours" }, "date": "2016-09-08", "photo": "proposal.jpg" },
+		{ "id": "proposal", "title": { "ar": "الطلب", "en": "The proposal" }, "place": { "ar": "فروع بيضا وأنوار دهبي", "en": "White branches, golden lights" }, "date": "2019-04-25", "photo": "proposal.jpg" }
 	],
 
 	"notes": [
-		{ "text": "Dy a7la 5rga mra fe7a 7yati… B7bk aktr", "by": "her" },
-		{ "text": "A7la sa3a f 7yati… b7bk ♥", "by": "him" }
+		{ "text": { "ar": "دي أحلى خرجة مرة فيها حياتي… بحبك أكتر", "en": "Dy a7la 5rga mra fe7a 7yati… B7bk aktr" }, "by": "her", "date": "2016-09-08" },
+		{ "text": { "ar": "أحلى ساعة في حياتي… بحبك ♥", "en": "A7la sa3a f 7yati… b7bk ♥" }, "by": "him", "date": "2016-09-08" }
 	],
 
 	"gallery": [
-		{ "photo": "proposal.jpg", "caption": "She said yes ♥" },
-		{ "photo": "poster.jpg", "caption": "Our love story, on one page" }
+		{ "photo": "proposal.jpg", "caption": { "ar": "وقالت أيوه ♥", "en": "She said yes ♥" }, "date": "2019-04-25", "album": { "ar": "الخطوبة", "en": "Engagement" } },
+		{ "photo": "poster.jpg", "caption": { "ar": "حكايتنا في صفحة واحدة", "en": "Our love story, on one page" }, "date": "2020-09-10", "album": { "ar": "حكايتنا", "en": "Our story" } }
 	],
 
 	"family": {
-		"paper": "The Daily Us",
-		"headline": "Local couple still madly in love after 17 years",
-		"lead": "Sources close to the couple confirm: it only gets better.",
+		"paper": { "ar": "جريدة بيتنا", "en": "The Daily Us" },
+		"headline": { "ar": "زوجان لسه بيحبوا بعض بجنون بعد ١٧ سنة", "en": "Local couple still madly in love after 17 years" },
+		"lead": { "ar": "مصادر قريبة من العيلة بتأكد: الحكاية كل يوم بتحلو.", "en": "Sources close to the family confirm: it only gets better." },
 		"members": [
-			{ "name": "Sameh", "role": "The lucky husband", "text": "Still can't believe she said yes." },
-			{ "name": "Esraa", "role": "The heart of the house", "text": "The reason everything in this home is warm." }
+			{ "id": "sameh", "name": { "ar": "سامح", "en": "Sameh" }, "role": { "ar": "الزوج المحظوظ", "en": "The lucky husband" }, "emoji": "🤵", "color": "#0e6990", "text": { "ar": "لسه مش مصدق إنها قالت أيوه.", "en": "Still can’t believe she said yes." } },
+			{ "id": "esraa", "name": { "ar": "إسراء", "en": "Esraa" }, "role": { "ar": "قلب البيت", "en": "The heart of the house" }, "emoji": "👸", "color": "#d9534f", "text": { "ar": "السبب في إن كل حاجة في البيت ده دافية.", "en": "The reason everything in this home is warm." } },
+			{ "id": "fahd", "kid": true, "born": "2022-03-10", "name": { "ar": "فهد", "en": "Fahd" }, "role": { "ar": "الابن الكبير", "en": "Big brother" }, "emoji": "🦁", "color": "#e39b2d", "text": { "ar": "أول فرحتنا. اكتب هنا أكتر حاجة بتميزه.", "en": "Our first joy. Write what makes him, him." } },
+			{ "id": "abdulrahman", "kid": true, "born": "2026-07-25", "name": { "ar": "عبد الرحمن", "en": "Abdulrahman" }, "role": { "ar": "آخر العنقود", "en": "The baby of the family" }, "emoji": "🐣", "color": "#5a9e6f", "text": { "ar": "أصغر فرد في العيلة، وأكبر فرحة جديدة.", "en": "The newest of us, and the newest joy." } }
 		]
 	},
 
-	"letter": {
-		"to": "To my Esraa",
-		"body": "Write her your birthday letter here.\n\nEvery paragraph you write in story.json shows up on its own line.",
-		"from": "Yours, always — Sameh"
-	},
-
-	"closing": "W kol youm 7kaya tol ma ana wyak"
+	"letters": [
+		{
+			"id": "birthday", "date": "2026-11-06",
+			"title": { "ar": "جواب عيد ميلادك", "en": "Your birthday letter" },
+			"to": { "ar": "لإسراء حبيبتي", "en": "To my Esraa" },
+			"body": { "ar": "اكتب هنا جوابك ليها.\n\nكل فقرة بتكتبها في story.json بتظهر في سطر لوحدها.", "en": "Write her your birthday letter here.\n\nEvery paragraph you write in story.json shows up on its own line." },
+			"from": { "ar": "بتاعك على طول — سامح", "en": "Yours, always — Sameh" }
+		},
+		{
+			"id": "mum", "date": "2026-11-06",
+			"title": { "ar": "لأم فهد وعبد الرحمن", "en": "To Fahd and Abdulrahman’s mum" },
+			"to": { "ar": "لأحلى أم", "en": "To the best mum" },
+			"body": { "ar": "اكتب هنا شكرك ليها كأم.", "en": "Write your thank-you to her as a mother here." },
+			"from": { "ar": "سامح، وفهد، وعبد الرحمن", "en": "Sameh, Fahd and Abdulrahman" }
+		}
+	]
 }

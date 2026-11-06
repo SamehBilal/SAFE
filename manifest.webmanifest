@@ -1,9 +1,10 @@
 {
 	"id": "./",
-	"name": "Our Love Story",
-	"short_name": "Us ♥",
+	"name": "حكاية حبنا — Our Love Story",
+	"short_name": "إحنا ♥",
 	"description": "A private place for two.",
-	"lang": "en",
+	"lang": "ar",
+	"dir": "rtl",
 	"start_url": "./?source=pwa",
 	"scope": "./",
 	"display": "standalone",

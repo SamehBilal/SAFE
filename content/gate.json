@@ -1,23 +1,58 @@
 {
-	"title": "Hey you 👀",
-	"intro": "This little corner of the internet belongs to one person only. Prove it's you.",
-	"wrong": "Hmm… one of those isn't quite right 🙈 Try again, ya 7abibti.",
+	"title": {
+		"ar": "أهلًا يا قمر 👀",
+		"en": "Hey you 👀"
+	},
+	"intro": {
+		"ar": "المكان ده بتاع شخص واحد بس. أثبتي إنه انتي.",
+		"en": "This little corner of the internet belongs to one person only. Prove it’s you."
+	},
+	"wrong": {
+		"ar": "في إجابة مش مظبوطة 🙈 جربي تاني يا حبيبتي.",
+		"en": "Hmm… one of those isn’t quite right 🙈 Try again, ya 7abibti."
+	},
 	"questions": [
 		{
-			"q": "Where did we first meet?",
-			"hint": "Blue. Has a 'Like' button.",
-			"placeholder": "type it…"
+			"q": {
+				"ar": "اتعرفنا على بعض فين؟",
+				"en": "Where did we first meet?"
+			},
+			"hint": {
+				"ar": "أزرق، وفيه زرار «لايك».",
+				"en": "Blue. Has a ‘Like’ button."
+			},
+			"placeholder": {
+				"ar": "اكتبي هنا…",
+				"en": "type it…"
+			}
 		},
 		{
-			"q": "When did I first say “I love you”?",
-			"hint": "Summer 2009 — day.month.year",
-			"placeholder": "dd.mm.yyyy",
-			"type": "text"
+			"q": {
+				"ar": "قلتلك «بحبك» أول مرة إمتى؟",
+				"en": "When did I first say “I love you”?"
+			},
+			"hint": {
+				"ar": "صيف ٢٠٠٩ — يوم.شهر.سنة",
+				"en": "Summer 2009 — day.month.year"
+			},
+			"placeholder": {
+				"ar": "يوم.شهر.سنة",
+				"en": "dd.mm.yyyy"
+			}
 		},
 		{
-			"q": "Where was “a7la 5rga” with the notebook selfies?",
-			"hint": "Green mermaid ☕",
-			"placeholder": "the place…"
+			"q": {
+				"ar": "«أحلى خرجة» بتاعة صور النوتة كانت فين؟",
+				"en": "Where was “a7la 5rga” with the notebook selfies?"
+			},
+			"hint": {
+				"ar": "حورية البحر الخضرا ☕",
+				"en": "Green mermaid ☕"
+			},
+			"placeholder": {
+				"ar": "المكان…",
+				"en": "the place…"
+			}
 		}
 	]
 }
