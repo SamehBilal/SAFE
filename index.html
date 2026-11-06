@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Just for you ♥</title>
+	<meta name="description" content="A private place for two.">
+	<meta name="robots" content="noindex, nofollow, noarchive">
+	<meta name="referrer" content="no-referrer">
+	<meta name="theme-color" content="#0E6990">
+	<meta name="color-scheme" content="light">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Us ♥">
+	<link rel="manifest" href="manifest.webmanifest">
+	<link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@500;700&family=Lobster&family=Nunito:wght@400;600;800&family=Cairo:wght@400;700&display=swap">
+	<link rel="stylesheet" href="assets/css/app.css">
+	<link rel="modulepreload" href="assets/js/core.js">
+</head>
+<body>
+	<div class="hearts" aria-hidden="true"></div>
+
+	<!-- 1. The gate: her answers are the key -->
+	<section class="stage gate" id="gate" hidden>
+		<form class="gate__card" id="gate-form" autocomplete="off" novalidate>
+			<svg class="gate__lock" viewBox="0 0 64 72" aria-hidden="true">
+				<path class="gate__shackle" d="M18 32V22a14 14 0 0 1 28 0v10" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+				<path class="gate__body" d="M32 70C14 58 4 48 4 38a12 12 0 0 1 22-7l6 6 6-6a12 12 0 0 1 22 7c0 10-10 20-28 32Z"/>
+				<g class="gate__dots" fill="#fff"><circle cx="24" cy="44" r="2.6"/><circle cx="32" cy="44" r="2.6"/><circle cx="40" cy="44" r="2.6"/></g>
+			</svg>
+			<h1 class="gate__title" id="gate-title"></h1>
+			<p class="gate__intro" id="gate-intro"></p>
+			<ol class="gate__steps" id="gate-steps" aria-hidden="true"></ol>
+			<div class="gate__ask" id="gate-ask">
+				<label class="gate__q" for="gate-input" id="gate-q"></label>
+				<input class="gate__input" id="gate-input" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next">
+				<button type="button" class="link" id="gate-hint-btn">Need a hint?</button>
+				<p class="gate__hint" id="gate-hint" hidden></p>
+			</div>
+			<p class="gate__msg" id="gate-msg" role="alert" aria-live="assertive"></p>
+			<div class="gate__actions">
+				<button type="button" class="btn btn--ghost" id="gate-back">Back</button>
+				<button type="submit" class="btn" id="gate-next">Next</button>
+			</div>
+		</form>
+	</section>
+
+	<!-- 2. Loader: fills as the photos are decrypted -->
+	<section class="stage loader" id="loader" hidden>
+		<svg class="loader__heart" viewBox="0 0 100 92" aria-hidden="true">
+			<defs>
+				<clipPath id="heart-clip"><path d="M50 90C20 70 2 52 2 30A24 24 0 0 1 50 18a24 24 0 0 1 48 12c0 22-18 40-48 60Z"/></clipPath>
+			</defs>
+			<path d="M50 90C20 70 2 52 2 30A24 24 0 0 1 50 18a24 24 0 0 1 48 12c0 22-18 40-48 60Z" fill="#fde3e0"/>
+			<g clip-path="url(#heart-clip)">
+				<g id="loader-fill"><path class="loader__wave" d="M-100 92 Q-75 86 -50 92 T0 92 T50 92 T100 92 T150 92 T200 92 V200 H-100Z" fill="#F2726F"/></g>
+			</g>
+			<path d="M50 90C20 70 2 52 2 30A24 24 0 0 1 50 18a24 24 0 0 1 48 12c0 22-18 40-48 60Z" fill="none" stroke="#0E6990" stroke-width="3"/>
+		</svg>
+		<p class="loader__text" id="loader-text" aria-live="polite"></p>
+		<p class="loader__pct" id="loader-pct">0%</p>
+	</section>
+
+	<!-- 3. Intro -->
+	<section class="stage intro" id="intro" hidden>
+		<button class="intro__skip link" id="intro-skip" type="button">Skip ›</button>
+		<div class="intro__lines" id="intro-lines" aria-live="polite"></div>
+		<div class="intro__final" id="intro-final" hidden></div>
+	</section>
+
+	<!-- 4. The site, built from the decrypted story -->
+	<div id="site" hidden></div>
+
+	<noscript><p style="padding:2rem;text-align:center">This little place needs JavaScript ♥</p></noscript>
+	<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

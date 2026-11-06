@@ -1,0 +1,5 @@
+# Everything readable lives here — it must never be pushed.
+private/
+node_modules/
+.DS_Store
+Thumbs.db

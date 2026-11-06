@@ -1,0 +1,76 @@
+{
+	"him": "Sameh",
+	"her": "Esraa",
+	"met": "2009-06-10",
+	"married": "2020-09-10",
+	"birthday": {
+		"show": true,
+		"title": "Happy Birthday",
+		"subtitle": "ya a7la 7aga f 7yati"
+	},
+
+	"intro": [
+		"Once upon a time, in the summer of 2009…",
+		"a boy sent a girl a message.",
+		"He had no idea it would become his whole life.",
+		"This is our story, Esraa. Welcome home ♥"
+	],
+
+	"poster": "poster.jpg",
+
+	"timeline": [
+		{ "date": "2009-06-10", "icon": "💬", "title": "Hello, you", "text": "It all started on Facebook. One message, and nothing was ever the same." },
+		{ "date": "2009-07-13", "icon": "❤️", "title": "I love you", "text": "The first time I said it — and meant it with everything I had." },
+		{ "date": "2009-07-14", "icon": "👫", "title": "Officially us", "text": "The day we became “we”." },
+		{ "date": "2009-08-01", "icon": "🎁", "title": "The first gift", "text": "Small box, big heart." },
+		{ "date": "2009-08-04", "icon": "📞", "title": "The first call", "text": "Hearing your voice for the first time. I still remember the butterflies." },
+		{ "date": "2009-12-06", "icon": "🌧️", "title": "Our rainy day", "text": "The sky was crying, we were laughing." },
+		{ "date": "2011-12-09", "icon": "🔐", "title": "Locked in", "text": "Your heart, my key. Forever." },
+		{ "date": "2016-09-08", "icon": "☕", "title": "A7la 5rga", "text": "Starbucks, a notebook and the best day out of my life." },
+		{ "date": "2017-06-21", "icon": "🚶", "title": "Side by side", "text": "Walking together — and we never stopped." },
+		{ "date": "2017-09-16", "icon": "👨‍👩‍👧‍👦", "title": "The families meet", "text": "Two families around one table, for one love." },
+		{ "date": "2019-01-20", "icon": "📖", "title": "Reading el Fat7a", "text": "The promise, made official." },
+		{ "date": "2019-04-25", "icon": "💍", "title": "The engagement", "text": "A ring, a yes, and my happiest tears." },
+		{ "date": "2020-08-02", "icon": "📜", "title": "A day only we know", "text": "One step closer to forever." },
+		{ "date": "2020-09-10", "icon": "👰", "title": "Our wedding", "text": "And they lived happily ever after… and it's still being written.", "photo": "proposal.jpg" }
+	],
+
+	"proposal": {
+		"title": "The day I asked",
+		"text": "Under the white branches and a thousand little lights, I asked, and you said yes.",
+		"photos": ["proposal.jpg"]
+	},
+
+	"moments": [
+		{ "title": "Starbucks", "place": "Where we laughed for hours", "photo": "proposal.jpg" },
+		{ "title": "The Proposal", "place": "White branches, golden lights", "photo": "proposal.jpg" }
+	],
+
+	"notes": [
+		{ "text": "Dy a7la 5rga mra fe7a 7yati… B7bk aktr", "by": "her" },
+		{ "text": "A7la sa3a f 7yati… b7bk ♥", "by": "him" }
+	],
+
+	"gallery": [
+		{ "photo": "proposal.jpg", "caption": "She said yes ♥" },
+		{ "photo": "poster.jpg", "caption": "Our love story, on one page" }
+	],
+
+	"family": {
+		"paper": "The Daily Us",
+		"headline": "Local couple still madly in love after 17 years",
+		"lead": "Sources close to the couple confirm: it only gets better.",
+		"members": [
+			{ "name": "Sameh", "role": "The lucky husband", "text": "Still can't believe she said yes." },
+			{ "name": "Esraa", "role": "The heart of the house", "text": "The reason everything in this home is warm." }
+		]
+	},
+
+	"letter": {
+		"to": "To my Esraa",
+		"body": "Write her your birthday letter here.\n\nEvery paragraph you write in story.json shows up on its own line.",
+		"from": "Yours, always — Sameh"
+	},
+
+	"closing": "W kol youm 7kaya tol ma ana wyak"
+}

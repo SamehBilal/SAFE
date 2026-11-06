@@ -1,0 +1,26 @@
+{
+	"title": "Hey you 👀",
+	"intro": "This little corner of the internet belongs to one person only. Prove it's you.",
+	"wrong": "Hmm… one of those isn't quite right 🙈 Try again, ya 7abibti.",
+	"questions": [
+		{
+			"q": "Where did we first meet?",
+			"hint": "Blue. Has a 'Like' button.",
+			"placeholder": "type it…",
+			"answers": ["facebook", "fb", "face", "فيسبوك", "فيس بوك", "فيس"]
+		},
+		{
+			"q": "When did I first say “I love you”?",
+			"hint": "Summer 2009 — day.month.year",
+			"placeholder": "dd.mm.yyyy",
+			"type": "text",
+			"answers": ["13.07.2009", "13.7.2009"]
+		},
+		{
+			"q": "Where was “a7la 5rga” with the notebook selfies?",
+			"hint": "Green mermaid ☕",
+			"placeholder": "the place…",
+			"answers": ["starbucks", "ستاربكس", "ستار بكس"]
+		}
+	]
+}

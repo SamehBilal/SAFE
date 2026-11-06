@@ -1,0 +1,159 @@
+#!/usr/bin/env node
+/* Encrypts private/ into content/ so the site can be published publicly.
+
+   private/questions.json  the gate questions + every accepted answer   (never committed)
+   private/story.json      everything shown on the site                 (never committed)
+   private/media/*         photos and videos the story refers to         (never committed)
+   private/.master-key     created on first run; keep it — losing it makes her re-answer
+
+   Output (safe to commit):
+   content/gate.json       the questions and hints only
+   content/vault.json      the encrypted story + the master key wrapped per answer combo
+   content/m/<id>.bin      each photo/video, encrypted
+   sw.js                   VERSION bumped so phones pick up the new content
+
+   Run:  node tools/build.mjs */
+
+import { readFile, writeFile, mkdir, readdir, stat, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { createHash, createHmac } from 'node:crypto';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { ITERATIONS, deriveKek, importMaster, seal, randomBytes, toB64, fromB64 } from '../assets/js/core.js';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PRIV = path.join(ROOT, 'private');
+const OUT = path.join(ROOT, 'content');
+const MEDIA_OUT = path.join(OUT, 'm');
+const MAX_COMBOS = 512;
+
+const MIME = {
+	'.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp',
+	'.gif': 'image/gif', '.avif': 'image/avif', '.mp4': 'video/mp4', '.webm': 'video/webm',
+	'.mov': 'video/quicktime', '.mp3': 'audio/mpeg', '.m4a': 'audio/mp4', '.ogg': 'audio/ogg'
+};
+
+const fail = (msg) => { console.error('\n✗ ' + msg + '\n'); process.exit(1); };
+
+async function readJson(file) {
+	try {
+		return JSON.parse(await readFile(file, 'utf8'));
+	} catch (e) {
+		fail(`Could not read ${path.relative(ROOT, file)}: ${e.message}`);
+	}
+}
+
+async function masterKey() {
+	const file = path.join(PRIV, '.master-key');
+	if (existsSync(file)) return fromB64((await readFile(file, 'utf8')).trim());
+	const raw = randomBytes(32);
+	await writeFile(file, toB64(raw) + '\n');
+	console.log('• Created private/.master-key (back it up with the rest of private/)');
+	return raw;
+}
+
+function combos(lists) {
+	return lists.reduce((acc, list) => acc.flatMap((prefix) => list.map((a) => [...prefix, a])), [[]]);
+}
+
+async function main() {
+	if (!existsSync(PRIV)) fail('No private/ folder. Copy tools/example/ to private/ and fill it in.');
+
+	const questions = await readJson(path.join(PRIV, 'questions.json'));
+	const story = await readJson(path.join(PRIV, 'story.json'));
+	const qs = questions.questions || [];
+	if (!qs.length) fail('questions.json has no questions.');
+	qs.forEach((q, i) => {
+		if (!q.q || !Array.isArray(q.answers) || !q.answers.length) fail(`Question ${i + 1} needs "q" and a non-empty "answers" list.`);
+	});
+
+	const all = combos(qs.map((q) => q.answers));
+	if (all.length > MAX_COMBOS) fail(`${all.length} answer combinations — keep it under ${MAX_COMBOS} (fewer alternatives per question).`);
+
+	const raw = await masterKey();
+	const key = await importMaster(raw);
+	await mkdir(MEDIA_OUT, { recursive: true });
+
+	// 1) Media: every string in story.json that names a file in private/media becomes "media:<id>.<ext>".
+	const mediaDir = path.join(PRIV, 'media');
+	const files = existsSync(mediaDir) ? await readdir(mediaDir) : [];
+	const byName = new Map(files.map((f) => [f.toLowerCase(), f]));
+	const used = new Map();
+	const missing = new Set();
+
+	async function encodeMedia(name) {
+		const real = byName.get(name.toLowerCase());
+		if (!real) { missing.add(name); return name; }
+		if (used.has(real)) return used.get(real);
+		const ext = path.extname(real).toLowerCase();
+		const bytes = await readFile(path.join(mediaDir, real));
+		const id = createHmac('sha256', Buffer.from(raw)).update(bytes).digest('hex').slice(0, 20);
+		const out = path.join(MEDIA_OUT, id + '.bin');
+		if (!existsSync(out)) await writeFile(out, await seal(key, bytes));
+		const ref = `media:${id}${ext}`;
+		used.set(real, ref);
+		return ref;
+	}
+
+	async function walk(node) {
+		if (Array.isArray(node)) return Promise.all(node.map(walk));
+		if (node && typeof node === 'object') {
+			const out = {};
+			for (const [k, v] of Object.entries(node)) out[k] = await walk(v);
+			return out;
+		}
+		if (typeof node === 'string' && MIME[path.extname(node).toLowerCase()] && !/^https?:|\//.test(node)) return encodeMedia(node);
+		return node;
+	}
+
+	const sealedStory = await walk(story);
+	sealedStory.$media = [...used.values()];
+
+	// Remove encrypted files no longer referenced.
+	const keep = new Set([...used.values()].map((r) => r.slice(6).replace(/\.[^.]+$/, '') + '.bin'));
+	for (const f of await readdir(MEDIA_OUT)) if (!keep.has(f)) await rm(path.join(MEDIA_OUT, f));
+
+	// 2) Story.
+	const data = await seal(key, new TextEncoder().encode(JSON.stringify(sealedStory)));
+
+	// 3) Wrap the master key for every accepted combination of answers.
+	const salt = randomBytes(16);
+	process.stdout.write(`• Wrapping key for ${all.length} answer combination(s)`);
+	const keys = [];
+	for (const answers of all) {
+		const kek = await deriveKek(answers, salt, ITERATIONS);
+		keys.push(toB64(await seal(kek, raw)));
+		process.stdout.write('.');
+	}
+	process.stdout.write('\n');
+	// Shuffle so order doesn't hint which combo is which.
+	keys.sort(() => Math.random() - 0.5);
+
+	const vault = { v: 1, iter: ITERATIONS, salt: toB64(salt), keys, data: toB64(data) };
+	const gate = {
+		title: questions.title || '',
+		intro: questions.intro || '',
+		wrong: questions.wrong || '',
+		questions: qs.map(({ q, hint, placeholder, type }) => ({ q, hint, placeholder, type }))
+	};
+	await writeFile(path.join(OUT, 'vault.json'), JSON.stringify(vault));
+	await writeFile(path.join(OUT, 'gate.json'), JSON.stringify(gate, null, '\t') + '\n');
+
+	// 4) Bump the service worker version.
+	const swFile = path.join(ROOT, 'sw.js');
+	const sw = await readFile(swFile, 'utf8');
+	const hash = createHash('sha256');
+	for (const f of ['index.html', 'assets/css/app.css', 'assets/js/app.js', 'assets/js/core.js', 'manifest.webmanifest']) {
+		if (existsSync(path.join(ROOT, f))) hash.update(await readFile(path.join(ROOT, f)));
+	}
+	hash.update(JSON.stringify(vault));
+	await writeFile(swFile, sw.replace(/var VERSION = '[^']*';/, `var VERSION = 'us-${hash.digest('hex').slice(0, 10)}';`));
+
+	const size = (await Promise.all([...keep].map((f) => stat(path.join(MEDIA_OUT, f)).then((s) => s.size)))).reduce((a, b) => a + b, 0);
+	console.log(`✓ ${qs.length} question(s), ${used.size} media file(s) (${(size / 1048576).toFixed(1)} MB), vault ${(JSON.stringify(vault).length / 1024).toFixed(0)} KB`);
+	if (missing.size) console.warn('! Not found in private/media (left as-is): ' + [...missing].join(', '));
+	const unused = files.filter((f) => !used.has(f) && !f.startsWith('.'));
+	if (unused.length) console.log('  (not used by story.json: ' + unused.join(', ') + ')');
+}
+
+main().catch((e) => fail(e.stack || e.message));
