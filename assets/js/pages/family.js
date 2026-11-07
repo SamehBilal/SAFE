@@ -17,6 +17,10 @@ export default {
 				</a>`).join('')}
 			</div>
 
+			${f.portrait ? `<figure class="portrait reveal" data-media-box>
+				${img(f.portrait.photo, App.t(f.portrait.caption), 'zoom')}
+				<figcaption>${f.portrait.title ? `<b>${T(f.portrait.title)}</b>` : ''}${f.portrait.text ? `<span>${T(f.portrait.text)}</span>` : ''}</figcaption>
+			</figure>` : ''}
 			<article class="paper reveal">
 				<h2 class="paper__name">${T(f.paper) || L('جريدة بيتنا', 'The Daily Us')}</h2>
 				<div class="paper__bar"><div><span>${L('العدد', 'Issue')} #${num(yearsBetween(parseDate(s.met)))}</span><span>${today.toLocaleDateString(App.lang === 'ar' ? 'ar-EG' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span><span>${L('التمن: حضن', 'Price: one hug')}</span></div></div>

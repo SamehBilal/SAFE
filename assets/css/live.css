@@ -172,3 +172,10 @@
 }
 @media (min-width: 980px) and (max-width: 1199px) { .mnav-cta { display: none; } }
 @media (min-width: 1040px) { .ft-wrap { grid-template-columns: 1.4fr repeat(4, 1fr); } }
+
+/* the real pebble portrait, framed on the family page */
+.portrait { margin: 0 auto 40px; max-width: 760px; display: grid; gap: 14px; justify-items: center; text-align: center; }
+.portrait img { width: 100%; border-radius: 14px; box-shadow: var(--shadow-lg); cursor: zoom-in; }
+.portrait figcaption { display: grid; gap: 4px; max-width: 54ch; }
+.portrait b { font: 400 2rem/1.3 var(--f-script); color: var(--blue); }
+.portrait span { color: var(--muted); }
