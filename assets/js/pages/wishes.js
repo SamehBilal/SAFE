@@ -1,4 +1,6 @@
-import { L, pageHead, related, sleep, store, $ } from '../shell.js';
+import { L, T, pageHead, related, sleep, store, $, App } from '../shell.js';
+import * as live from '../live.js';
+import { setupNote } from './journal.js';
 
 const KEY = 'us.wishes';
 const JAR = `<svg viewBox="0 0 200 260" aria-hidden="true">
@@ -8,39 +10,48 @@ const JAR = `<svg viewBox="0 0 200 260" aria-hidden="true">
 	<g class="jar__lid"><rect x="40" y="26" width="120" height="28" rx="10" fill="#66a8b8" stroke="#27525c" stroke-width="5"/><path d="M56 38h88" stroke="#27525c" stroke-width="3" opacity=".35"/></g>
 </svg>`;
 
-/* Wishes stay on her phone (localStorage) — they're hers. */
+/* Our wish jar, shared by both phones (content/live/wishes.bin, encrypted). Wishes made on a phone before the jar
+   was shared (kept only on that phone) are moved into it the first time that phone can save. */
 export default {
 	title: { ar: 'برطمان الأمنيات', en: 'Wish jar' },
 	render() {
 		return `
-		${pageHead(L('برطمان الأمنيات', 'Wish jar'), L('اكتبي أمنية، وهتفضل في أمان جوه البرطمان', 'Make a wish — it stays safe in the jar'), [{ href: 'wishes.html', ar: 'برطمان الأمنيات', en: 'Wish jar' }])}
+		${pageHead(L('برطمان الأمنيات', 'Wish jar'), L('أمنياتنا إحنا الاتنين، في برطمان واحد', 'Both our wishes, in one jar'), [{ href: 'wishes.html', ar: 'برطمان الأمنيات', en: 'Wish jar' }])}
+		${live.canWrite() ? '' : `<div class="wrap narrow" style="margin-top:16px">${setupNote()}</div>`}
 		<section class="sec sec--top"><div class="wrap jar-wrap">
 			<form class="wish-form reveal" id="wish-form" autocomplete="off">
 				<label class="sr-only" for="wish-input">${L('نفسي…', 'I wish…')}</label>
 				<input id="wish-input" dir="auto" maxlength="140" placeholder="${L('نفسي…', 'I wish…')}" enterkeyhint="send">
-				<button type="submit" aria-label="${L('حطي الأمنية في البرطمان', 'Put the wish in the jar')}">★</button>
+				<button type="submit" aria-label="${L('حطوا الأمنية في البرطمان', 'Put the wish in the jar')}">★</button>
 			</form>
-			<p class="wish-hint">${L('دوسي على أي نجمة عشان تقري الأمنية اللي جواها', 'Tap a star to read the wish inside')}</p>
+			<p class="wish-hint">${L('دوسوا على أي نجمة عشان تقروا الأمنية اللي جواها', 'Tap a star to read the wish inside')}</p>
 			<div class="jar" id="jar">${JAR}<div class="jar__stars" id="jar-stars"></div></div>
 			<p class="wish-toast" id="wish-toast" aria-live="polite"></p>
 		</div></section>
-		${related(['birthday', 'letters', 'notes'])}`;
+		${related(['birthday', 'journal', 'notes'])}`;
 	},
-	after(main) {
+	async after(main) {
 		const form = $('#wish-form', main);
 		const input = $('#wish-input', main);
 		const box = $('#jar-stars', main);
 		const jar = $('#jar', main);
 		const toast = $('#wish-toast', main);
-		let wishes = [];
-		try { wishes = JSON.parse(store.get(KEY) || '[]'); } catch { wishes = []; }
+		const name = (w) => App.t(w === 'him' ? App.story.him : App.story.her);
+		let wishes = (await live.load('wishes')).items || [];
+		// wishes this phone kept for itself before the jar was shared
+		let mine = [];
+		try { mine = JSON.parse(store.get(KEY) || '[]'); } catch { mine = []; }
+		if (mine.length && live.canWrite()) {
+			try { wishes = (await live.save('wishes', (d) => { (d.items = d.items || []).push(...mine.map((w) => ({ ...w, id: live.newId(), by: live.me() }))); })).items; store.del(KEY); }
+			catch { /* try again next time */ }
+		}
 		const add = (w, animate) => {
 			const b = document.createElement('button');
 			b.type = 'button';
 			b.textContent = '⭐';
 			b.setAttribute('aria-label', L('أمنية: ', 'Wish: ') + w.text);
 			if (!animate) b.style.animation = 'none';
-			b.onclick = () => { toast.textContent = '«' + w.text + '»'; };
+			b.onclick = () => { toast.textContent = '«' + w.text + '»' + (w.by ? ' — ' + name(w.by) : ''); };
 			box.append(b);
 		};
 		wishes.forEach((w) => add(w, false));
@@ -48,10 +59,11 @@ export default {
 			e.preventDefault();
 			const text = input.value.trim();
 			if (!text) return input.focus();
+			if (!live.canWrite()) { toast.textContent = live.why({ code: 'setup' }); return; }
+			const w = { id: live.newId(), text, by: live.me(), at: Date.now() };
+			try { wishes = (await live.save('wishes', (d) => { (d.items = d.items || []).push(w); })).items; }
+			catch (err) { toast.textContent = live.why(err); return; }
 			input.value = '';
-			const w = { text, at: Date.now() };
-			wishes.push(w);
-			store.set(KEY, JSON.stringify(wishes));
 			const from = form.getBoundingClientRect();
 			const to = jar.getBoundingClientRect();
 			const star = Object.assign(document.createElement('span'), { className: 'flying-star', textContent: '⭐' });
@@ -69,7 +81,7 @@ export default {
 			add(w, true);
 			await sleep(250);
 			jar.classList.remove('is-open');
-			toast.textContent = L('أمنيتك في أمان جوه البرطمان ✨', 'Your wish is safe in the jar ✨');
+			toast.textContent = L('الأمنية في أمان جوه البرطمان ✨', 'The wish is safe in the jar ✨');
 		};
 	}
 };

@@ -32,7 +32,7 @@ export default {
 			<div class="counters" id="mv-totals"></div>
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal" style="margin-top:24px"${ok ? '' : ' hidden'}>
-				<summary><span>🍿</span> ${L('ضيفي حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
+				<summary><span>🍿</span> ${L('ضيفوا حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
 				<form id="mv-form" autocomplete="off">
 					<label class="f"><span>${L('الاسم', 'Title')}</span><input name="title" dir="auto" maxlength="80" required></label>
 					<div class="f-row">
@@ -47,7 +47,7 @@ export default {
 					<fieldset class="rate"><legend>${L('قيّموه', 'Rate it')}</legend>${[5, 4, 3, 2, 1].map((h) => `<input type="radio" name="hearts" id="mvh${h}" value="${h}"><label for="mvh${h}">♥</label>`).join('')}</fieldset>
 					<label class="f"><span>${L('حاجة عايزين نفتكرها؟', 'Anything to remember?')}</span><input name="note" dir="auto" maxlength="160"></label>
 					<p class="form-msg" id="mv-msg" role="status"></p>
-					<div class="f-actions"><button class="btn btn--coral" type="submit">${L('ضيفيه ♥', 'Add it ♥')}</button></div>
+					<div class="f-actions"><button class="btn btn--coral" type="submit">${L('ضيفوه ♥', 'Add it ♥')}</button></div>
 				</form>
 			</details>
 
@@ -97,7 +97,7 @@ export default {
 
 		board.onclick = async (e) => {
 			const del = e.target.closest('[data-del]');
-			if (!del || !confirm(L('تمسحيه من القايمة؟', 'Remove it from the list?'))) return;
+			if (!del || !confirm(L('تمسحوه من القايمة؟', 'Remove it from the list?'))) return;
 			try { data = await live.save('movies', (d) => { d.items = (d.items || []).filter((x) => x.id !== del.dataset.del); }); paint(); }
 			catch (err) { alert(live.why(err)); }
 		};

@@ -1,25 +1,75 @@
 {
-	"title": { "ar": "أهلًا يا قمر 👀", "en": "Hey you 👀" },
-	"intro": { "ar": "المكان ده بتاع شخص واحد بس. أثبتي إنه انتي.", "en": "This little corner of the internet belongs to one person only. Prove it’s you." },
-	"wrong": { "ar": "في إجابة مش مظبوطة 🙈 جربي تاني يا حبيبتي.", "en": "Hmm… one of those isn’t quite right 🙈 Try again, ya 7abibti." },
+	"title": {
+		"ar": "أهلًا بيكم 👋",
+		"en": "Welcome home 👋"
+	},
+	"intro": {
+		"ar": "المكان ده بتاعنا إحنا بس. جاوبوا وادخلوا.",
+		"en": "This place is only ours. Answer and come in."
+	},
+	"wrong": {
+		"ar": "في إجابة مش مظبوطة 🙈 جربوا تاني.",
+		"en": "One of those isn't quite right 🙈 Try again."
+	},
 	"questions": [
 		{
-			"q": { "ar": "اتعرفنا على بعض فين؟", "en": "Where did we first meet?" },
-			"hint": { "ar": "أزرق، وفيه زرار «لايك».", "en": "Blue. Has a ‘Like’ button." },
-			"placeholder": { "ar": "اكتبي هنا…", "en": "type it…" },
-			"answers": ["facebook", "fb", "face", "فيسبوك", "فيس بوك", "فيس"]
+			"q": {
+				"ar": "اتعرفنا على بعض فين؟",
+				"en": "Where did we first meet?"
+			},
+			"hint": {
+				"ar": "أزرق، وفيه زرار «لايك».",
+				"en": "Blue. Has a ‘Like’ button."
+			},
+			"placeholder": {
+				"ar": "اكتبوا هنا…",
+				"en": "type it…"
+			},
+			"answers": [
+				"facebook",
+				"fb",
+				"face",
+				"فيسبوك",
+				"فيس بوك",
+				"فيس"
+			]
 		},
 		{
-			"q": { "ar": "قلتلك «بحبك» أول مرة إمتى؟", "en": "When did I first say “I love you”?" },
-			"hint": { "ar": "صيف ٢٠٠٩ — يوم.شهر.سنة", "en": "Summer 2009 — day.month.year" },
-			"placeholder": { "ar": "يوم.شهر.سنة", "en": "dd.mm.yyyy" },
-			"answers": ["13.07.2009", "13.7.2009"]
+			"q": {
+				"ar": "قلتلك «بحبك» أول مرة إمتى؟",
+				"en": "When did I first say “I love you”?"
+			},
+			"hint": {
+				"ar": "صيف ٢٠٠٩ — يوم.شهر.سنة",
+				"en": "Summer 2009 — day.month.year"
+			},
+			"placeholder": {
+				"ar": "يوم.شهر.سنة",
+				"en": "dd.mm.yyyy"
+			},
+			"answers": [
+				"13.07.2009",
+				"13.7.2009"
+			]
 		},
 		{
-			"q": { "ar": "«أحلى خرجة» بتاعة صور النوتة كانت فين؟", "en": "Where was “a7la 5rga” with the notebook selfies?" },
-			"hint": { "ar": "حورية البحر الخضرا ☕", "en": "Green mermaid ☕" },
-			"placeholder": { "ar": "المكان…", "en": "the place…" },
-			"answers": ["starbucks", "ستاربكس", "ستار بكس"]
+			"q": {
+				"ar": "«أحلى خرجة» بتاعة صور النوتة كانت فين؟",
+				"en": "Where was “a7la 5rga” with the notebook selfies?"
+			},
+			"hint": {
+				"ar": "حورية البحر الخضرا ☕",
+				"en": "Green mermaid ☕"
+			},
+			"placeholder": {
+				"ar": "المكان…",
+				"en": "the place…"
+			},
+			"answers": [
+				"starbucks",
+				"ستاربكس",
+				"ستار بكس"
+			]
 		}
 	]
 }

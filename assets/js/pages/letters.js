@@ -5,7 +5,7 @@ export default {
 	render(s) {
 		const list = s.letters || [];
 		return `
-		${pageHead(L('جوابات ليكي', 'Letters for you'), L('دوسي على الجواب عشان يتفتح', 'Tap an envelope to open it'), [{ href: 'letters.html', ar: 'جوابات', en: 'Letters' }])}
+		${pageHead(L('جواباتنا', 'Letters for you'), L('دوسوا على الجواب عشان يتفتح', 'Tap an envelope to open it'), [{ href: 'letters.html', ar: 'جوابات', en: 'Letters' }])}
 		<section class="sec sec--top"><div class="wrap">
 			${list.map((x, k) => `
 			<div class="letter-block" id="${esc(x.id)}">
@@ -17,7 +17,7 @@ export default {
 					<span class="envelope__front"></span>
 					<span class="envelope__flap"></span>
 					<span class="envelope__seal" aria-hidden="true">💌</span>
-					<span class="sr-only">${L('افتحي الجواب', 'Open the letter')}</span>
+					<span class="sr-only">${L('افتحوا الجواب', 'Open the letter')}</span>
 				</button>
 				<article class="letter" id="letter-${k}" hidden>
 					<h3>${T(x.to)}</h3>

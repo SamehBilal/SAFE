@@ -15,21 +15,21 @@ export default {
 		<section class="sec sec--top"><div class="wrap narrow">
 			${ok ? '' : setupNote()}
 			<details class="composer reveal" id="composer"${ok ? '' : ' hidden'}>
-				<summary><span>✍️</span> ${L('اكتبي صفحة جديدة', 'Write a new page')}</summary>
+				<summary><span>✍️</span> ${L('اكتبوا صفحة جديدة', 'Write a new page')}</summary>
 				<form id="jr-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f"><span>${L('اليوم', 'Date')}</span><input type="date" name="date" required></label>
 						<label class="f f--grow"><span>${L('العنوان', 'Title')}</span><input name="title" dir="auto" maxlength="120" placeholder="${L('النهارده…', 'Today…')}"></label>
 					</div>
-					<label class="f"><span>${L('حصل إيه؟', 'What happened?')}</span><textarea name="text" dir="auto" rows="7" required placeholder="${L('اكتبي براحتك…', 'Write as much as you like…')}"></textarea></label>
+					<label class="f"><span>${L('حصل إيه؟', 'What happened?')}</span><textarea name="text" dir="auto" rows="7" required placeholder="${L('اكتبوا براحتكم…', 'Write as much as you like…')}"></textarea></label>
 					<fieldset class="moods"><legend>${L('المود', 'Mood')}</legend>${MOODS.map((m, k) => `<label><input type="radio" name="mood" value="${m}"${k === 0 ? ' checked' : ''}><span>${m}</span></label>`).join('')}</fieldset>
-					<label class="check"><input type="checkbox" name="timeline"> ${L('ضيفي اليوم ده لحكايتنا (التايم لاين)', 'Add this day to our story timeline')}</label>
+					<label class="check"><input type="checkbox" name="timeline"> ${L('ضيفوا اليوم ده لحكايتنا (التايم لاين)', 'Add this day to our story timeline')}</label>
 					<div class="sketch-attach" id="jr-sketch"></div>
 					<p class="form-msg" id="jr-msg" role="status"></p>
 					<div class="f-actions">
-						<button type="button" class="btn btn--ghost" id="jr-draw">✏️ ${L('ارسمي حاجة', 'Add a sketch')}</button>
+						<button type="button" class="btn btn--ghost" id="jr-draw">✏️ ${L('ارسموا حاجة', 'Add a sketch')}</button>
 						<button type="button" class="btn btn--ghost" id="jr-cancel" hidden>${L('إلغاء التعديل', 'Cancel edit')}</button>
-						<button type="submit" class="btn btn--coral" id="jr-save">${L('احفظي في الدفتر ♥', 'Save to the journal ♥')}</button>
+						<button type="submit" class="btn btn--coral" id="jr-save">${L('احفظوا في الدفتر ♥', 'Save to the journal ♥')}</button>
 					</div>
 				</form>
 			</details>
@@ -40,7 +40,7 @@ export default {
 					<button class="chip" type="button" data-by="him">${T(App.story.him)}</button>
 					<button class="chip" type="button" data-by="her">${T(App.story.her)}</button>
 				</div>
-				<input class="search" id="jr-q" type="search" dir="auto" placeholder="${L('دوري في الدفتر…', 'Search the journal…')}" aria-label="${L('بحث', 'Search')}">
+				<input class="search" id="jr-q" type="search" dir="auto" placeholder="${L('دوروا في الدفتر…', 'Search the journal…')}" aria-label="${L('بحث', 'Search')}">
 			</div>
 			<div id="jr-list" class="journal" aria-live="polite"><p class="empty">${L('بنفتح الدفتر…', 'Opening the journal…')}</p></div>
 		</div></section>
@@ -100,7 +100,7 @@ export default {
 			editing = null; sketchBlob = null; sketchId = null;
 			$('#jr-sketch', main).innerHTML = '';
 			$('#jr-cancel', main).hidden = true;
-			$('#jr-save', main).textContent = L('احفظي في الدفتر ♥', 'Save to the journal ♥');
+			$('#jr-save', main).textContent = L('احفظوا في الدفتر ♥', 'Save to the journal ♥');
 		};
 		reset();
 		try { const d = JSON.parse(store.get(DRAFT) || 'null'); if (d) { form.title.value = d.title || ''; form.text.value = d.text || ''; if (d.text) $('#composer', main).open = true; } } catch { /* no draft */ }
@@ -126,11 +126,11 @@ export default {
 				sketchId = x.sketch || null; sketchBlob = null;
 				if (sketchId) live.sketchURL(sketchId).then(showSketch).catch(() => {}); else showSketch('');
 				$('#jr-cancel', main).hidden = false;
-				$('#jr-save', main).textContent = L('احفظي التعديل', 'Save changes');
+				$('#jr-save', main).textContent = L('احفظوا التعديل', 'Save changes');
 				$('#composer', main).open = true;
 				$('#composer', main).scrollIntoView({ behavior: 'smooth' });
 			} else if (del) {
-				if (!confirm(L('تمسحي الصفحة دي من الدفتر؟', 'Delete this page from the journal?'))) return;
+				if (!confirm(L('تمسحوا الصفحة دي من الدفتر؟', 'Delete this page from the journal?'))) return;
 				try { data = await live.save('journal', (d) => { d.items = (d.items || []).filter((i) => i.id !== del.dataset.del); }); paint(); }
 				catch (err) { alert(live.why(err)); }
 			}
@@ -175,5 +175,5 @@ export default {
 };
 
 export function setupNote() {
-	return `<a class="setup-note reveal" href="settings.html">⚙️ <span><b>${L('عشان تكتبي هنا، ظبطي المزامنة مرة واحدة', 'To write here, set up syncing once')}</b><small>${L('اختاري انتي مين وحطي الـ GitHub token في صفحة الإعدادات', 'Choose who you are and add the GitHub token on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
+	return `<a class="setup-note reveal" href="settings.html">⚙️ <span><b>${L('عشان تكتبوا هنا، ظبطوا المزامنة مرة واحدة', 'To write here, set up syncing once')}</b><small>${L('اختاروا مين ماسك الموبايل وحطوا الـ GitHub token في صفحة الإعدادات', 'Choose who you are and add the GitHub token on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
 }

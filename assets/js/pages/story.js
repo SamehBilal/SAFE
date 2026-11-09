@@ -30,7 +30,7 @@ export default {
 								<h3>${T(x.title)}</h3>
 								${x.text ? `<p>${T(x.text)}</p>` : ''}
 								${x.photo ? `<figure data-media-box>${img(x.photo, App.t(x.title))}</figure>` : ''}
-								<span class="tl__more">${L('اقري أكتر', 'Read more')} ${App.arrow}</span>
+								<span class="tl__more">${L('اقروا أكتر', 'Read more')} ${App.arrow}</span>
 							</a>
 						</li>`;
 					}).join('')}

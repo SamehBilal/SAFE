@@ -179,12 +179,12 @@ export const today = () => { const d = new Date(); return `${d.getFullYear()}-${
 export function why(err) {
 	const L = App.L;
 	switch (err?.code) {
-		case 'setup': return L('لازم تظبطي المزامنة الأول من صفحة الإعدادات', 'Set up syncing on the settings page first');
+		case 'setup': return L('لازم تظبطوا المزامنة الأول من صفحة الإعدادات', 'Set up syncing on the settings page first');
 		case 'token': case 'auth': return L('الـ token مش شغال — راجعيه في الإعدادات', 'The token isn’t working — check it in settings');
 		case 'forbidden': return L('الـ token مالوش صلاحية كتابة على الريبو', 'The token can’t write to the repo');
-		case 'offline': return L('مفيش نت — جربي تاني لما النت يرجع', 'You’re offline — try again when you’re back online');
+		case 'offline': return L('مفيش نت — جربوا تاني لما النت يرجع', 'You’re offline — try again when you’re back online');
 		case 'key': return L('مش قادر أقرا الملف المحفوظ (المفتاح اتغير؟)', 'Can’t read the saved file (did the key change?)');
-		case 'busy': return L('التليفون التاني كان بيحفظ في نفس الوقت — جربي تاني', 'The other phone was saving at the same time — try again');
+		case 'busy': return L('التليفون التاني كان بيحفظ في نفس الوقت — جربوا تاني', 'The other phone was saving at the same time — try again');
 		default: return L('حصلت مشكلة في الحفظ', 'Something went wrong while saving') + (err?.message ? ` (${err.message})` : '');
 	}
 }

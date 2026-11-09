@@ -23,7 +23,7 @@ export default {
 			<div class="sotd reveal" id="sotd"></div>
 			${ok ? '' : setupNote()}
 			<details class="composer reveal"${ok ? '' : ' hidden'}>
-				<summary><span>🎵</span> ${L('ضيفي أغنية', 'Add a song')}</summary>
+				<summary><span>🎵</span> ${L('ضيفوا أغنية', 'Add a song')}</summary>
 				<form id="mu-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f f--grow"><span>${L('اسم الأغنية', 'Song')}</span><input name="song" dir="auto" required maxlength="120"></label>
@@ -33,7 +33,7 @@ export default {
 					<label class="f"><span>${L('بتفكرنا بإيه؟', 'Why is it ours?')}</span><textarea name="note" dir="auto" rows="3" maxlength="400"></textarea></label>
 					<label class="f"><span>${L('من إمتى بنسمعها؟ (اختياري)', 'Since when? (optional)')}</span><input name="date" type="date"></label>
 					<p class="form-msg" id="mu-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('ضيفيها للقايمة ♥', 'Add to our list ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('ضيفوها للقايمة ♥', 'Add to our list ♥')}</button></div>
 				</form>
 			</details>
 			<div class="toolbar">
@@ -42,7 +42,7 @@ export default {
 					<button class="chip" type="button" data-by="him">${L('اختيارات', 'Picked by')} ${T(App.story.him)}</button>
 					<button class="chip" type="button" data-by="her">${L('اختيارات', 'Picked by')} ${T(App.story.her)}</button>
 				</div>
-				<button class="btn btn--sm" type="button" id="mu-shuffle">🔀 ${L('شغلي أي أغنية', 'Shuffle')}</button>
+				<button class="btn btn--sm" type="button" id="mu-shuffle">🔀 ${L('شغلوا أي أغنية', 'Shuffle')}</button>
 			</div>
 			<ol class="songs" id="mu-list"><li class="empty">${L('بنجيب الأغاني…', 'Fetching the songs…')}</li></ol>
 		</div></section>
@@ -67,7 +67,7 @@ export default {
 					<div class="song__player" hidden></div>
 				</div>
 				<div class="song__acts">
-					${playable ? `<button type="button" class="play" data-play="${esc(x.id)}" aria-label="${L('شغلي', 'Play')}">▶</button>` : `<a class="play" href="${esc(link || searchLink(x))}" target="_blank" rel="noopener noreferrer" aria-label="${L('افتحي', 'Open')}">↗</a>`}
+					${playable ? `<button type="button" class="play" data-play="${esc(x.id)}" aria-label="${L('شغلوا', 'Play')}">▶</button>` : `<a class="play" href="${esc(link || searchLink(x))}" target="_blank" rel="noopener noreferrer" aria-label="${L('افتحوا', 'Open')}">↗</a>`}
 					${x.by === live.me() && live.canWrite() ? `<button type="button" class="link link--danger" data-del="${esc(x.id)}">${L('مسح', 'Delete')}</button>` : ''}
 				</div>
 			</li>`;
@@ -84,7 +84,7 @@ export default {
 				const x = all[(d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate()) % all.length];
 				const link = safeLink(x.link);
 				sotd.innerHTML = `<small>${L('أغنية النهارده', 'Song of the day')}</small><b dir="auto">${esc(x.title)}</b>${x.artist ? `<span dir="auto">${esc(x.artist)}</span>` : ''}${x.note ? `<p dir="auto">${esc(x.note)}</p>` : ''}
-					${player(link) ? `<button type="button" class="btn btn--light btn--sm" data-play="${esc(x.id)}">▶ ${L('شغليها', 'Play it')}</button><div class="song__player" hidden></div>` : `<a class="btn btn--light btn--sm" href="${esc(link || searchLink(x))}" target="_blank" rel="noopener noreferrer">↗ ${L('اسمعيها', 'Listen')}</a>`}`;
+					${player(link) ? `<button type="button" class="btn btn--light btn--sm" data-play="${esc(x.id)}">▶ ${L('شغلوها', 'Play it')}</button><div class="song__player" hidden></div>` : `<a class="btn btn--light btn--sm" href="${esc(link || searchLink(x))}" target="_blank" rel="noopener noreferrer">↗ ${L('اسمعوها', 'Listen')}</a>`}`;
 				sotd.hidden = false;
 			} else sotd.hidden = true;
 		};
@@ -103,7 +103,7 @@ export default {
 			const del = e.target.closest('[data-del]');
 			if (p) play(p.dataset.play, p.closest('.song, .sotd'));
 			if (del) {
-				if (!confirm(L('تشيلي الأغنية دي من القايمة؟', 'Remove this song from the list?'))) return;
+				if (!confirm(L('تشيلوا الأغنية دي من القايمة؟', 'Remove this song from the list?'))) return;
 				try { data = await live.save('music', (d) => { d.items = (d.items || []).filter((i) => i.id !== del.dataset.del); }); paint(); }
 				catch (err) { alert(live.why(err)); }
 			}

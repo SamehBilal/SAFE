@@ -1,19 +1,19 @@
 # حكاية حبنا — Our Love Story ♥
 
-A private birthday gift: a full website, Arabic first (right-to-left) with English one tap away.
+Our private app for the two of us: our love story, and a place to keep recording our life together.
 Questions only she can answer → loader → intro → the site. Installable as an app (PWA), works offline.
 
 ## Pages
 | Page | What's on it |
 | --- | --- |
-| `index.html` | Home: birthday badge, us in numbers (days together, the boys' ages), shortcuts, latest days, the poster |
+| `index.html` | Home: what's new with us (the latest things either of us added), what's coming up (birthdays, anniversary), quick buttons to add to today, us in numbers |
 | `story.html` → `moment.html?id=…` | The timeline, by year; each date has its own page |
 | `chapters.html` → `chapter.html?id=…` | Big days: proposal, wedding, Fahd, Abdulrahman — long text + photos |
 | `places.html` | Our places (photo cards that tilt with the mouse) |
 | `gallery.html` | Photo album, filterable by album |
 | `notes.html` · `letters.html` | Handwritten love notes · letters in envelopes she opens |
 | `family.html` → `member.html?id=…` | The family newspaper; one page per person with age and next birthday |
-| `birthday.html` · `wishes.html` | Candles she taps out (confetti) · the wish jar |
+| `birthday.html` · `wishes.html` | Everyone's birthdays with countdowns and a cake to blow out · our shared wish jar |
 | `journal.html` | **Our journal** — you both write pages from your phones (mood, sketch, optionally pinned to the timeline) |
 | `music.html` | **Our songs** — add songs with a link and why they're yours; YouTube/Spotify play right on the page; a song of the day |
 | `draw.html?k=outfit\|dining\|delivery\|movie` | **Tonight's draw** — a wheel picks from your list, you log the night (note, hearts, sketch), and recent picks are skipped |
@@ -54,7 +54,7 @@ After she unlocks once, her phone remembers (footer: **اقفلي 🔒** to lock
 
 Useful fields in `story.json`: `timeline[].photos`, `timeline[].story` (long text for its page),
 `chapters[].photos` (`[{ "photo": "x.jpg", "caption": {…} }]`), `gallery[].album`, `gallery[].who: ["fahd"]`
-(shows on that person's page), `family.members[].photo`, `birthday.candles`, `letters[]`.
+(shows on that person's page), `family.members[].photo`, `family.members[].born` (birth dates — add yours and Esraa's so your birthdays show too), `letters[]`.
 
 Then:
 

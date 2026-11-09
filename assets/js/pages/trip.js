@@ -39,15 +39,15 @@ export default {
 			${photos.length ? `<div class="hang-night"><h2 class="sec__title">${L('صور الرحلة', 'Trip photos')}</h2>${hangWall(photos)}</div>` : ''}
 
 			${ok ? `<details class="composer reveal" id="mem-composer" style="margin-top:28px"${photos.length || notes.length ? '' : ' open'}>
-				<summary><span>📸</span> ${L('ضيفي ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
+				<summary><span>📸</span> ${L('ضيفوا ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
 				<form id="mem-form" autocomplete="off">
-					<label class="f"><span>${L('فاكرة إيه؟', 'What do you remember?')}</span><textarea name="text" dir="auto" rows="3" maxlength="800"></textarea></label>
+					<label class="f"><span>${L('فاكرين إيه؟', 'What do you remember?')}</span><textarea name="text" dir="auto" rows="3" maxlength="800"></textarea></label>
 					<div class="photo-pick" id="mem-preview"></div>
 					<p class="form-msg" id="mem-msg" role="status"></p>
 					<div class="f-actions">
 						<label class="btn btn--ghost file-btn">📷 ${L('صور', 'Photos')}<input type="file" name="photos" accept="image/*" multiple></label>
 						<button class="btn btn--ghost" type="button" id="mem-draw">✏️ ${L('رسمة', 'Sketch')}</button>
-						<button class="btn btn--coral" type="submit">${L('احفظي الذكرى ♥', 'Save the memory ♥')}</button>
+						<button class="btn btn--coral" type="submit">${L('احفظوا الذكرى ♥', 'Save the memory ♥')}</button>
 					</div>
 				</form>
 			</details>` : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
@@ -77,7 +77,7 @@ export default {
 
 		main.onclick = async (e) => {
 			const del = e.target.closest('[data-del]');
-			if (!del || !confirm(L('تمسحي الذكرى دي؟', 'Delete this memory?'))) return;
+			if (!del || !confirm(L('تمسحوا الذكرى دي؟', 'Delete this memory?'))) return;
 			try { await live.save('trips', (d) => { const t = (d.items || []).find((y) => y.id === x.id); if (t) t.memories = (t.memories || []).filter((m) => m.id !== del.dataset.del); }); location.reload(); }
 			catch (err) { alert(live.why(err)); }
 		};

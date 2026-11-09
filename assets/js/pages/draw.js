@@ -44,7 +44,7 @@ export default {
 			<section class="sec sec--top"><div class="wrap">
 				<div class="draw" style="--c:${k.color}">
 					<div class="wheel-box">
-						<div class="wheel" id="wheel"><span class="wheel__pin" aria-hidden="true"></span><div class="wheel__disc" id="wheel-disc"></div><button class="wheel__hub" type="button" id="spin">${L('لفّي', 'Spin')}</button></div>
+						<div class="wheel" id="wheel"><span class="wheel__pin" aria-hidden="true"></span><div class="wheel__disc" id="wheel-disc"></div><button class="wheel__hub" type="button" id="spin">${L('لفّوا', 'Spin')}</button></div>
 						<label class="check"><input type="checkbox" id="fresh" checked> ${L('من غير اللي عملناه آخر أسبوعين', 'Skip what we did in the last two weeks')}</label>
 					</div>
 					<div class="result" id="result" hidden aria-live="polite"></div>
@@ -55,8 +55,8 @@ export default {
 						<h2>${L('القايمة بتاعتنا', 'Our list')}</h2>
 						<ul class="pool" id="pool"></ul>
 						<form class="add" id="add" autocomplete="off"${live.canWrite() ? '' : ' hidden'}>
-							<input name="item" dir="auto" maxlength="80" placeholder="${L('ضيفي اختيار…', 'Add an option…')}" required>
-							<button class="btn btn--sm" type="submit">${L('ضيفي', 'Add')}</button>
+							<input name="item" dir="auto" maxlength="80" placeholder="${L('ضيفوا اختيار…', 'Add an option…')}" required>
+							<button class="btn btn--sm" type="submit">${L('ضيفوا', 'Add')}</button>
 						</form>
 					</section>
 					<section class="panel">
@@ -83,7 +83,7 @@ export default {
 				<div><b dir="auto">${esc(h.text)}</b><small>${longDate(h.date)} · ${esc(L(kk.ar, kk.en))}${h.by ? ` · ${name(h.by)}` : ''}</small>
 				${h.hearts ? `<span class="hearts-row" aria-label="${h.hearts}/5">${'♥'.repeat(h.hearts)}<i>${'♥'.repeat(5 - h.hearts)}</i></span>` : ''}
 				${h.note ? `<p dir="auto">${esc(h.note)}</p>` : ''}</div>
-				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">✏️ ${L('ارسميها', 'Sketch it')}</button>` : ''}
+				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">✏️ ${L('ارسموها', 'Sketch it')}</button>` : ''}
 			</article>`;
 		};
 		const paintHistory = () => {
@@ -117,7 +117,7 @@ export default {
 		const pool = $('#pool', main);
 		const paintPool = () => {
 			const items = data.lists[k.id] || [];
-			pool.innerHTML = items.length ? items.map((x) => `<li><span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${L('شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${L('القايمة فاضية — ضيفي اختيارات', 'The list is empty — add some options')}</li>`;
+			pool.innerHTML = items.length ? items.map((x) => `<li><span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${L('شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${L('القايمة فاضية — ضيفوا اختيارات', 'The list is empty — add some options')}</li>`;
 			paintWheel();
 		};
 		pool.onclick = async (e) => {
@@ -200,9 +200,9 @@ export default {
 					<p class="form-msg" id="log-msg" role="status"></p>
 				</form>` : ''}
 				<div class="result__acts">
-					<button type="button" class="btn btn--ghost" id="again">🔄 ${L('لفّي تاني', 'Spin again')}</button>
+					<button type="button" class="btn btn--ghost" id="again">🔄 ${L('لفّوا تاني', 'Spin again')}</button>
 					<button type="button" class="btn btn--ghost" id="res-draw">✏️ ${esc(t(k.sketch))}</button>
-					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${L('عملناها ♥ سجليها', 'We did it ♥ Log it')}</button>` : ''}
+					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${L('عملناها ♥ سجلوها', 'We did it ♥ Log it')}</button>` : ''}
 				</div>`;
 			result.hidden = false;
 			result.scrollIntoView({ behavior: 'smooth', block: 'center' });

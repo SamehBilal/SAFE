@@ -1,16 +1,36 @@
-import { L, T, esc, img, pageHead, related, App, $, $$, rand, REDUCE } from '../shell.js';
+import { L, T, esc, img, num, pageHead, related, App, $, $$, rand, REDUCE, qs, occasions, longDate, age } from '../shell.js';
 
-/* A cake: tap each flame to blow it out. When they're all out — confetti, and the birthday message. */
+/* Birthdays: each of us, with how long until the next one and the age we're turning. The cake below is for
+   whoever is next (or whose day it is today, or whoever you tap): blow out the candles, get confetti. */
 export default {
-	title: { ar: 'عيد ميلادك', en: 'Your birthday' },
+	title: { ar: 'أعياد الميلاد', en: 'Birthdays' },
 	render(s) {
-		const b = s.birthday || {};
-		const n = Math.min(Math.max(Number(b.candles) || 5, 1), 9);
+		const members = s.family?.members || [];
+		const bdays = occasions(s).filter((o) => o.kind === 'birthday');
+		const missing = members.filter((m) => !m.born);
+		const pick = bdays.find((o) => o.id === qs('id')) || bdays[0];
+		this.pick = pick;
+		const card = (o) => `
+			<a class="bd-card reveal${o === pick ? ' is-on' : ''}${o.days === 0 ? ' is-today' : ''}" href="birthday.html?id=${esc(o.id)}" style="--c:${esc(o.member.color || '#0e6990')}">
+				<span class="fam__pic">${o.member.photo ? `<span data-media-box>${img(o.member.photo, App.t(o.member.name))}</span>` : `<span class="fam__emoji">${esc(o.member.emoji || '♥')}</span>`}</span>
+				<b>${T(o.member.name)}</b>
+				<small>${longDate(o.member.born).replace(/\s*\d{4}$|[\s،,]*[٠-٩]{4}$/, '')}</small>
+				<em>${o.days === 0 ? L('النهارده! 🎂', 'Today! 🎂') : L(`بعد ${num(o.days)} يوم`, `in ${o.days} days`)}</em>
+				<small>${L(`هيكمل ${num(o.years)}`, `turning ${o.years}`)}</small>
+			</a>`;
+		const n = pick ? Math.min(Math.max(pick.years, 1), 9) : 5;
 		const xs = Array.from({ length: n }, (_, k) => 40 + (k * 140) / Math.max(n - 1, 1));
 		return `
-		${pageHead(App.t(b.title) || L('كل سنة وانتي طيبة', 'Happy Birthday'), App.t(b.subtitle), [{ href: 'birthday.html', ar: 'عيد ميلادك', en: 'Your birthday' }])}
+		${pageHead(L('أعياد الميلاد', 'Birthdays'), L('عيد ميلاد كل واحد فينا، وكام يوم فاضل عليه', 'Each of our birthdays, and how long until the next'), [{ href: 'birthday.html', ar: 'أعياد الميلاد', en: 'Birthdays' }])}
+		<section class="sec sec--top"><div class="wrap">
+			<div class="bd-row">${bdays.map(card).join('')}</div>
+			${missing.length ? `<p class="empty" style="margin-top:16px">${L(`ضيفوا تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `Add a birth date ("born") for ${missing.map((m) => App.t(m.name)).join(' and ')} in private/story.json to show them here`)}</p>` : ''}
+		</div></section>
+		${pick ? `
 		<section class="sec sec--top bday"><div class="wrap narrow">
-			<p class="bday__hint reveal" id="bday-hint">${L('اتمني أمنية… وبعدين اطفي الشمع (دوسي على كل شمعة)', 'Make a wish… then blow out the candles (tap each one)')}</p>
+			<h2 class="sec__title reveal">${esc(pick.title)}</h2>
+			<p class="sec__sub reveal">${pick.days === 0 ? esc(pick.sub) : L(`بعد ${num(pick.days)} يوم — ${age(pick.member.born)} دلوقتي`, `in ${pick.days} days — ${age(pick.member.born)} now`)}</p>
+			<p class="bday__hint reveal" id="bday-hint">${L('اتمنوا أمنية… وبعدين اطفوا الشمع (دوسوا على كل شمعة)', 'Make a wish… then blow out the candles (tap each one)')}</p>
 			<div class="cake reveal">
 				<svg viewBox="0 0 220 210" role="img" aria-label="${L('تورتة عيد ميلاد', 'A birthday cake')}">
 					<ellipse cx="110" cy="196" rx="100" ry="10" fill="#0e6990" opacity=".12"/>
@@ -30,13 +50,11 @@ export default {
 				</svg>
 			</div>
 			<div class="bday__msg" id="bday-msg" hidden>
-				<h2 class="sec__title">${L('أمنيتك اتسجلت ✨', 'Your wish is on its way ✨')}</h2>
-				${b.message ? `<p class="lede">${T(b.message)}</p>` : ''}
-				${b.photo ? `<figure class="frame frames--single" data-media-box style="--tilt:-2deg;max-width:520px;margin:24px auto">${img(b.photo, '', 'zoom')}</figure>` : ''}
-				<p class="center"><a class="btn btn--coral" href="wishes.html">${L('اكتبي أمنيتك في البرطمان', 'Write your wish in the jar')} ${App.arrow}</a></p>
+				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} طيب ✨`, `Happy birthday, ${App.t(pick.member.name)} ✨`)}</h2>
+				<p class="center"><a class="btn btn--coral" href="wishes.html">${L('اكتبوا الأمنية في البرطمان', 'Put the wish in the jar')} ${App.arrow}</a></p>
 			</div>
-		</div></section>
-		${related(['wishes', 'letters', 'family'])}`;
+		</div></section>` : ''}
+		${related(['wishes', 'family', 'journal'])}`;
 	},
 	after(main) {
 		const candles = $$('.candle', main);
@@ -51,7 +69,7 @@ export default {
 			c.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); blow(c); } };
 		}
 		function done() {
-			$('#bday-hint', main).textContent = L('🎉 كل سنة وانتي طيبة يا حبيبتي 🎉', '🎉 Happy birthday, my love 🎉');
+			$('#bday-hint', main).textContent = '🎉';
 			$('#bday-msg', main).hidden = false;
 			confetti();
 		}

@@ -7,7 +7,7 @@ export default {
 		const members = f.members || [];
 		const today = new Date();
 		return `
-		${pageHead(L('عيلتنا', 'Our family'), L('خبر عاجل! اقري كل حاجة عننا', 'Extra! Extra! Read all about us'), [{ href: 'family.html', ar: 'عيلتنا', en: 'Our family' }])}
+		${pageHead(L('عيلتنا', 'Our family'), L('خبر عاجل! اقروا كل حاجة عننا', 'Extra! Extra! Read all about us'), [{ href: 'family.html', ar: 'عيلتنا', en: 'Our family' }])}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="fam-row">${members.map((m, k) => `
 				<a class="fam reveal" href="member.html?id=${esc(m.id)}" style="--c:${esc(m.color || '#0e6990')};--delay:${k * 0.08}s">

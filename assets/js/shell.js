@@ -73,6 +73,42 @@ export function yearsAgo(iso) {
 	if (y <= 0) return '';
 	return App.lang === 'ar' ? `من ${y === 1 ? 'سنة' : y === 2 ? 'سنتين' : num(y) + (y <= 10 ? ' سنين' : ' سنة')}` : `${y} year${y === 1 ? '' : 's'} ago`;
 }
+/** Days from today to the next time this month/day comes round (0 = today). */
+export function daysUntil(iso, from = new Date()) {
+	const d = parseDate(iso);
+	const t0 = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+	let n = new Date(t0.getFullYear(), d.getMonth(), d.getDate());
+	if (n < t0) n = new Date(t0.getFullYear() + 1, d.getMonth(), d.getDate());
+	return Math.round((n - t0) / 864e5);
+}
+
+/** Our days that come round every year — each of our birthdays, our wedding anniversary, the day we met —
+    nearest first, with how many days to go and which one it will be. */
+export function occasions(s, from = new Date()) {
+	const list = [];
+	const turning = (iso) => yearsBetween(parseDate(iso), from) + (daysUntil(iso, from) === 0 ? 0 : 1);
+	for (const m of s.family?.members || []) {
+		if (!m.born) continue;
+		const days = daysUntil(m.born, from);
+		const n = turning(m.born);
+		const name = t(m.name);
+		list.push({ kind: 'birthday', id: m.id, member: m, emoji: '🎂', date: m.born, days, years: n,
+			title: L(`عيد ميلاد ${name}`, `${name}'s birthday`),
+			sub: (() => { const yrs = n === 1 ? 'سنة' : n === 2 ? 'سنتين' : `${num(n)} ${n <= 10 ? 'سنين' : 'سنة'}`; return days === 0 ? L(`${name} بقى عنده ${yrs} ♥`, `${name} turns ${n} today ♥`) : L(`${name} هيكمل ${yrs}`, `${name} turns ${n}`); })() });
+	}
+	if (s.married) {
+		const n = turning(s.married);
+		list.push({ kind: 'anniversary', emoji: '💍', date: s.married, days: daysUntil(s.married, from), years: n,
+			title: L('عيد جوازنا', 'Our anniversary'), sub: L(`${num(n)} سنين جواز ♥`, `${n} years married ♥`) });
+	}
+	if (s.met) {
+		const n = turning(s.met);
+		list.push({ kind: 'met', emoji: '💬', date: s.met, days: daysUntil(s.met, from), years: n,
+			title: L('يوم أول سلام', 'The day we met'), sub: L(`${num(n)} سنة من أول رسالة`, `${n} years since the first message`) });
+	}
+	return list.sort((a, b) => a.days - b.days);
+}
+
 export function isToday(iso) {
 	const d = parseDate(iso), n = new Date();
 	return d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
@@ -159,7 +195,7 @@ async function boot() {
 	try {
 		[vault, gate, page] = await Promise.all([getJSON('content/vault.json'), getJSON('content/gate.json'), pageP]);
 	} catch {
-		return fatal(L('مش قادر أحمّل الموقع — اتأكدي من النت وجربي تاني ♥', 'Couldn’t load — check your connection and try again ♥'));
+		return fatal(L('مش قادر أحمّل الموقع — اتأكدوا من النت وجربوا تاني ♥', 'Couldn’t load — check your connection and try again ♥'));
 	}
 	const saved = store.get(KEY);
 	if (saved) {
@@ -203,7 +239,7 @@ async function leaveStage() {
 }
 
 function fatal(msg) {
-	stage(`<div class="gate__card"><h1 class="gate__title">${L('أوبس', 'Oops')}</h1><p>${esc(msg)}</p><button class="btn" onclick="location.reload()">${L('جربي تاني', 'Try again')}</button></div>`, 'gate');
+	stage(`<div class="gate__card"><h1 class="gate__title">${L('أوبس', 'Oops')}</h1><p>${esc(msg)}</p><button class="btn" onclick="location.reload()">${L('جربوا تاني', 'Try again')}</button></div>`, 'gate');
 }
 
 const THEME = 'us.theme';
@@ -236,19 +272,19 @@ function runGate() {
 					<path class="gate__body" d="M32 70C14 58 4 48 4 38a12 12 0 0 1 22-7l6 6 6-6a12 12 0 0 1 22 7c0 10-10 20-28 32Z"/>
 					<g fill="#fff"><circle cx="24" cy="44" r="2.6"/><circle cx="32" cy="44" r="2.6"/><circle cx="40" cy="44" r="2.6"/></g>
 				</svg>
-				<h1 class="gate__title">${T(gate.title) || L('أهلًا يا قمر', 'Hey you')}</h1>
+				<h1 class="gate__title">${T(gate.title) || L('أهلًا بيكم', 'Hey you')}</h1>
 				<p class="gate__intro">${T(gate.intro)}</p>
 				<ol class="gate__steps" aria-hidden="true">${qsList.map((_, n) => `<li class="${n < i ? 'is-done' : n === i ? 'is-now' : ''}"></li>`).join('')}</ol>
 				<div class="gate__ask ${animate ? 'swap' : ''}">
 					<label class="gate__q" for="gate-input">${T(q.q)}</label>
 					<input class="gate__input" id="gate-input" type="text" dir="auto" autocapitalize="off" autocorrect="off" spellcheck="false"
 						inputmode="${q.type === 'number' ? 'numeric' : 'text'}" enterkeyhint="${last ? 'go' : 'next'}" placeholder="${esc(t(q.placeholder))}" value="${esc(answers[i])}">
-					${q.hint ? `<button type="button" class="link" id="gate-hint-btn">${L('محتاجة تلميح؟', 'Need a hint?')}</button><p class="gate__hint" id="gate-hint" hidden>${T(q.hint)}</p>` : ''}
+					${q.hint ? `<button type="button" class="link" id="gate-hint-btn">${L('محتاجين تلميح؟', 'Need a hint?')}</button><p class="gate__hint" id="gate-hint" hidden>${T(q.hint)}</p>` : ''}
 				</div>
-				<p class="gate__msg" id="gate-msg" role="alert">${wrong ? T(gate.wrong) || L('في إجابة مش مظبوطة… جربي تاني ♥', 'Not quite — try again ♥') : ''}</p>
+				<p class="gate__msg" id="gate-msg" role="alert">${wrong ? T(gate.wrong) || L('في إجابة مش مظبوطة… جربوا تاني ♥', 'Not quite — try again ♥') : ''}</p>
 				<div class="gate__actions">
 					${i > 0 ? `<button type="button" class="btn btn--ghost" id="gate-back">${L('رجوع', 'Back')}</button>` : ''}
-					<button type="submit" class="btn" id="gate-next">${last ? L('افتحي ♥', 'Unlock ♥') : L('التالي', 'Next')}</button>
+					<button type="submit" class="btn" id="gate-next">${last ? L('افتحوا ♥', 'Unlock ♥') : L('التالي', 'Next')}</button>
 				</div>
 			</form>`, 'gate');
 		wire(el);
@@ -281,7 +317,7 @@ function runGate() {
 			if (!raw) { i = 0; wrong = true; draw(false); shake($('#gate-form')); return; }
 			store.set(KEY, toB64(raw));
 			gateRedraw = null;
-			next.textContent = L('أهلًا بيكي في بيتك ♥', 'Welcome home ♥');
+			next.textContent = L('أهلًا بيكم في بيتنا ♥', 'Welcome home ♥');
 			$$('.gate__steps li', el).forEach((li) => (li.className = 'is-done'));
 			el.classList.add('is-open');
 			navigator.vibrate?.([60, 80, 60]);
@@ -369,9 +405,9 @@ async function runIntro(story) {
 	if (sand) { sand.scatter(); await pause(900); sand.stop(); }
 	lines.textContent = '';
 
-	const b = story.birthday || {};
-	const bday = b.show !== false;
-	const words = (bday ? t(b.title) || L('عيد ميلاد سعيد', 'Happy Birthday') : L('حكاية حبنا', 'Our Love Story')).split(' ');
+	// "Our Love Story" — unless today is one of our days, then that
+	const today = occasions(story).find((o) => o.days === 0);
+	const words = (today ? today.title : L('حكاية حبنا', 'Our Love Story')).split(' ');
 	const [first, ...rest] = words;
 	$('.intro__dust', el).remove();
 	$('.intro__skip', el).remove();
@@ -379,8 +415,8 @@ async function runIntro(story) {
 		<div class="intro__final">
 			<div class="names"><span class="n1">${T(story.him)}</span><span class="heart">♥</span><span class="n2">${T(story.her)}</span></div>
 			<h1 class="pop"><span>${esc(first)}</span>${rest.length ? `<span class="pop__word"><span>${esc(rest.join(' '))}</span></span>` : ''}</h1>
-			${bday && b.subtitle ? `<p class="sub">${T(b.subtitle)}</p>` : ''}
-			<button class="btn btn--light" type="button" id="intro-go">${L('افتحي حكايتنا ♥', 'Open our story ♥')}</button>
+			<p class="sub">${today ? esc(today.sub) : T(story.closing)}</p>
+			<button class="btn btn--light" type="button" id="intro-go">${L('ادخلوا ♥', 'Come in ♥')}</button>
 		</div>`;
 	await new Promise((r) => ($('#intro-go', el).onclick = r));
 }
@@ -400,19 +436,19 @@ export const PAGES = [
 	{ href: 'music.html', id: 'music', ic: 'music', ar: 'أغانينا', en: 'Our songs', dar: 'الأغاني اللي بتفكرنا ببعض', den: 'The songs that remind us of each other', group: 'nights' },
 	{ href: 'gallery.html', id: 'gallery', ic: 'image', ar: 'ألبوم الصور', en: 'Photo album', dar: 'إحنا بالصور، سنة بسنة', den: 'Us in pictures, year by year', group: 'memories' },
 	{ href: 'notes.html', id: 'notes', ic: 'note', ar: 'رسايل حب', en: 'Love notes', dar: 'كلام كتبناه لبعض', den: 'Little things we wrote', group: 'memories' },
-	{ href: 'letters.html', id: 'letters', ic: 'mail', ar: 'جوابات', en: 'Letters', dar: 'جوابات ليكي، افتحيها', den: 'Letters for you — open them', group: 'memories' },
+	{ href: 'letters.html', id: 'letters', ic: 'mail', ar: 'جوابات', en: 'Letters', dar: 'جوابات لبعض، افتحوها', den: 'Letters for you — open them', group: 'memories' },
 	{ href: 'family.html', id: 'family', ic: 'family', ar: 'عيلتنا', en: 'Our family', dar: 'فهد وعبد الرحمن وإحنا', den: 'Fahd, Abdulrahman and us', group: 'family' },
-	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'عيد ميلادك', en: 'Your birthday', dar: 'اطفي الشمع واتمني', den: 'Blow the candles, make a wish', group: 'you' },
-	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتك في أمان هنا', den: 'Your wishes, kept safe', group: 'you' },
+	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'أعياد الميلاد', en: 'Birthdays', dar: 'عيد ميلاد كل واحد فينا', den: 'Every one of our birthdays', group: 'you' },
+	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتنا في أمان هنا', den: 'Our wishes, kept safe', group: 'you' },
 	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين بيكتب، والمزامنة', den: 'Who’s writing, and syncing', group: 'app' }
 ];
 
 /* What a night can be drawn for (draw.html?k=…). */
 export const DRAW_KINDS = [
-	{ id: 'outfit', emoji: '👗', color: '#c2185b', ar: 'لبس الليلة', en: 'Tonight’s outfit', dar: 'ثيم نلبسه سوا الليلة', den: 'A theme we dress up in tonight', sketch: { ar: 'ارسمي اللبس', en: 'Sketch the outfit' } },
-	{ id: 'dining', emoji: '🍽️', color: '#e39b2d', ar: 'خروجة عشا', en: 'Dining out', dar: 'نتعشى برا فين؟', den: 'Where shall we eat out?', sketch: { ar: 'ارسمي المكان', en: 'Sketch the place' } },
-	{ id: 'delivery', emoji: '🛵', color: '#5a9e6f', ar: 'دليفري', en: 'Delivery night', dar: 'نطلب إيه النهارده؟', den: 'What shall we order in?', sketch: { ar: 'ارسمي الأكلة', en: 'Sketch the meal' } },
-	{ id: 'movie', emoji: '🎬', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسمي بوستر الفيلم', en: 'Sketch the poster' } }
+	{ id: 'outfit', emoji: '👗', color: '#c2185b', ar: 'لبس الليلة', en: 'Tonight’s outfit', dar: 'ثيم نلبسه سوا الليلة', den: 'A theme we dress up in tonight', sketch: { ar: 'ارسموا اللبس', en: 'Sketch the outfit' } },
+	{ id: 'dining', emoji: '🍽️', color: '#e39b2d', ar: 'خروجة عشا', en: 'Dining out', dar: 'نتعشى برا فين؟', den: 'Where shall we eat out?', sketch: { ar: 'ارسموا المكان', en: 'Sketch the place' } },
+	{ id: 'delivery', emoji: '🛵', color: '#5a9e6f', ar: 'دليفري', en: 'Delivery night', dar: 'نطلب إيه النهارده؟', den: 'What shall we order in?', sketch: { ar: 'ارسموا الأكلة', en: 'Sketch the meal' } },
+	{ id: 'movie', emoji: '🎬', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسموا بوستر الفيلم', en: 'Sketch the poster' } }
 ];
 /* pages that are one page per item, and which menu they belong to */
 const DETAIL_OF = { moment: 'story', chapter: 'story', member: 'family', trip: 'story' };
@@ -485,14 +521,14 @@ function megaHTML(s) {
 	// لِكِ — birthday, wishes, and us in numbers.
 	const met = parseDate(s.met || '2009-06-10');
 	const yrs = yearsBetween(met);
-	const you = panel('you', L('ليكي', 'For you'),
+	const you = panel('you', L('مناسباتنا', 'Occasions'),
 		`<div class="mg-list">${pages('you').map(item).join('')}</div>
 		<a class="mg-data" href="index.html#numbers">
 			<span class="mg-new">${L('بالأرقام', 'In numbers')}</span>
 			<span class="mg-bars" aria-hidden="true">${Array.from({ length: Math.min(yrs + 1, 20) }, (_, k) => `<i style="height:${18 + Math.round(82 * (k + 1) / Math.min(yrs + 1, 20))}%"></i>`).join('')}</span>
 			<b>${num(daysBetween(met))} ${L('يوم من أول سلام', 'days since hello')}</b>
 			<small>${L('وكل سنة الحب بيزيد', 'and every year it grows')}</small>
-			<span class="mg-go">${L('شوفي الأرقام', 'See the numbers')} ${App.arrow}</span>
+			<span class="mg-go">${L('شوفوا الأرقام', 'See the numbers')} ${App.arrow}</span>
 		</a>`);
 
 	// ليالينا — the four draws as coloured cards, then the songs and the journal.
@@ -507,8 +543,8 @@ function megaHTML(s) {
 	const link = (href, ar, en) => `<a class="mnav-link" href="${href}"${cur(href)}>${esc(L(ar, en))}</a>`;
 	return `<nav class="mnav" aria-label="${L('القائمة الرئيسية', 'Main')}">
 		${link('index.html', 'الرئيسية', 'Home')}
-		${top('story', L('حكايتنا', 'Our story'))}${top('memories', L('ذكرياتنا', 'Memories'))}${top('family', L('عيلتنا', 'Family'))}${top('nights', L('ليالينا', 'Our nights'))}${top('you', L('ليكي', 'For you'))}
-		<a class="mnav-link mnav-cta" href="birthday.html"${cur('birthday.html')}>🎂 ${L('عيد ميلادك', 'Birthday')}</a>
+		${top('story', L('حكايتنا', 'Our story'))}${top('memories', L('ذكرياتنا', 'Memories'))}${top('family', L('عيلتنا', 'Family'))}${top('nights', L('ليالينا', 'Our nights'))}${top('you', L('مناسباتنا', 'Occasions'))}
+		<a class="mnav-link mnav-cta" href="journal.html"${cur('journal.html')}>✍️ ${L('اكتبوا النهارده', 'Write today')}</a>
 		${story}${memories}${family}${nights}${you}
 	</nav>`;
 }
@@ -588,7 +624,7 @@ function renderChrome() {
 	header.className = 'site-header';
 	const here = currentFile();
 	header.innerHTML = `
-		<a class="skip" href="#main">${L('روحي للمحتوى', 'Skip to content')}</a>
+		<a class="skip" href="#main">${L('روحوا للمحتوى', 'Skip to content')}</a>
 		<div class="hd-wrap">
 			<button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="${L('القائمة', 'Menu')}"><span class="stack" aria-hidden="true"><i></i><i></i><i></i></span></button>
 			<a class="brand" href="index.html"><span class="brand-names">${T(s.him)} <i>♥</i> ${T(s.her)}</span><span class="brand-sub">${L('حكاية حب', 'A love story')} · ${(s.met || '2009').slice(0, 4)}</span></a>
@@ -619,7 +655,7 @@ function renderChrome() {
 	footer.className = 'site-footer';
 	footer.innerHTML = footerHTML(s);
 	$('#lock-btn', footer).onclick = () => {
-		if (!confirm(L('تقفلي الموقع تاني؟ هتحتاجي تجاوبي على الأسئلة المرة الجاية.', 'Lock it again? You’ll need to answer the questions next time.'))) return;
+		if (!confirm(L('تقفلوا الموقع تاني؟ هتحتاجوا تجاوبوا على الأسئلة المرة الجاية.', 'Lock it again? You’ll need to answer the questions next time.'))) return;
 		store.del(KEY);
 		location.href = 'index.html';
 	};
@@ -768,15 +804,15 @@ function footerHTML(s) {
 			<span class="ft-dates" dir="ltr">${(s.met || '2009').slice(0, 4)} — ∞</span>
 			<div class="ft-tools">
 				<button class="btn btn--coral btn--sm" type="button" id="install-btn" hidden>${L('حطيه على الشاشة الرئيسية', 'Add to home screen')}</button>
-				<a class="btn btn--ghost btn--sm" href="index.html?intro">${L('شوفي المقدمة تاني', 'Replay intro')}</a>
-				<button class="btn btn--ghost btn--sm" type="button" id="lock-btn">${L('اقفلي', 'Lock')} 🔒</button>
+				<a class="btn btn--ghost btn--sm" href="index.html?intro">${L('شوفوا المقدمة تاني', 'Replay intro')}</a>
+				<button class="btn btn--ghost btn--sm" type="button" id="lock-btn">${L('اقفلوا', 'Lock')} 🔒</button>
 			</div>
-			<p class="ios-tip" id="ios-tip" hidden>${L('على الآيفون: دوسي على <b>مشاركة</b> وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'On iPhone: tap <b>Share</b> then <b>Add to Home Screen</b> ♥')}</p>
+			<p class="ios-tip" id="ios-tip" hidden>${L('على الآيفون: دوسوا على <b>مشاركة</b> وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'On iPhone: tap <b>Share</b> then <b>Add to Home Screen</b> ♥')}</p>
 		</div>
 		${col(L('حكايتنا', 'Our story'), [PAGES[0], ...g('story')])}
 		${col(L('ذكرياتنا', 'Memories'), g('memories'))}
 		${col(L('ليالينا', 'Our nights'), [...g('nights'), ...DRAW_KINDS.map((k) => ({ href: `draw.html?k=${k.id}`, ar: `${k.emoji} ${k.ar}`, en: `${k.emoji} ${k.en}` }))])}
-		${col(L('عيلتنا وليكي', 'Family & you'), [...g('family'), ...g('you'), ...g('app')])}
+		${col(L('عيلتنا ومناسباتنا', 'Family & occasions'), [...g('family'), ...g('you'), ...g('app')])}
 		<div class="ft-maker">
 			${App.lang === 'ar'
 				? `<p class="ft-copy" dir="rtl">حقوق النشر @${new Date().getFullYear()}، <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>كل الحب محفوظ. <span>صُنع بـ <span class="ft-heart">🧡</span> سامح بلال</span></p>`
@@ -831,7 +867,7 @@ export function pageHead(title, sub, crumbs = []) {
 
 /** "More to see" links at the foot of a page. */
 export function related(ids) {
-	return `<aside class="related wrap" aria-label="${L('كمان', 'More')}"><h2 class="related__h">${L('كملي الحكاية', 'Keep exploring')}</h2><div class="related__grid">
+	return `<aside class="related wrap" aria-label="${L('كمان', 'More')}"><h2 class="related__h">${L('كملوا الحكاية', 'Keep exploring')}</h2><div class="related__grid">
 		${ids.map((id) => PAGES.find((p) => p.id === id)).filter(Boolean).map((p) => `<a class="related__card reveal" href="${p.href}">${icon(p.ic, 26)}<b>${esc(L(p.ar, p.en))}</b><small>${esc(L(p.dar || '', p.den || ''))}</small><span aria-hidden="true">${App.arrow}</span></a>`).join('')}
 	</div></aside>`;
 }
@@ -855,7 +891,7 @@ function lightbox(root) {
 		box.className = 'lightbox';
 		box.setAttribute('role', 'dialog');
 		box.setAttribute('aria-modal', 'true');
-		box.innerHTML = `<button type="button" aria-label="${L('اقفلي', 'Close')}">✕</button><figure><img src="${el.src}" alt="${esc(el.alt)}">${el.alt ? `<figcaption>${esc(el.alt)}</figcaption>` : ''}</figure>`;
+		box.innerHTML = `<button type="button" aria-label="${L('اقفلوا', 'Close')}">✕</button><figure><img src="${el.src}" alt="${esc(el.alt)}">${el.alt ? `<figcaption>${esc(el.alt)}</figcaption>` : ''}</figure>`;
 		const close = () => { box.remove(); document.removeEventListener('keydown', onKey); };
 		const onKey = (k) => k.key === 'Escape' && close();
 		box.onclick = close;

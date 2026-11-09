@@ -8,10 +8,10 @@ export default {
 		const c = live.config();
 		const me = live.me();
 		const steps = App.lang === 'ar'
-			? ['افتحي <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">صفحة إنشاء token جديد</a> على GitHub (من حساب سامح).',
-				'Repository access: <b>Only select repositories</b> واختاري <b>' + esc(c.repo || 'SAFE') + '</b>.',
+			? ['افتحوا <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">صفحة إنشاء token جديد</a> على GitHub (من حساب سامح).',
+				'Repository access: <b>Only select repositories</b> واختاروا <b>' + esc(c.repo || 'SAFE') + '</b>.',
 				'Permissions → Repository permissions → <b>Contents: Read and write</b>.',
-				'اعملي Generate، وانسخي الـ token والزقيه هنا. اعملي token لكل تليفون لوحده.']
+				'اعملوا Generate، وانسخوا الـ token والزقوه هنا. اعملوا token لكل تليفون لوحده.']
 			: ['Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">the new-token page</a> on GitHub (from Sameh’s account).',
 				'Repository access: <b>Only select repositories</b>, and pick <b>' + esc(c.repo || 'SAFE') + '</b>.',
 				'Permissions → Repository permissions → <b>Contents: Read and write</b>.',
@@ -37,12 +37,12 @@ export default {
 				<details class="howto"><summary>${L('أعمل token إزاي؟', 'How do I make a token?')}</summary><ol>${steps.map((x) => `<li>${x}</li>`).join('')}</ol></details>
 				<p class="form-msg" id="st-msg" role="status"></p>
 				<div class="f-actions">
-					${c.token ? `<button type="button" class="btn btn--ghost" id="st-forget">${L('امسحي الـ token', 'Forget the token')}</button>` : ''}
-					<button type="button" class="btn btn--ghost" id="st-test">${L('جربي الاتصال', 'Test connection')}</button>
-					<button type="submit" class="btn btn--coral">${L('احفظي', 'Save')}</button>
+					${c.token ? `<button type="button" class="btn btn--ghost" id="st-forget">${L('امسحوا الـ token', 'Forget the token')}</button>` : ''}
+					<button type="button" class="btn btn--ghost" id="st-test">${L('جربوا الاتصال', 'Test connection')}</button>
+					<button type="submit" class="btn btn--coral">${L('احفظوا', 'Save')}</button>
 				</div>
 			</form>
-			<p class="muted center" style="margin-top:20px">${L('الـ token بيفضل على الموبايل ده بس. لو الموبايل ضاع، امسحيه من GitHub.', 'The token stays on this phone only. If the phone is lost, delete it on GitHub.')}</p>
+			<p class="muted center" style="margin-top:20px">${L('الـ token بيفضل على الموبايل ده بس. لو الموبايل ضاع، امسحوه من GitHub.', 'The token stays on this phone only. If the phone is lost, delete it on GitHub.')}</p>
 		</div></section>`;
 	},
 	after(main) {
@@ -68,7 +68,7 @@ export default {
 				msg.textContent = r.push
 					? L('تمام! الموبايل ده يقدر يحفظ ♥', 'All good! This phone can save ♥')
 					: L('شايف الريبو بس الـ token مالوش صلاحية كتابة (Contents: Read and write)', 'I can see the repo, but the token can’t write (Contents: Read and write)');
-				if (!live.me()) msg.textContent += ' — ' + L('اختاري انتي مين فوق', 'choose whose phone this is above');
+				if (!live.me()) msg.textContent += ' — ' + L('اختاروا مين ماسك الموبايل فوق', 'choose whose phone this is above');
 			} catch (err) {
 				msg.textContent = err.code === 'repo' ? L('مش لاقي الريبو — راجعي الاسم', 'Repo not found — check the names') : live.why(err);
 			}
