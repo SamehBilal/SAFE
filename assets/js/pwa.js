@@ -185,7 +185,10 @@ export function initPWA() {
 	new MutationObserver(syncThemeColor).observe(html, { attributes: true, attributeFilter: ['data-theme'] });
 	matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor);
 
-	addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e; place(); });
+	/* Chrome's offer to install. Each page's first script catches it (it can come before this module loads), and it is
+	   not held back, so the browser still shows its own install banner and icon as well as our button. */
+	deferred = window.__bip || null;
+	addEventListener('beforeinstallprompt', (e) => { deferred = e; place(); });
 	addEventListener('appinstalled', () => {
 		deferred = null; place();
 		if (told) return;

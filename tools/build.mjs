@@ -5,7 +5,7 @@
    private/story.json      everything shown on the site                 (never committed)
    private/media/*         photos and videos the story refers to         (never committed)
    private/live/*.json     the shared lists (journal, songs, draws, trips, films, wishes); phones' files are merged in by tools/import.mjs
-   private/live/s/*        sketches and photos those lists show
+   private/live/s/*        sketches and photos those lists show (a list can also name a file in private/media, like a song's "audio")
    private/.master-key     created on first run; keep it — losing it makes her re-answer
 
    Output (safe to commit):
@@ -105,11 +105,13 @@ async function main() {
 			for (const [k, v] of Object.entries(node)) out[k] = await walk(v);
 			return out;
 		}
-		if (typeof node === 'string' && MIME[path.extname(node).toLowerCase()] && !/^https?:|\//.test(node)) return encodeMedia(node);
+		if (typeof node === 'string' && MIME[path.extname(node).toLowerCase()] && !/^(https?|media):|\//.test(node)) return encodeMedia(node);
 		return node;
 	}
 
 	const sealedStory = await walk(story);
+	// The shared lists and their sketches (a list can name a file in private/media too, like a song's own recording).
+	const live = await sealLive(key, walk);
 	sealedStory.$media = [...used.values()];
 
 	// Remove encrypted files no longer referenced.
@@ -144,8 +146,6 @@ async function main() {
 	await writeFile(path.join(OUT, 'vault.json'), JSON.stringify(vault));
 	await writeFile(path.join(OUT, 'gate.json'), JSON.stringify(gate, null, '\t') + '\n');
 
-	// 4) The shared lists and their sketches.
-	const live = await sealLive(key);
 
 	// 5) Service worker: list every page and script to precache, and bump its version.
 	const swFile = path.join(ROOT, 'sw.js');
@@ -171,7 +171,7 @@ async function main() {
 
 /* private/live → content/live. A file is only rewritten when what's in it changed, so git sees real changes only.
    The first time, lists that were saved in content/live before (by the phones, through GitHub) are copied out to private/live. */
-async function sealLive(key) {
+async function sealLive(key, walk) {
 	const src = path.join(PRIV, 'live'), out = path.join(OUT, 'live');
 	await mkdir(path.join(src, 's'), { recursive: true });
 	await mkdir(path.join(out, 's'), { recursive: true });
@@ -199,7 +199,7 @@ async function sealLive(key) {
 	for (const f of lists) {
 		let data;
 		try { data = JSON.parse(await readFile(path.join(src, f), 'utf8')); } catch (e) { fail(`private/live/${f} isn't valid JSON: ${e.message}`); }
-		await put(path.join(out, f.replace(/\.json$/, '.bin')), Buffer.from(JSON.stringify(data)));
+		await put(path.join(out, f.replace(/\.json$/, '.bin')), Buffer.from(JSON.stringify(await walk(data))));
 	}
 	const sketches = await readdir(path.join(src, 's'));
 	for (const f of sketches) await put(path.join(out, 's', f.replace(EXT, '') + '.bin'), await readFile(path.join(src, 's', f)));

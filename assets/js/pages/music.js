@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE } from '../shell.js';
+import { L, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE, mediaURL } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -6,7 +6,8 @@ import { setupNote } from './journal.js';
 /* Our songs on a record player, after Codrops' "Interactive Record Player" (tympanus.net/Development/RecordPlayer):
    the songs are sleeves on a shelf; tap one and its vinyl slides out onto the turntable, the tonearm swings onto
    the record, the platter spins and the arm creeps inward while it plays, over a soft vinyl crackle
-   (Vinyl Noise SFX by Chia, free to use). Sound comes from the song's YouTube or Spotify link. */
+   (Vinyl Noise SFX by Chia, free to use). Sound comes from the song's own recording when it has one ("audio": a file in
+   private/media, encrypted by the build like the photos), else from its YouTube or Spotify link. */
 
 /* Links we can play right here; anything else opens in its own app. */
 export function player(link) {
@@ -138,6 +139,12 @@ export default {
 		const crackle = new Audio('assets/audio/crackle.mp3');
 		crackle.loop = true;
 		crackle.volume = 0.18;
+		/* a song's own recording, decrypted on the phone; the arm crosses the record in the song's own time */
+		const song = new Audio();
+		song.preload = 'none';
+		let asked = 0;
+		song.onloadedmetadata = () => { if (playing && isFinite(song.duration)) { clearTimeout(armTimer); armTimer = setTimeout(() => setArm(ARM_END, Math.max(1, song.duration - song.currentTime), 'linear'), REDUCE ? 0 : 950); } };
+		song.onended = () => step(1);
 		const crackleBox = $('#dk-crackle', main);
 		crackleBox.checked = store.get(CRACKLE) !== 'off';
 		crackleBox.onchange = () => {
@@ -167,7 +174,7 @@ export default {
 			$('#dk-artist', main).textContent = x.artist || '';
 			$('#dk-note', main).textContent = x.note || '';
 			const link = safeLink(x.link);
-			open.hidden = !!player(link);
+			open.hidden = !!(player(link) || x.audio);
 			open.href = link || searchLink(x);
 			$$('.sleeve', list).forEach((el) => el.classList.toggle('is-on', el.dataset.id === x.id));
 			// the new record drops onto the platter
@@ -186,7 +193,16 @@ export default {
 			clearTimeout(armTimer);
 			armTimer = setTimeout(() => setArm(ARM_END, 240, 'linear'), REDUCE ? 0 : 950);
 			if (crackleBox.checked) { crackle.currentTime = 0; crackle.play().catch(() => {}); }
-			if (embed) { screen.innerHTML = embed; screen.hidden = false; }
+			if (current.audio) {
+				const ask = ++asked, x = current;
+				if (crackleBox.checked) crackle.volume = 0.07;
+				mediaURL(x.audio).then((url) => {
+					if (ask !== asked || !playing) return;
+					if (song.src !== url) song.src = url;
+					return song.play();
+				}).catch(() => { if (ask === asked) { stop(); window.open(safeLink(x.link) || searchLink(x), '_blank', 'noopener'); } });
+			}
+			else if (embed) { screen.innerHTML = embed; screen.hidden = false; }
 			else window.open(safeLink(current.link) || searchLink(current), '_blank', 'noopener');
 		}
 
@@ -197,6 +213,9 @@ export default {
 			clearTimeout(armTimer);
 			setArm(ARM_REST, 1.1);
 			crackle.pause();
+			crackle.volume = 0.18;
+			asked++;
+			song.pause();
 			screen.innerHTML = '';
 			screen.hidden = true;
 		}
@@ -261,7 +280,7 @@ export default {
 			if (l.length) load(l[Math.floor(Math.random() * l.length)], { autoplay: true });
 		};
 		// leaving the page stops the music and the crackle
-		addEventListener('pagehide', () => crackle.pause(), { once: true });
+		addEventListener('pagehide', () => { crackle.pause(); song.pause(); }, { once: true });
 
 		data = await live.load('music');
 		paint();
