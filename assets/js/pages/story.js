@@ -1,4 +1,5 @@
 import { L, T, esc, img, fmtDate, yearsAgo, isToday, pageHead, related, App } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 
 export default {
@@ -6,7 +7,7 @@ export default {
 	// journal pages you marked "add to our story" join the timeline
 	async load() {
 		const j = await live.load('journal');
-		this.extra = (j.items || []).filter((x) => x.timeline).map((x) => ({ id: x.id, date: x.date, icon: x.mood || '✍️', title: x.title || x.text.slice(0, 40), text: x.text.length > 160 ? x.text.slice(0, 160) + '…' : x.text, href: `journal.html#${x.id}`, journal: true }));
+		this.extra = (j.items || []).filter((x) => x.timeline).map((x) => ({ id: x.id, date: x.date, icon: x.mood || 'pen', title: x.title || x.text.slice(0, 40), text: x.text.length > 160 ? x.text.slice(0, 160) + '…' : x.text, href: `journal.html#${x.id}`, journal: true }));
 	},
 	render(s) {
 		const tl = [...(s.timeline || []), ...(this.extra || [])].sort((a, b) => a.date.localeCompare(b.date));
@@ -22,7 +23,7 @@ export default {
 						const today = isToday(x.date);
 						return `<li class="tl__item reveal" id="t-${esc(x.id)}"${first ? ` data-year="${x.date.slice(0, 4)}"` : ''}>
 							${first ? `<span class="tl__year" id="y-${x.date.slice(0, 4)}">${x.date.slice(0, 4)}</span>` : ''}
-							<span class="tl__icon" aria-hidden="true">${esc(x.icon || '♥')}</span>
+							<span class="tl__icon" aria-hidden="true">${doodle(x.icon, 28)}</span>
 							<a class="tl__card${x.journal ? ' tl__card--journal' : ''}" href="${x.href ? esc(x.href) : `moment.html?id=${esc(x.id)}`}">
 								<div class="tl__date"><time datetime="${esc(x.date)}">${fmtDate(x.date)}</time>
 									${today ? `<span class="tl__today">${L('النهارده', 'Today')}، ${yearsAgo(x.date)} ♥</span>` : `<span class="tl__ago">${yearsAgo(x.date)}</span>`}

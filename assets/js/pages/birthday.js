@@ -1,4 +1,5 @@
 import { L, T, esc, img, num, pageHead, related, App, $, $$, rand, REDUCE, qs, occasions, longDate, age } from '../shell.js';
+import { doodle } from '../doodles.js';
 
 /* Birthdays: each of us, with how long until the next one and the age we're turning. The cake below is for
    whoever is next (or whose day it is today, or whoever you tap): blow out the candles, get confetti. */
@@ -12,10 +13,10 @@ export default {
 		this.pick = pick;
 		const card = (o) => `
 			<a class="bd-card reveal${o === pick ? ' is-on' : ''}${o.days === 0 ? ' is-today' : ''}" href="birthday.html?id=${esc(o.id)}" style="--c:${esc(o.member.color || '#0e6990')}">
-				<span class="fam__pic">${o.member.photo ? `<span data-media-box>${img(o.member.photo, App.t(o.member.name))}</span>` : `<span class="fam__emoji">${esc(o.member.emoji || '♥')}</span>`}</span>
+				<span class="fam__pic">${o.member.photo ? `<span data-media-box>${img(o.member.photo, App.t(o.member.name))}</span>` : `<span class="fam__emoji">${doodle(o.member.emoji, 52)}</span>`}</span>
 				<b>${T(o.member.name)}</b>
 				<small>${longDate(o.member.born).replace(/\s*\d{4}$|[\s،,]*[٠-٩]{4}$/, '')}</small>
-				<em>${o.days === 0 ? L('النهارده! 🎂', 'Today! 🎂') : L(`بعد ${num(o.days)} يوم`, `in ${o.days} days`)}</em>
+				<em>${o.days === 0 ? L('النهارده!', 'Today!') : L(`بعد ${num(o.days)} يوم`, `in ${o.days} days`)}</em>
 				<small>${L(`${o.member.female ? 'هتكمل' : 'هيكمل'} ${num(o.years)}`, `turning ${o.years}`)}</small>
 			</a>`;
 		const n = pick ? Math.min(Math.max(pick.years, 1), 9) : 5;
@@ -50,7 +51,7 @@ export default {
 				</svg>
 			</div>
 			<div class="bday__msg" id="bday-msg" hidden>
-				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} ${pick.member.female ? 'طيبة' : 'طيب'} ✨`, `Happy birthday, ${App.t(pick.member.name)} ✨`)}</h2>
+				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} ${pick.member.female ? 'طيبة' : 'طيب'}`, `Happy birthday, ${App.t(pick.member.name)}`)}</h2>
 				<p class="center"><a class="btn btn--coral" href="wishes.html">${L('اكتبوا الأمنية في البرطمان', 'Put the wish in the jar')} ${App.arrow}</a></p>
 			</div>
 		</div></section>` : ''}
@@ -69,7 +70,7 @@ export default {
 			c.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); blow(c); } };
 		}
 		function done() {
-			$('#bday-hint', main).textContent = '🎉';
+			$('#bday-hint', main).innerHTML = doodle('party', 44);
 			$('#bday-msg', main).hidden = false;
 			confetti();
 		}

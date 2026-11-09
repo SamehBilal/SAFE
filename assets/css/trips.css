@@ -62,8 +62,9 @@
 .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 /* ---------- Footer: the sketch ---------- */
-.ft-scene { position: relative; line-height: 0; background: var(--sk-paper); background-image: radial-gradient(120% 90% at 50% 0%, transparent 60%, rgba(120, 90, 40, 0.08)); }
-.ft-scene svg { display: block; width: 100%; height: clamp(220px, 30vw, 340px); }
+.ft-scene { position: relative; line-height: 0; }
+/* the sketch is drawn straight on the page, its sand fading out into it */
+.ft-scene svg { display: block; width: 100%; height: clamp(220px, 30vw, 340px); -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
 .sk-ink { stroke: var(--sk-ink); }
 .sk-ghost { opacity: 0.45; }
 .sk-hatch { opacity: 0.55; }

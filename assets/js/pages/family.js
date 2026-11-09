@@ -1,4 +1,5 @@
 import { L, T, esc, img, num, age, longDate, parseDate, yearsBetween, pageHead, related, App } from '../shell.js';
+import { doodle } from '../doodles.js';
 
 export default {
 	title: { ar: 'عيلتنا', en: 'Our family' },
@@ -11,7 +12,7 @@ export default {
 		<section class="sec sec--top"><div class="wrap">
 			<div class="fam-row">${members.map((m, k) => `
 				<a class="fam reveal" href="member.html?id=${esc(m.id)}" style="--c:${esc(m.color || '#0e6990')};--delay:${k * 0.08}s">
-					<span class="fam__pic">${m.photo ? `<span data-media-box>${img(m.photo, App.t(m.name))}</span>` : `<span class="fam__emoji">${esc(m.emoji || '♥')}</span>`}</span>
+					<span class="fam__pic">${m.photo ? `<span data-media-box>${img(m.photo, App.t(m.name))}</span>` : `<span class="fam__emoji">${doodle(m.emoji, 52)}</span>`}</span>
 					<b>${T(m.name)}</b>
 					<small>${m.kid && m.born ? `${age(m.born)} · ${T(m.role)}` : T(m.role)}</small>
 				</a>`).join('')}

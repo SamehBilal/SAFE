@@ -1,8 +1,9 @@
 import { L, T, esc, pageHead, related, App, $, $$, longDate, store } from '../shell.js';
+import { doodle, MOODS, doodleName } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
 
-const MOODS = ['😍', '🥰', '😂', '🥹', '😌', '🎉', '😴', '🤒', '😤', '🌧️'];
+
 const DRAFT = 'us.draft.journal';
 
 /* Our journal: pages you both write. An entry can also be pinned to the story timeline. */
@@ -15,19 +16,19 @@ export default {
 		<section class="sec sec--top"><div class="wrap narrow">
 			${ok ? '' : setupNote()}
 			<details class="composer reveal" id="composer"${ok ? '' : ' hidden'}>
-				<summary><span>✍️</span> ${L('اكتبوا صفحة جديدة', 'Write a new page')}</summary>
+				<summary><span>${doodle('pen', 22)}</span> ${L('اكتبوا صفحة جديدة', 'Write a new page')}</summary>
 				<form id="jr-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f"><span>${L('اليوم', 'Date')}</span><input type="date" name="date" required></label>
 						<label class="f f--grow"><span>${L('العنوان', 'Title')}</span><input name="title" dir="auto" maxlength="120" placeholder="${L('النهارده…', 'Today…')}"></label>
 					</div>
 					<label class="f"><span>${L('حصل إيه؟', 'What happened?')}</span><textarea name="text" dir="auto" rows="7" required placeholder="${L('اكتبوا براحتكم…', 'Write as much as you like…')}"></textarea></label>
-					<fieldset class="moods"><legend>${L('المود', 'Mood')}</legend>${MOODS.map((m, k) => `<label><input type="radio" name="mood" value="${m}"${k === 0 ? ' checked' : ''}><span>${m}</span></label>`).join('')}</fieldset>
+					<fieldset class="moods"><legend>${L('المود', 'Mood')}</legend>${MOODS.map((m, k) => `<label><input type="radio" name="mood" value="${m}"${k === 0 ? ' checked' : ''}><span>${doodle(m, 28)}</span></label>`).join('')}</fieldset>
 					<label class="check"><input type="checkbox" name="timeline"> ${L('ضيفوا اليوم ده لحكايتنا (التايم لاين)', 'Add this day to our story timeline')}</label>
 					<div class="sketch-attach" id="jr-sketch"></div>
 					<p class="form-msg" id="jr-msg" role="status"></p>
 					<div class="f-actions">
-						<button type="button" class="btn btn--ghost" id="jr-draw">✏️ ${L('ارسموا حاجة', 'Add a sketch')}</button>
+						<button type="button" class="btn btn--ghost" id="jr-draw">${doodle('pencil', 18)} ${L('ارسموا حاجة', 'Add a sketch')}</button>
 						<button type="button" class="btn btn--ghost" id="jr-cancel" hidden>${L('إلغاء التعديل', 'Cancel edit')}</button>
 						<button type="submit" class="btn btn--coral" id="jr-save">${L('احفظوا في الدفتر ♥', 'Save to the journal ♥')}</button>
 					</div>
@@ -73,8 +74,8 @@ export default {
 				month = m;
 				const mine = x.by === live.me();
 				return `${head}<article class="entry entry--${x.by === 'him' ? 'him' : 'her'}" id="${esc(x.id)}">
-					<header><span class="entry__mood">${esc(x.mood || '♥')}</span>
-						<div><h3 dir="auto">${esc(x.title || longDate(x.date))}</h3><small>${longDate(x.date)} · ${L('كتبها', 'by')} <b>${name(x.by)}</b>${x.timeline ? ` · <a href="story.html#t-${esc(x.id)}">📌 ${L('في حكايتنا', 'on our timeline')}</a>` : ''}</small></div>
+					<header><span class="entry__mood">${doodle(x.mood, 30)}</span>
+						<div><h3 dir="auto">${esc(x.title || longDate(x.date))}</h3><small>${longDate(x.date)} · ${L('كتبها', 'by')} <b>${name(x.by)}</b>${x.timeline ? ` · <a href="story.html#t-${esc(x.id)}">${doodle('pin', 14)} ${L('في حكايتنا', 'on our timeline')}</a>` : ''}</small></div>
 					</header>
 					<div class="entry__text" dir="auto">${esc(x.text)}</div>
 					${x.sketch ? `<img class="entry__sketch zoom" data-sketch="${esc(x.sketch)}" alt="${L('رسمة', 'Sketch')}">` : ''}
@@ -122,7 +123,7 @@ export default {
 				editing = x.id;
 				form.date.value = x.date; form.title.value = x.title || ''; form.text.value = x.text || '';
 				form.timeline.checked = !!x.timeline;
-				const m = form.querySelector(`input[name=mood][value="${x.mood}"]`); if (m) m.checked = true;
+				const m = form.querySelector(`input[name=mood][value="${doodleName(x.mood) || x.mood}"]`); if (m) m.checked = true;
 				sketchId = x.sketch || null; sketchBlob = null;
 				if (sketchId) live.sketchURL(sketchId).then(showSketch).catch(() => {}); else showSketch('');
 				$('#jr-cancel', main).hidden = false;
@@ -175,5 +176,5 @@ export default {
 };
 
 export function setupNote() {
-	return `<a class="setup-note reveal" href="settings.html">⚙️ <span><b>${L('عشان تكتبوا هنا، ظبطوا المزامنة مرة واحدة', 'To write here, set up syncing once')}</b><small>${L('اختاروا مين ماسك الموبايل وحطوا الـ GitHub token في صفحة الإعدادات', 'Choose who you are and add the GitHub token on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
+	return `<a class="setup-note reveal" href="settings.html">${doodle('gear', 28)} <span><b>${L('عشان تكتبوا هنا، ظبطوا المزامنة مرة واحدة', 'To write here, set up syncing once')}</b><small>${L('اختاروا مين ماسك الموبايل وحطوا الـ GitHub token في صفحة الإعدادات', 'Choose who you are and add the GitHub token on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
 }

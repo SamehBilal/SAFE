@@ -6,6 +6,7 @@
 import { unlock, readVault, open, toB64, fromB64 } from './core.js';
 import { sky, dust } from './stardust.js';
 import { nightScene } from './scene.js';
+import { doodle, doodleDefs } from './doodles.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -92,7 +93,7 @@ export function occasions(s, from = new Date()) {
 		const days = daysUntil(m.born, from);
 		const n = turning(m.born);
 		const name = t(m.name);
-		list.push({ kind: 'birthday', id: m.id, member: m, emoji: '🎂', date: m.born, days, years: n,
+		list.push({ kind: 'birthday', id: m.id, member: m, emoji: 'cake', date: m.born, days, years: n,
 			title: L(`عيد ميلاد ${name}`, `${name}'s birthday`),
 			sub: (() => { const yrs = n === 1 ? 'سنة' : n === 2 ? 'سنتين' : `${num(n)} ${n <= 10 ? 'سنين' : 'سنة'}`; // Arabic follows whether it's him or her: هيكمل / هتكمل, بقى عنده / بقت عندها
 			const she = !!m.female;
@@ -100,12 +101,12 @@ export function occasions(s, from = new Date()) {
 	}
 	if (s.married) {
 		const n = turning(s.married);
-		list.push({ kind: 'anniversary', emoji: '💍', date: s.married, days: daysUntil(s.married, from), years: n,
+		list.push({ kind: 'anniversary', emoji: 'ring', date: s.married, days: daysUntil(s.married, from), years: n,
 			title: L('عيد جوازنا', 'Our anniversary'), sub: L(`${num(n)} سنين جواز ♥`, `${n} years married ♥`) });
 	}
 	if (s.met) {
 		const n = turning(s.met);
-		list.push({ kind: 'met', emoji: '💬', date: s.met, days: daysUntil(s.met, from), years: n,
+		list.push({ kind: 'met', emoji: 'chat', date: s.met, days: daysUntil(s.met, from), years: n,
 			title: L('يوم أول سلام', 'The day we met'), sub: L(`${num(n)} سنة من أول رسالة`, `${n} years since the first message`) });
 	}
 	return list.sort((a, b) => a.days - b.days);
@@ -190,6 +191,7 @@ let gateRedraw;
 
 async function boot() {
 	applyLang();
+	doodleDefs();
 	floatHearts();
 	registerSW();
 	const id = document.body.dataset.page || 'home';
@@ -246,12 +248,12 @@ function fatal(msg) {
 
 const THEME = 'us.theme';
 const isDark = () => document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
-const themeBtn = () => `<button class="icon-btn theme-toggle" type="button" aria-pressed="${isDark()}" aria-label="${L('الوضع الليلي', 'Dark mode')}" title="${L('ليلي / نهاري', 'Dark / light')}"><span aria-hidden="true">${isDark() ? '☀️' : '🌙'}</span></button>`;
+const themeBtn = () => `<button class="icon-btn theme-toggle" type="button" aria-pressed="${isDark()}" aria-label="${L('الوضع الليلي', 'Dark mode')}" title="${L('ليلي / نهاري', 'Dark / light')}"><span aria-hidden="true">${doodle(isDark() ? 'sun' : 'moon', 20)}</span></button>`;
 function toggleTheme() {
 	const next = isDark() ? 'light' : 'dark';
 	document.documentElement.dataset.theme = next;
 	store.set(THEME, next);
-	for (const b of $$('.theme-toggle')) { b.setAttribute('aria-pressed', String(next === 'dark')); b.firstElementChild.textContent = next === 'dark' ? '☀️' : '🌙'; }
+	for (const b of $$('.theme-toggle')) { b.setAttribute('aria-pressed', String(next === 'dark')); b.firstElementChild.innerHTML = doodle(next === 'dark' ? 'sun' : 'moon', 20); }
 }
 const langBtn = () => `<button class="lang-toggle" type="button" lang="${App.lang === 'ar' ? 'en' : 'ar'}">${App.lang === 'ar' ? 'English' : 'عربي'}</button>`;
 
@@ -463,10 +465,10 @@ export const PAGES = [
 
 /* What a night can be drawn for (draw.html?k=…). */
 export const DRAW_KINDS = [
-	{ id: 'outfit', emoji: '👗', color: '#c2185b', ar: 'لبس الليلة', en: 'Tonight’s outfit', dar: 'ثيم نلبسه سوا الليلة', den: 'A theme we dress up in tonight', sketch: { ar: 'ارسموا اللبس', en: 'Sketch the outfit' } },
-	{ id: 'dining', emoji: '🍽️', color: '#e39b2d', ar: 'خروجة عشا', en: 'Dining out', dar: 'نتعشى برا فين؟', den: 'Where shall we eat out?', sketch: { ar: 'ارسموا المكان', en: 'Sketch the place' } },
-	{ id: 'delivery', emoji: '🛵', color: '#5a9e6f', ar: 'دليفري', en: 'Delivery night', dar: 'نطلب إيه النهارده؟', den: 'What shall we order in?', sketch: { ar: 'ارسموا الأكلة', en: 'Sketch the meal' } },
-	{ id: 'movie', emoji: '🎬', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسموا بوستر الفيلم', en: 'Sketch the poster' } }
+	{ id: 'outfit', emoji: 'dress', color: '#c2185b', ar: 'لبس الليلة', en: 'Tonight’s outfit', dar: 'ثيم نلبسه سوا الليلة', den: 'A theme we dress up in tonight', sketch: { ar: 'ارسموا اللبس', en: 'Sketch the outfit' } },
+	{ id: 'dining', emoji: 'dinner', color: '#e39b2d', ar: 'خروجة عشا', en: 'Dining out', dar: 'نتعشى برا فين؟', den: 'Where shall we eat out?', sketch: { ar: 'ارسموا المكان', en: 'Sketch the place' } },
+	{ id: 'delivery', emoji: 'scooter', color: '#5a9e6f', ar: 'دليفري', en: 'Delivery night', dar: 'نطلب إيه النهارده؟', den: 'What shall we order in?', sketch: { ar: 'ارسموا الأكلة', en: 'Sketch the meal' } },
+	{ id: 'movie', emoji: 'clapper', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسموا بوستر الفيلم', en: 'Sketch the poster' } }
 ];
 /* pages that are one page per item, and which menu they belong to */
 const DETAIL_OF = { moment: 'story', chapter: 'story', member: 'family', trip: 'story' };
@@ -531,7 +533,7 @@ function megaHTML(s) {
 	const family = panel('family', L('عيلتنا', 'Our family'),
 		`<div class="mg-figs">${members.map((m) => `
 			<a class="mg-fig" href="member.html?id=${esc(m.id)}" style="--c:${esc(m.color || '#0e6990')}">
-				<span class="mg-fig-box">${m.photo ? img(m.photo, '', 'mg-fig-img') : `<span class="mg-fig-emoji">${esc(m.emoji || '♥')}</span>`}</span>
+				<span class="mg-fig-box">${m.photo ? img(m.photo, '', 'mg-fig-img') : `<span class="mg-fig-emoji">${doodle(m.emoji, 40)}</span>`}</span>
 				<span class="mg-fig-t"><b>${T(m.name)}</b><small>${m.born && m.kid ? age(m.born) : T(m.role)}</small></span>
 			</a>`).join('')}</div>
 		<div class="mg-more"><p class="mg-h">${L('البيت', 'Home')}</p>${row(PAGES.find((p) => p.id === 'family'))}</div>`);
@@ -554,7 +556,7 @@ function megaHTML(s) {
 	const nights = panel('nights', L('ليالينا', 'Our nights'),
 		`<div class="mg-kinds">${DRAW_KINDS.map((k) => `
 			<a class="mg-kind" href="draw.html?k=${k.id}" style="--c:${k.color}"${here === 'draw.html' && kind === k.id ? ' aria-current="page"' : ''}>
-				<span class="mg-kind-e" aria-hidden="true">${k.emoji}</span><b>${esc(L(k.ar, k.en))}</b><small>${esc(L(k.dar, k.den))}</small>
+				<span class="mg-kind-e" aria-hidden="true">${doodle(k.emoji, 40)}</span><b>${esc(L(k.ar, k.en))}</b><small>${esc(L(k.dar, k.den))}</small>
 			</a>`).join('')}</div>
 		<div class="mg-more"><p class="mg-h">${L('سهراتنا', 'Our evenings')}</p>${pages('nights').map(row).join('')}${row(PAGES.find((p) => p.id === 'journal'))}</div>`);
 
@@ -562,7 +564,7 @@ function megaHTML(s) {
 	return `<nav class="mnav" aria-label="${L('القائمة الرئيسية', 'Main')}">
 		${link('index.html', 'الرئيسية', 'Home')}
 		${top('story', L('حكايتنا', 'Our story'))}${top('memories', L('ذكرياتنا', 'Memories'))}${top('family', L('عيلتنا', 'Family'))}${top('nights', L('ليالينا', 'Our nights'))}${top('you', L('مناسباتنا', 'Occasions'))}
-		<a class="mnav-link mnav-cta" href="journal.html"${cur('journal.html')}>✍️ ${L('اكتبوا النهارده', 'Write today')}</a>
+		<a class="mnav-link mnav-cta" href="journal.html"${cur('journal.html')}>${doodle('pen', 18)} ${L('اكتبوا النهارده', 'Write today')}</a>
 		${story}${memories}${family}${nights}${you}
 	</nav>`;
 }
@@ -822,18 +824,18 @@ function footerHTML(s) {
 			<div class="ft-tools">
 				<button class="btn btn--coral btn--sm" type="button" id="install-btn" hidden>${L('حطيه على الشاشة الرئيسية', 'Add to home screen')}</button>
 				<a class="btn btn--ghost btn--sm" href="index.html?intro">${L('شوفوا المقدمة تاني', 'Replay intro')}</a>
-				<button class="btn btn--ghost btn--sm" type="button" id="lock-btn">${L('اقفلوا', 'Lock')} 🔒</button>
+				<button class="btn btn--ghost btn--sm" type="button" id="lock-btn">${doodle('lock', 16)} ${L('اقفلوا', 'Lock')}</button>
 			</div>
 			<p class="ios-tip" id="ios-tip" hidden>${L('على الآيفون: دوسوا على <b>مشاركة</b> وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'On iPhone: tap <b>Share</b> then <b>Add to Home Screen</b> ♥')}</p>
 		</div>
 		${col(L('حكايتنا', 'Our story'), [PAGES[0], ...g('story')])}
 		${col(L('ذكرياتنا', 'Memories'), g('memories'))}
-		${col(L('ليالينا', 'Our nights'), [...g('nights'), ...DRAW_KINDS.map((k) => ({ href: `draw.html?k=${k.id}`, ar: `${k.emoji} ${k.ar}`, en: `${k.emoji} ${k.en}` }))])}
+		${col(L('ليالينا', 'Our nights'), [...g('nights'), ...DRAW_KINDS.map((k) => ({ href: `draw.html?k=${k.id}`, ar: k.ar, en: k.en }))])}
 		${col(L('عيلتنا ومناسباتنا', 'Family & occasions'), [...g('family'), ...g('you'), ...g('app')])}
 		<div class="ft-maker">
 			${App.lang === 'ar'
-				? `<p class="ft-copy" dir="rtl">حقوق النشر @${new Date().getFullYear()}، <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>كل الحب محفوظ. <span>صُنع بـ <span class="ft-heart">🧡</span> سامح بلال</span></p>`
-				: `<p class="ft-copy" dir="ltr">Copyright @${new Date().getFullYear()}, <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>All love reserved. <span>Crafted with <span class="ft-heart">🧡</span> Sameh Bilal</span></p>`}
+				? `<p class="ft-copy" dir="rtl">حقوق النشر @${new Date().getFullYear()}، <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>كل الحب محفوظ. <span>صُنع بـ <span class="ft-heart">${doodle('heart', 16)}</span> سامح بلال</span></p>`
+				: `<p class="ft-copy" dir="ltr">Copyright @${new Date().getFullYear()}, <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>All love reserved. <span>Crafted with <span class="ft-heart">${doodle('heart', 16)}</span> Sameh Bilal</span></p>`}
 		</div>
 	</div>
 	<p class="ft-end">${T(s.closing)} <span aria-hidden="true">♥</span></p></div>`;

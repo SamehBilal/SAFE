@@ -1,4 +1,5 @@
 import { App, L, T, t, esc, img, num, parseDate, yearsBetween, daysBetween, age, isToday, yearsAgo, fmtDate, icon, PAGES, occasions, DRAW_KINDS } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { GOVERNORATES } from '../egypt.js';
 const GOV = Object.fromEntries(GOVERNORATES.map((g) => [g.id, g]));
@@ -19,12 +20,12 @@ export default {
 	async load() {
 		const [journal, draw, trips, music, movies] = await Promise.all(['journal', 'draw', 'trips', 'music', 'movies'].map((k) => live.load(k).catch(() => ({ items: [] }))));
 		this.feed = [
-			...(journal.items || []).map((x) => ({ at: x.at, by: x.by, e: x.mood || '✍️', what: verb(x.by, 'كتب صفحة في الدفتر', 'كتبت صفحة في الدفتر', 'wrote in the journal'), text: x.title || x.text, href: `journal.html#${x.id}` })),
+			...(journal.items || []).map((x) => ({ at: x.at, by: x.by, e: x.mood || 'pen', what: verb(x.by, 'كتب صفحة في الدفتر', 'كتبت صفحة في الدفتر', 'wrote in the journal'), text: x.title || x.text, href: `journal.html#${x.id}` })),
 			...(draw.history || []).map((x) => { const k = DRAW_KINDS.find((d) => d.id === x.kind) || DRAW_KINDS[0]; return { at: x.at, by: x.by, e: k.emoji, what: L(k.ar, k.en), text: x.text, href: `draw.html?k=${k.id}` }; }),
-			...(trips.items || []).filter((x) => x.gov).map((x) => ({ at: x.at, by: x.by, e: '🧳', what: verb(x.by, 'سجّل رحلة', 'سجّلت رحلة', 'logged a trip'), text: `${x.year} · ${GOV[x.gov] ? L(GOV[x.gov].ar, GOV[x.gov].en) : ''}`, href: `trip.html?id=${x.id}` })),
-			...(trips.items || []).flatMap((x) => (x.memories || []).map((m) => ({ at: m.at, by: m.by, e: '📸', what: verb(m.by, 'ضاف ذكرى لرحلة', 'ضافت ذكرى لرحلة', 'added a trip memory'), text: m.text || (GOV[x.gov] ? L(GOV[x.gov].ar, GOV[x.gov].en) : ''), href: `trip.html?id=${x.id}` }))),
-			...(music.items || []).map((x) => ({ at: x.at, by: x.by, e: '🎵', what: verb(x.by, 'ضاف أغنية', 'ضافت أغنية', 'added a song'), text: [x.title, x.artist].filter(Boolean).join(' — '), href: `music.html#${x.id}` })),
-			...(movies.items || []).map((x) => ({ at: x.at, by: x.by, e: '🍿', what: L('اتفرجنا على', 'we watched'), text: x.title, href: `movies.html#${x.id}` }))
+			...(trips.items || []).filter((x) => x.gov).map((x) => ({ at: x.at, by: x.by, e: 'suitcase', what: verb(x.by, 'سجّل رحلة', 'سجّلت رحلة', 'logged a trip'), text: `${x.year} · ${GOV[x.gov] ? L(GOV[x.gov].ar, GOV[x.gov].en) : ''}`, href: `trip.html?id=${x.id}` })),
+			...(trips.items || []).flatMap((x) => (x.memories || []).map((m) => ({ at: m.at, by: m.by, e: 'camera', what: verb(m.by, 'ضاف ذكرى لرحلة', 'ضافت ذكرى لرحلة', 'added a trip memory'), text: m.text || (GOV[x.gov] ? L(GOV[x.gov].ar, GOV[x.gov].en) : ''), href: `trip.html?id=${x.id}` }))),
+			...(music.items || []).map((x) => ({ at: x.at, by: x.by, e: 'music', what: verb(x.by, 'ضاف أغنية', 'ضافت أغنية', 'added a song'), text: [x.title, x.artist].filter(Boolean).join(' — '), href: `music.html#${x.id}` })),
+			...(movies.items || []).map((x) => ({ at: x.at, by: x.by, e: 'popcorn', what: L('اتفرجنا على', 'we watched'), text: x.title, href: `movies.html#${x.id}` }))
 		].filter((x) => x.at).sort((a, b) => b.at - a.at).slice(0, 8);
 	},
 	render(s) {
@@ -44,35 +45,35 @@ export default {
 			...kids.map((k) => [age(k.born), L(`عمر ${App.t(k.name)}`, `${App.t(k.name)}’s age`)])
 		].filter(Boolean);
 		const features = PAGES.filter((p) => p.id !== 'home' && p.group !== 'app');
-		const quick = [['journal.html', '✍️', L('صفحة في الدفتر', 'A journal page')], ['music.html', '🎵', L('أغنية', 'A song')], ['draw.html', '🎲', L('سهرة الليلة', 'Tonight’s plan')], ['trips.html', '🧳', L('رحلة', 'A trip')], ['movies.html', '🍿', L('فيلم اتفرجنا عليه', 'A film we watched')]];
+		const quick = [['journal.html', 'pen', L('صفحة في الدفتر', 'A journal page')], ['music.html', 'music', L('أغنية', 'A song')], ['draw.html', 'dice', L('سهرة الليلة', 'Tonight’s plan')], ['trips.html', 'suitcase', L('رحلة', 'A trip')], ['movies.html', 'popcorn', L('فيلم اتفرجنا عليه', 'A film we watched')]];
 		const feed = this.feed || [];
 
 		return `
 		<section class="hero">
-			${next ? `<a class="hero__bday" href="${occHref(next)}">${next.emoji} ${next.days === 0 ? `${L('النهارده', 'Today')}: ${esc(next.title)}` : `${esc(next.title)} ${L(`بعد ${num(next.days)} يوم`, `in ${next.days} days`)}`}</a>` : ''}
+			${next ? `<a class="hero__bday" href="${occHref(next)}">${doodle(next.emoji, 18)} ${next.days === 0 ? `${L('النهارده', 'Today')}: ${esc(next.title)}` : `${esc(next.title)} ${L(`بعد ${num(next.days)} يوم`, `in ${next.days} days`)}`}</a>` : ''}
 			<h1 class="hero__title">${L('حكاية حبنا', 'Our Love Story')}</h1>
 			<div class="ribbon"><span>${T(s.him)}</span><span class="heart">♥</span><span>${T(s.her)}</span></div>
 			<a class="scroll-cue" href="#now" aria-label="${L('انزلوا', 'Scroll down')}">⌄</a>
 		</section>
 
 		<section class="sec sec--tight" id="now"><div class="wrap">
-			${today.map((x) => `<a class="otd reveal" href="moment.html?id=${esc(x.id)}"><span class="otd__ic">${esc(x.icon || '♥')}</span><span><small>${L('النهارده', 'On this day')} · ${yearsAgo(x.date)}</small><b>${T(x.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>`).join('')}
+			${today.map((x) => `<a class="otd reveal" href="moment.html?id=${esc(x.id)}"><span class="otd__ic">${doodle(x.icon, 28)}</span><span><small>${L('النهارده', 'On this day')} · ${yearsAgo(x.date)}</small><b>${T(x.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>`).join('')}
 			<h2 class="sec__title reveal" style="margin-top:24px">${L('ضيفوا للنهارده', 'Add to today')}</h2>
-			<div class="quick">${quick.map(([href, e, label]) => `<a class="quick__btn reveal" href="${href}"><span aria-hidden="true">${e}</span>${esc(label)}</a>`).join('')}</div>
+			<div class="quick">${quick.map(([href, e, label]) => `<a class="quick__btn reveal" href="${href}"><span aria-hidden="true">${doodle(e, 22)}</span>${esc(label)}</a>`).join('')}</div>
 		</div></section>
 
 		<section class="sec"><div class="wrap home-cols">
 			<div>
 				<h2 class="sec__title reveal">${L('آخر أخبارنا', 'What’s new with us')}</h2>
 				${feed.length ? `<ol class="feed">${feed.map((x) => `
-					<li class="reveal"><a href="${esc(x.href)}"><span class="feed__e" aria-hidden="true">${esc(x.e)}</span>
+					<li class="reveal"><a href="${esc(x.href)}"><span class="feed__e" aria-hidden="true">${doodle(x.e, 26)}</span>
 						<span><span><b>${x.by ? name(x.by) : ''}</b> ${esc(x.what)}${x.text ? `: <q dir="auto">${esc(t(x.text).slice(0, 90))}</q>` : ''}</span><small>${ago(x.at)}</small></span></a></li>`).join('')}</ol>`
 					: `<p class="empty">${L('لسه محدش كتب حاجة — ابدأوا بصفحة في الدفتر ♥', 'Nothing added yet — start with a journal page ♥')}</p>`}
 			</div>
 			<div>
 				<h2 class="sec__title reveal">${L('جاي قريب', 'Coming up')}</h2>
 				<ul class="coming">${occ.slice(0, 5).map((o) => `
-					<li class="reveal"><a href="${occHref(o)}"><span class="feed__e" aria-hidden="true">${o.emoji}</span><span><b>${esc(o.title)}</b><small>${fmtDate(o.date).slice(0, 5)} · ${esc(o.sub)}</small></span>
+					<li class="reveal"><a href="${occHref(o)}"><span class="feed__e" aria-hidden="true">${doodle(o.emoji, 26)}</span><span><b>${esc(o.title)}</b><small>${fmtDate(o.date).slice(0, 5)} · ${esc(o.sub)}</small></span>
 						<em>${o.days === 0 ? L('النهارده', 'today') : L(`${num(o.days)} يوم`, `${o.days} days`)}</em></a></li>`).join('')}</ul>
 			</div>
 		</div></section>
@@ -99,7 +100,7 @@ export default {
 				<h2 class="sec__title reveal">${L('آخر الحكاية', 'Latest in our story')}</h2>
 				<div class="cards3">${latest.map((x) => `
 					<a class="mini reveal" href="moment.html?id=${esc(x.id)}">
-						<span class="mini__ic">${esc(x.icon || '♥')}</span>
+						<span class="mini__ic">${doodle(x.icon, 30)}</span>
 						<time>${fmtDate(x.date)}</time>
 						<b>${T(x.title)}</b>
 						<p>${T(x.text)}</p>

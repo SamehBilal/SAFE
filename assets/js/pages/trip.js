@@ -1,4 +1,5 @@
 import { L, T, esc, pageHead, related, App, $, $$, qs, longDate, img, hydrate } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
 import { hangWall } from '../hang.js';
@@ -29,7 +30,7 @@ export default {
 			<div class="trip-hero panel reveal">
 				<div class="trip-hero__facts">
 					${x.title ? `<h2 dir="auto">${esc(x.title)}</h2>` : ''}
-					${x.date ? `<p>🗓️ ${longDate(x.date)}</p>` : ''}
+					${x.date ? `<p>${doodle('calendar', 18)} ${longDate(x.date)}</p>` : ''}
 					${x.note ? `<p class="lede" style="text-align:start" dir="auto">${esc(x.note)}</p>` : ''}
 					${x.by ? `<p class="muted">${L('سجّلها', 'Logged by')} ${name(x.by)}</p>` : ''}
 				</div>
@@ -39,14 +40,14 @@ export default {
 			${photos.length ? `<div class="hang-night"><h2 class="sec__title">${L('صور الرحلة', 'Trip photos')}</h2>${hangWall(photos)}</div>` : ''}
 
 			${ok ? `<details class="composer reveal" id="mem-composer" style="margin-top:28px"${photos.length || notes.length ? '' : ' open'}>
-				<summary><span>📸</span> ${L('ضيفوا ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
+				<summary><span>${doodle('camera', 22)}</span> ${L('ضيفوا ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
 				<form id="mem-form" autocomplete="off">
 					<label class="f"><span>${L('فاكرين إيه؟', 'What do you remember?')}</span><textarea name="text" dir="auto" rows="3" maxlength="800"></textarea></label>
 					<div class="photo-pick" id="mem-preview"></div>
 					<p class="form-msg" id="mem-msg" role="status"></p>
 					<div class="f-actions">
-						<label class="btn btn--ghost file-btn">📷 ${L('صور', 'Photos')}<input type="file" name="photos" accept="image/*" multiple></label>
-						<button class="btn btn--ghost" type="button" id="mem-draw">✏️ ${L('رسمة', 'Sketch')}</button>
+						<label class="btn btn--ghost file-btn">${doodle('camera', 18)} ${L('صور', 'Photos')}<input type="file" name="photos" accept="image/*" multiple></label>
+						<button class="btn btn--ghost" type="button" id="mem-draw">${doodle('pencil', 18)} ${L('رسمة', 'Sketch')}</button>
 						<button class="btn btn--coral" type="submit">${L('احفظوا الذكرى ♥', 'Save the memory ♥')}</button>
 					</div>
 				</form>

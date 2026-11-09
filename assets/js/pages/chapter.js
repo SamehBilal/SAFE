@@ -1,4 +1,5 @@
 import { L, T, esc, img, longDate, yearsAgo, pageHead, related, qs, rand, App } from '../shell.js';
+import { doodle } from '../doodles.js';
 
 export default {
 	title: { ar: 'يوم فارق', en: 'A big day' },
@@ -23,7 +24,7 @@ export default {
 			: `<div class="wrap narrow"><p class="empty reveal">${L('الصور جاية قريب ♥', 'Photos coming soon ♥')}</p></div>`}
 		</article>
 		${other.length ? `<section class="sec"><div class="wrap"><h2 class="sec__title reveal">${L('أيام تانية', 'More big days')}</h2>
-			<div class="cards3">${other.map((x) => `<a class="mini reveal" href="chapter.html?id=${esc(x.id)}"><span class="mini__ic">${esc(x.icon || '♥')}</span><time>${longDate(x.date)}</time><b>${T(x.title)}</b><p>${T(x.sub)}</p></a>`).join('')}</div></div></section>` : ''}
+			<div class="cards3">${other.map((x) => `<a class="mini reveal" href="chapter.html?id=${esc(x.id)}"><span class="mini__ic">${doodle(x.icon, 30)}</span><time>${longDate(x.date)}</time><b>${T(x.title)}</b><p>${T(x.sub)}</p></a>`).join('')}</div></div></section>` : ''}
 		${related(['story', 'gallery', 'letters'])}`;
 	}
 };

@@ -1,15 +1,15 @@
 {
 	"title": {
-		"ar": "أهلًا بيكم 👋",
-		"en": "Welcome home 👋"
+		"ar": "أهلًا بيكم",
+		"en": "Welcome home"
 	},
 	"intro": {
 		"ar": "المكان ده بتاعنا إحنا بس. جاوبوا وادخلوا.",
 		"en": "This place is only ours. Answer and come in."
 	},
 	"wrong": {
-		"ar": "في إجابة مش مظبوطة 🙈 جربوا تاني.",
-		"en": "One of those isn't quite right 🙈 Try again."
+		"ar": "في إجابة مش مظبوطة جربوا تاني.",
+		"en": "One of those isn't quite right Try again."
 	},
 	"questions": [
 		{

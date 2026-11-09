@@ -1,4 +1,5 @@
 import { L, T, esc, longDate, pageHead, related, sleep, REDUCE, App, $, $$ } from '../shell.js';
+import { doodle } from '../doodles.js';
 
 export default {
 	title: { ar: 'جوابات', en: 'Letters' },
@@ -16,7 +17,7 @@ export default {
 					<span class="envelope__peek">${T(x.to)}</span>
 					<span class="envelope__front"></span>
 					<span class="envelope__flap"></span>
-					<span class="envelope__seal" aria-hidden="true">💌</span>
+					<span class="envelope__seal" aria-hidden="true">${doodle('letter', 40)}</span>
 					<span class="sr-only">${L('افتحوا الجواب', 'Open the letter')}</span>
 				</button>
 				<article class="letter" id="letter-${k}" hidden>

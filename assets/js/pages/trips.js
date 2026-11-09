@@ -1,4 +1,5 @@
 import { L, T, t, esc, pageHead, related, App, $, $$, num, parseDate, daysBetween, longDate, REDUCE, sleep, img, hydrate } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { GOVERNORATES, VIEWBOX, DOTS } from '../egypt.js';
 import { setupNote } from './journal.js';
@@ -106,7 +107,7 @@ export default {
 		<section class="sec sec--top"><div class="wrap">
 			<div class="counters trip-stats">
 				<div class="counter reveal"><b id="tr-been">–</b><span>${L('محافظة من ٢٧', 'of 27 governorates')}</span></div>
-				<div class="counter reveal"><b>${nx.days === 0 ? '🎉' : num(nx.days)}</b><span>${nx.days === 0 ? L('النهارده عيد جوازنا!', 'It’s our anniversary today!') : esc(L(`يوم على ${anniversary(s, nx.year)}`, `days to ${anniversary(s, nx.year).toLowerCase()}`))}</span></div>
+				<div class="counter reveal"><b>${nx.days === 0 ? doodle('party', 34) : num(nx.days)}</b><span>${nx.days === 0 ? L('النهارده عيد جوازنا!', 'It’s our anniversary today!') : esc(L(`يوم على ${anniversary(s, nx.year)}`, `days to ${anniversary(s, nx.year).toLowerCase()}`))}</span></div>
 				<div class="counter reveal"><b id="tr-left">–</b><span>${L('محافظة لسه مستنيانا', 'still waiting for us')}</span></div>
 			</div>
 
@@ -117,7 +118,7 @@ export default {
 
 			${ok ? '' : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal" id="tr-composer" style="margin-top:28px"${ok ? '' : ' hidden'}>
-				<summary><span>🧳</span> ${L('سجلوا رحلة', 'Log a trip')}</summary>
+				<summary><span>${doodle('suitcase', 22)}</span> ${L('سجلوا رحلة', 'Log a trip')}</summary>
 				<form id="tr-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f"><span>${L('سنة كام؟', 'Which year?')}</span><select name="year">${years.map((y) => `<option value="${y}"${y === (nx.days === 0 ? nx.year : nx.year - 1) ? ' selected' : ''}>${y} — ${esc(anniversary(s, y))}</option>`).join('')}</select></label>
@@ -148,7 +149,7 @@ export default {
 
 		const sideIdle = () => `<h2>${L('دوسوا على أي محافظة', 'Tap a governorate')}</h2>
 			<p class="muted">${L('الملونة رحناها في عيد جوازنا، والباقي لسه مستنينا.', 'The coloured ones are where our anniversaries took us; the rest are still waiting.')}</p>
-			<button class="btn btn--coral" type="button" id="tr-draw">🎲 ${L('قرعة الرحلة الجاية', 'Draw our next trip')}</button>
+			<button class="btn btn--coral" type="button" id="tr-draw">${doodle('dice', 18)} ${L('قرعة الرحلة الجاية', 'Draw our next trip')}</button>
 			<p class="trip-pick" id="tr-pick" aria-live="polite"></p>`;
 
 		const showGov = (id) => {
@@ -158,7 +159,7 @@ export default {
 			side.innerHTML = `<h2>${esc(govName(id))}</h2>
 				${here.length ? here.map((x) => `<a class="trip-mini" href="trip.html?id=${esc(x.id)}"><b>${x.year}</b><span>${esc(anniversary(s, x.year))}${x.place ? ` · <span dir="auto">${esc(x.place)}</span>` : ''}</span><i aria-hidden="true">${App.arrow}</i></a>`).join('')
 					: `<p class="muted">${L('لسه مرحناهاش… يمكن تكون الجاية؟', 'We haven’t been yet… maybe it’s next?')}</p>
-					${live.canWrite() ? `<button class="btn btn--ghost btn--sm" type="button" data-log="${id}">🧳 ${L('سجلوا رحلة هنا', 'Log a trip here')}</button>` : ''}`}
+					${live.canWrite() ? `<button class="btn btn--ghost btn--sm" type="button" data-log="${id}">${doodle('suitcase', 16)} ${L('سجلوا رحلة هنا', 'Log a trip here')}</button>` : ''}`}
 				<button class="link" type="button" id="tr-back">${L('رجوع', 'Back')}</button>`;
 			$('#tr-back', side).onclick = () => { focus = ''; paintMap(svg, trips); side.innerHTML = sideIdle(); wireDraw(); };
 			$('[data-log]', side)?.addEventListener('click', (e) => {
@@ -176,7 +177,7 @@ export default {
 			b.onclick = async () => {
 				const been = new Set(trips.map((x) => x.gov));
 				const left = GOVERNORATES.filter((g) => !been.has(g.id));
-				if (!left.length) { $('#tr-pick', side).textContent = L('لفينا مصر كلها! 🎉', 'We’ve seen all of Egypt! 🎉'); return; }
+				if (!left.length) { $('#tr-pick', side).textContent = L('لفينا مصر كلها!', 'We’ve seen all of Egypt!'); return; }
 				b.disabled = true;
 				const pick = left[Math.floor(Math.random() * left.length)];
 				const steps = REDUCE ? 1 : 18;

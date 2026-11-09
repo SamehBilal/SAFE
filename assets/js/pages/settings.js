@@ -1,4 +1,5 @@
 import { L, T, esc, pageHead, App, $, store } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 
 /* Who's holding this phone, and the GitHub token that lets it save. Nothing here leaves the phone. */
@@ -22,8 +23,8 @@ export default {
 			<form class="panel settings" id="st-form" autocomplete="off">
 				<fieldset class="who">
 					<legend>${L('مين ماسك الموبايل ده؟', 'Whose phone is this?')}</legend>
-					<label><input type="radio" name="me" value="him"${me === 'him' ? ' checked' : ''}><span>🤵 ${T(s.him)}</span></label>
-					<label><input type="radio" name="me" value="her"${me === 'her' ? ' checked' : ''}><span>👸 ${T(s.her)}</span></label>
+					<label><input type="radio" name="me" value="him"${me === 'him' ? ' checked' : ''}><span>${doodle('groom', 28)} ${T(s.him)}</span></label>
+					<label><input type="radio" name="me" value="her"${me === 'her' ? ' checked' : ''}><span>${doodle('princess', 28)} ${T(s.her)}</span></label>
 				</fieldset>
 
 				<h2>${L('الحفظ على GitHub', 'Saving to GitHub')}</h2>

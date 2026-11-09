@@ -1,4 +1,5 @@
 import { L, T, pageHead, related, sleep, store, $, App } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
 
@@ -48,7 +49,7 @@ export default {
 		const add = (w, animate) => {
 			const b = document.createElement('button');
 			b.type = 'button';
-			b.textContent = '⭐';
+			b.innerHTML = doodle('star', 22, 'dd--fill');
 			b.setAttribute('aria-label', L('أمنية: ', 'Wish: ') + w.text);
 			if (!animate) b.style.animation = 'none';
 			b.onclick = () => { toast.textContent = '«' + w.text + '»' + (w.by ? ' — ' + name(w.by) : ''); };
@@ -66,7 +67,7 @@ export default {
 			input.value = '';
 			const from = form.getBoundingClientRect();
 			const to = jar.getBoundingClientRect();
-			const star = Object.assign(document.createElement('span'), { className: 'flying-star', textContent: '⭐' });
+			const star = Object.assign(document.createElement('span'), { className: 'flying-star', innerHTML: doodle('star', 30, 'dd--fill') });
 			const sx = from.left + from.width / 2;
 			star.style.left = sx + 'px';
 			star.style.top = from.top + 'px';
@@ -81,7 +82,7 @@ export default {
 			add(w, true);
 			await sleep(250);
 			jar.classList.remove('is-open');
-			toast.textContent = L('الأمنية في أمان جوه البرطمان ✨', 'The wish is safe in the jar ✨');
+			toast.textContent = L('الأمنية في أمان جوه البرطمان', 'The wish is safe in the jar');
 		};
 	}
 };

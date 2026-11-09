@@ -2,6 +2,7 @@
    Adapted from the hang.html template. hangWall(items) where each item is
    { html: '<img …>', caption, sub, href?, tilt? } — two polaroids hang on each string. */
 import { esc } from './shell.js';
+import { doodle } from './doodles.js';
 
 const WIRE = '<svg class="hang__wire" viewBox="0 0 37 996" preserveAspectRatio="none" aria-hidden="true"><path d="M21.2 3C28.7 25.6 40.9 121 29.1 186.9 13.3 257.5 4.2 253.1 21.2 351.6c8.6 50.1 13.4 58.8 7.9 98.6-15.1 50-39.3 48.5-15.8 151.5 17.8 92.7-1.2 55.9-9.1 170.6-3.9 57.4 2.8 80 9.1 100 7.9 31.9 0 88.3 7.5 120.6" fill="none" stroke="#fff3e8" stroke-width="3" stroke-linecap="round"/></svg>';
 const LIGHTS = [[5, -15, 120], [20, 90, -50], [35, -10, -5], [50, -90, -105], [65, -70, 15], [80, -100, -105], [96, -50, 0]];
@@ -13,7 +14,7 @@ export function hangWall(items, { empty = '' } = {}) {
 		<div class="hang__col" style="--w:${w}">
 			${WIRE}
 			${LIGHTS.map(([top, x, r], k) => `<i class="hang__light" style="top:${top}%;--x:${x}%;--r:${r}deg;--k:${(w * 7 + k) % 9}"></i>`).join('')}
-			${pair.length ? pair.map((it, k) => polaroid(it, k, w)).join('') : `<div class="polaroid polaroid--empty" style="--top:22%;--tilt:-2deg"><span class="polaroid__ph">✈️</span><span class="polaroid__cap">${esc(empty)}</span></div>`}
+			${pair.length ? pair.map((it, k) => polaroid(it, k, w)).join('') : `<div class="polaroid polaroid--empty" style="--top:22%;--tilt:-2deg"><span class="polaroid__ph">${doodle('plane', 44)}</span><span class="polaroid__cap">${esc(empty)}</span></div>`}
 		</div>`).join('')}
 	</div>`;
 }

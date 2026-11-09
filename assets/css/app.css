@@ -528,3 +528,22 @@ body:not(.is-locked) .hearts { opacity: 0.45; }
 	.hearts { display: none; }
 	.reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Hand-drawn icons (doodles.js) ---------- */
+.dd { display: inline-block; vertical-align: middle; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.dd--fill path { fill: #ffd36b; stroke: #b9861f; }
+.tl__icon, .mini__ic, .moment-hero__ic, .entry__mood, .feed__e, .night__e { color: var(--coral-deep); }
+.mini__ic, .moment-hero__ic { display: inline-grid; place-items: center; }
+.fam__emoji, .mg-fig-emoji { color: var(--c, var(--blue)); display: grid; place-items: center; }
+.moods span { color: var(--text); }
+.moods input:checked + span { color: var(--coral-deep); }
+.who span { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.envelope__seal { color: #fff; }
+.quick__btn span, .composer summary span { display: inline-flex; color: var(--coral-deep); }
+.btn .dd, .link .dd, .mnav-cta .dd { margin-inline-end: 2px; }
+.hero__bday .dd { margin-inline-end: 4px; }
+.jar__stars button { display: inline-flex; }
+.flying-star { display: inline-flex; }
+.polaroid__ph { color: #8a94a0; }
+.result__pick .dd { margin-inline-end: 6px; }
+.theme-toggle span { display: inline-flex; }

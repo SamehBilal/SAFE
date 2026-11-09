@@ -1,4 +1,5 @@
 import { L, T, esc, pageHead, related, App, $, $$, num } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
 
@@ -32,7 +33,7 @@ export default {
 			<div class="counters" id="mv-totals"></div>
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal" style="margin-top:24px"${ok ? '' : ' hidden'}>
-				<summary><span>🍿</span> ${L('ضيفوا حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
+				<summary><span>${doodle('popcorn', 22)}</span> ${L('ضيفوا حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
 				<form id="mv-form" autocomplete="off">
 					<label class="f"><span>${L('الاسم', 'Title')}</span><input name="title" dir="auto" maxlength="80" required></label>
 					<div class="f-row">
@@ -90,7 +91,7 @@ export default {
 				[num(items.length), L('فيلم ومسلسل', 'films & series')],
 				[num(eps), L('حلقة', 'episodes')],
 				[fav && fav[1] ? esc(L(fav[0].ar, fav[0].en)) : '–', L('أكتر نوع بنحبه', 'our favourite kind')],
-				[him === her ? '🤝' : name(him > her ? 'him' : 'her'), L('مين بيختار أكتر', 'who picks more')]
+				[him === her ? doodle('handshake', 34) : name(him > her ? 'him' : 'her'), L('مين بيختار أكتر', 'who picks more')]
 			].map(([n, l]) => `<div class="counter"><b>${n}</b><span>${l}</span></div>`).join('');
 		};
 		paint();

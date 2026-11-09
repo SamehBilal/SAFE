@@ -1,4 +1,5 @@
 import { L, T, t, esc, pageHead, related, App, $, $$, qs, longDate, DRAW_KINDS, REDUCE, parseDate, daysBetween } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
 import { setupNote } from './journal.js';
@@ -21,7 +22,7 @@ export default {
 	render() {
 		const k = DRAW_KINDS.find((x) => x.id === qs('k'));
 		if (k) this.title = { ar: k.ar, en: k.en };
-		const tabs = `<nav class="chips kinds-tabs" aria-label="${L('نوع السهرة', 'Kind of night')}">${DRAW_KINDS.map((x) => `<a class="chip${x === k ? ' is-on' : ''}" href="draw.html?k=${x.id}" style="--c:${x.color}">${x.emoji} ${esc(L(x.ar, x.en))}</a>`).join('')}</nav>`;
+		const tabs = `<nav class="chips kinds-tabs" aria-label="${L('نوع السهرة', 'Kind of night')}">${DRAW_KINDS.map((x) => `<a class="chip${x === k ? ' is-on' : ''}" href="draw.html?k=${x.id}" style="--c:${x.color}">${doodle(x.emoji, 18)} ${esc(L(x.ar, x.en))}</a>`).join('')}</nav>`;
 		const crumbs = [{ href: 'draw.html', ar: 'قرعة الليلة', en: 'Tonight’s draw' }, ...(k ? [{ href: '#', ar: k.ar, en: k.en }] : [])];
 
 		if (!k) return `
@@ -29,7 +30,7 @@ export default {
 			<section class="sec sec--top"><div class="wrap">
 				<div class="kinds">${DRAW_KINDS.map((x, n) => `
 					<a class="kind reveal" href="draw.html?k=${x.id}" style="--c:${x.color};--delay:${n * 0.07}s">
-						<span class="kind__e" aria-hidden="true">${x.emoji}</span><b>${esc(L(x.ar, x.en))}</b><small>${esc(L(x.dar, x.den))}</small>
+						<span class="kind__e" aria-hidden="true">${doodle(x.emoji, 54)}</span><b>${esc(L(x.ar, x.en))}</b><small>${esc(L(x.dar, x.den))}</small>
 						<em data-count="${x.id}"></em>
 					</a>`).join('')}
 				</div>
@@ -39,7 +40,7 @@ export default {
 			${related(['music', 'journal', 'wishes'])}`;
 
 		return `
-			${pageHead(`${k.emoji} ${L(k.ar, k.en)}`, L(k.dar, k.den), crumbs)}
+			${pageHead(L(k.ar, k.en), L(k.dar, k.den), crumbs)}
 			<div class="wrap">${tabs}</div>
 			<section class="sec sec--top"><div class="wrap">
 				<div class="draw" style="--c:${k.color}">
@@ -79,11 +80,11 @@ export default {
 		const night = (h) => {
 			const kk = DRAW_KINDS.find((x) => x.id === h.kind) || DRAW_KINDS[0];
 			return `<article class="night" style="--c:${kk.color}">
-				<span class="night__e" aria-hidden="true">${kk.emoji}</span>
+				<span class="night__e" aria-hidden="true">${doodle(kk.emoji, 30)}</span>
 				<div><b dir="auto">${esc(h.text)}</b><small>${longDate(h.date)} · ${esc(L(kk.ar, kk.en))}${h.by ? ` · ${name(h.by)}` : ''}</small>
 				${h.hearts ? `<span class="hearts-row" aria-label="${h.hearts}/5">${'♥'.repeat(h.hearts)}<i>${'♥'.repeat(5 - h.hearts)}</i></span>` : ''}
 				${h.note ? `<p dir="auto">${esc(h.note)}</p>` : ''}</div>
-				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">✏️ ${L('ارسموها', 'Sketch it')}</button>` : ''}
+				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">${doodle('pencil', 16)} ${L('ارسموها', 'Sketch it')}</button>` : ''}
 			</article>`;
 		};
 		const paintHistory = () => {
@@ -192,7 +193,7 @@ export default {
 			const ok = live.canWrite();
 			result.innerHTML = `
 				<small>${L('الليلة دي', 'Tonight it’s')}</small>
-				<b class="result__pick" dir="auto">${k.emoji} ${esc(label(x))}</b>
+				<b class="result__pick" dir="auto">${doodle(k.emoji, 40)} ${esc(label(x))}</b>
 				<div class="result__sketch" id="res-sketch"></div>
 				${ok ? `<form id="log" class="result__log">
 					<label class="f"><span>${L('حاجة عايزين نفتكرها؟', 'Anything to remember?')}</span><input name="note" dir="auto" maxlength="200"></label>
@@ -200,8 +201,8 @@ export default {
 					<p class="form-msg" id="log-msg" role="status"></p>
 				</form>` : ''}
 				<div class="result__acts">
-					<button type="button" class="btn btn--ghost" id="again">🔄 ${L('لفّوا تاني', 'Spin again')}</button>
-					<button type="button" class="btn btn--ghost" id="res-draw">✏️ ${esc(t(k.sketch))}</button>
+					<button type="button" class="btn btn--ghost" id="again">${doodle('refresh', 18)} ${L('لفّوا تاني', 'Spin again')}</button>
+					<button type="button" class="btn btn--ghost" id="res-draw">${doodle('pencil', 18)} ${esc(t(k.sketch))}</button>
 					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${L('عملناها ♥ سجلوها', 'We did it ♥ Log it')}</button>` : ''}
 				</div>`;
 			result.hidden = false;

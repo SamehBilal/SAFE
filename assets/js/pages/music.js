@@ -1,4 +1,5 @@
 import { L, T, esc, pageHead, related, App, $, $$, longDate } from '../shell.js';
+import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
 
@@ -23,7 +24,7 @@ export default {
 			<div class="sotd reveal" id="sotd"></div>
 			${ok ? '' : setupNote()}
 			<details class="composer reveal"${ok ? '' : ' hidden'}>
-				<summary><span>🎵</span> ${L('ضيفوا أغنية', 'Add a song')}</summary>
+				<summary><span>${doodle('music', 22)}</span> ${L('ضيفوا أغنية', 'Add a song')}</summary>
 				<form id="mu-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f f--grow"><span>${L('اسم الأغنية', 'Song')}</span><input name="song" dir="auto" required maxlength="120"></label>
@@ -42,7 +43,7 @@ export default {
 					<button class="chip" type="button" data-by="him">${L('اختيارات', 'Picked by')} ${T(App.story.him)}</button>
 					<button class="chip" type="button" data-by="her">${L('اختيارات', 'Picked by')} ${T(App.story.her)}</button>
 				</div>
-				<button class="btn btn--sm" type="button" id="mu-shuffle">🔀 ${L('شغلوا أي أغنية', 'Shuffle')}</button>
+				<button class="btn btn--sm" type="button" id="mu-shuffle">${doodle('shuffle', 18)} ${L('شغلوا أي أغنية', 'Shuffle')}</button>
 			</div>
 			<ol class="songs" id="mu-list"><li class="empty">${L('بنجيب الأغاني…', 'Fetching the songs…')}</li></ol>
 		</div></section>

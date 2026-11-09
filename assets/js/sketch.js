@@ -1,6 +1,7 @@
 /* A full-screen sketch pad. openSketch({ title }) resolves to a webp Blob, or null if cancelled.
    Finger, pen or mouse; pen pressure changes the line width. */
 import { L, esc } from './shell.js';
+import { doodle } from './doodles.js';
 
 const COLORS = ['#133447', '#0e6990', '#f2726f', '#c2185b', '#e39b2d', '#ffc94a', '#5a9e6f', '#8e5bd1', '#8b5a2b', '#ffffff'];
 const SIZES = [3, 7, 14];
@@ -23,9 +24,9 @@ export function openSketch({ title = '', hint = '' } = {}) {
 				<div class="sketch__colors">${COLORS.map((c, k) => `<button type="button" class="sw${k === 0 ? ' is-on' : ''}" data-color="${c}" style="--c:${c}" aria-label="${c}"></button>`).join('')}</div>
 				<div class="sketch__row">
 					${SIZES.map((s, k) => `<button type="button" class="sz${k === 1 ? ' is-on' : ''}" data-size="${s}" aria-label="${L('سُمك', 'Size')} ${s}"><i style="--s:${s}px"></i></button>`).join('')}
-					<button type="button" class="tool" data-act="eraser" aria-pressed="false" title="${L('أستيكة', 'Eraser')}">🧽</button>
+					<button type="button" class="tool" data-act="eraser" aria-pressed="false" title="${L('أستيكة', 'Eraser')}">${doodle('eraser', 22)}</button>
 					<button type="button" class="tool" data-act="undo" title="${L('رجوع', 'Undo')}">↶</button>
-					<button type="button" class="tool" data-act="clear" title="${L('امسحوا الكل', 'Clear')}">🗑️</button>
+					<button type="button" class="tool" data-act="clear" title="${L('امسحوا الكل', 'Clear')}">${doodle('trash', 22)}</button>
 				</div>
 			</footer>`;
 		document.body.append(box);
