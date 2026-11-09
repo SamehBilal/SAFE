@@ -1,7 +1,7 @@
 /* Anniversary trips: the Egypt map, the hanging memory wall, a trip's own page, and the footer scene. */
 
 /* ---------- The map ---------- */
-.f select { font: 400 1rem/1.6 var(--f-body); color: var(--blue-ink); border: 2px solid var(--line); border-radius: 14px; padding: 10px 14px; background: #fff; min-height: 46px; width: 100%; }
+.f select { font: 400 1rem/1.6 var(--f-body); color: var(--text); border: 2px solid var(--line); border-radius: 14px; padding: 10px 14px; background: var(--card); min-height: 46px; width: 100%; }
 .trip-stats { margin-bottom: 28px; }
 .trip-map { display: grid; gap: 20px; align-items: start; }
 @media (min-width: 900px) { .trip-map { grid-template-columns: 1.5fr 1fr; } }
@@ -18,7 +18,7 @@
 .trip-map__side h2 { margin-bottom: 6px; }
 .trip-pick { font-size: 1.2rem; min-height: 1.6em; margin: 12px 0 0; }
 .trip-pick b { color: var(--coral-deep); font: 400 1.8rem/1.3 var(--f-script); }
-.trip-mini { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin-bottom: 8px; border-radius: 14px; background: var(--paper); text-decoration: none; color: var(--blue-ink); }
+.trip-mini { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin-bottom: 8px; border-radius: 14px; background: var(--paper); text-decoration: none; color: var(--text); }
 .trip-mini b { font: 1.5rem var(--f-label); color: var(--coral-deep); }
 .trip-mini span { flex: 1; }
 .trip-mini:hover { background: var(--blush); }
@@ -31,7 +31,7 @@
 @media (min-width: 900px) { .hang__col:nth-child(even) { transform: translateY(-40px); } .hang__col:nth-child(3n) { transform: translateY(24px); } }
 .hang__wire { position: absolute; inset: 0 auto 0 50%; translate: -50% 0; width: 37px; height: 100%; opacity: 0.8; }
 .hang__light { position: absolute; left: 50%; width: 0.6rem; height: 1.5rem; border-radius: 100%; background: #fff3e8; transform: translateX(var(--x)) rotate(var(--r)); }
-.hang__light::before { content: ''; position: absolute; bottom: 0; left: 50%; translate: -50% 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #ffeb3b, inset 0 -0.35rem 0.6rem #eebd39, 0 1rem 5rem 2rem rgba(255, 174, 71, 0.45), 0 1rem 4rem 6rem rgba(234, 162, 58, 0.08); animation: glow 3s ease-in-out infinite; animation-delay: calc(var(--k) * -0.4s); }
+.hang__light::before { content: ''; position: absolute; bottom: 0; left: 50%; translate: -50% 0; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--card); box-shadow: 0 0 10px #ffeb3b, inset 0 -0.35rem 0.6rem #eebd39, 0 1rem 5rem 2rem rgba(255, 174, 71, 0.45), 0 1rem 4rem 6rem rgba(234, 162, 58, 0.08); animation: glow 3s ease-in-out infinite; animation-delay: calc(var(--k) * -0.4s); }
 @keyframes glow { 50% { opacity: 0.6; } }
 .polaroid { position: absolute; top: var(--top); left: 50%; z-index: 2; display: grid; gap: 0; width: min(150px, 86%); padding: 8px 8px 0; background: #fff; border: 3px solid #000; box-shadow: 0 2px 40px rgba(255, 255, 255, 0.25); color: #111; text-decoration: none; margin: 0; transform: translateX(-50%) rotate(var(--tilt)); transition: transform 0.35s var(--ease-pop); }
 .polaroid::before { content: ''; position: absolute; top: -3rem; left: 40%; width: 1.3rem; height: 4.6rem; border-radius: 3px; background: linear-gradient(to bottom, #c28f52, #edc491 73%, #222 73%, #222 78%, #edc491 78%); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.6); transform: rotate(var(--peg)); }
@@ -51,7 +51,7 @@
 .trip-hero__facts { display: grid; gap: 8px; }
 .trip-hero__facts p { margin: 0; }
 .memories { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); margin-top: 18px; }
-.memory { background: #fffdf8; border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c, var(--coral)); }
+.memory { background: var(--card-2); border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c, var(--coral)); }
 .memory--him { --c: var(--blue); }
 .memory p { margin: 0 0 6px; white-space: pre-line; font: 1.4rem/1.4 var(--f-hand); }
 .memory img { width: 100%; border-radius: 10px; margin-bottom: 8px; cursor: zoom-in; }
@@ -61,64 +61,42 @@
 .file-btn { position: relative; overflow: hidden; }
 .file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-/* ---------- Footer: the four of us as pebbles, at sunset by the Nile ---------- */
-.ft-scene { position: relative; line-height: 0; background: #f6c37c; }
-.ft-scene svg { display: block; width: 100%; height: clamp(230px, 34vw, 380px); }
+/* ---------- Footer: the sketch ---------- */
+.ft-scene { position: relative; line-height: 0; background: var(--sk-paper); background-image: radial-gradient(120% 90% at 50% 0%, transparent 60%, rgba(120, 90, 40, 0.08)); }
+.ft-scene svg { display: block; width: 100%; height: clamp(220px, 30vw, 340px); }
+.sk-ink { stroke: var(--sk-ink); }
+.sk-ghost { opacity: 0.45; }
+.sk-hatch { opacity: 0.55; }
+.sk-sun { stroke: #e39b2d; }
+.sk-red { stroke: #d9534f; }
+.sk-blue { stroke: #3a7ca5; }
+.sk-green { stroke: #4f7a3a; }
+.sk-wash { opacity: 0.55; mix-blend-mode: multiply; }
+.sk-label { fill: var(--sk-ink); font: 700 30px var(--f-hand); }
+:root:lang(ar) .sk-label { font-size: 26px; }
+:root[data-theme='dark'] .sk-wash { opacity: 0.6; mix-blend-mode: normal; }
+:root[data-theme='dark'] .sk-blue { stroke: #7cc0e6; }
+:root[data-theme='dark'] .sk-green { stroke: #9cc77e; }
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) .sk-wash { opacity: 0.6; mix-blend-mode: normal; }
+	:root:not([data-theme='light']) .sk-blue { stroke: #7cc0e6; }
+	:root:not([data-theme='light']) .sk-green { stroke: #9cc77e; }
+}
 .fs-sun { animation: sun-glow 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes sun-glow { 50% { transform: scale(1.06); } }
-.fs-cloud { animation: drift 60s linear infinite; }
-.fs-cloud.c2 { animation-duration: 90s; animation-delay: -40s; }
+@keyframes sun-glow { 50% { transform: scale(1.05) rotate(8deg); } }
+.fs-cloud { animation: drift 70s linear infinite; }
+.fs-cloud.c2 { animation-duration: 100s; animation-delay: -45s; }
 @keyframes drift { from { transform: translateX(-260px); } to { transform: translateX(1460px); } }
-.fs-boat { animation: sail 46s linear infinite; }
+.fs-boat { animation: sail 50s linear infinite; }
 @keyframes sail { from { transform: translateX(1300px); } to { transform: translateX(-200px); } }
 .fs-boat-bob { animation: bob 2.6s ease-in-out infinite; transform-box: fill-box; }
-.fs-water { animation: shimmer 4s ease-in-out infinite; }
-@keyframes shimmer { 50% { opacity: 0.55; } }
-.fs-bird { animation: fly 22s linear infinite; }
-.fs-bird.b2 { animation-delay: -9s; animation-duration: 28s; }
+.fs-bird { animation: fly 24s linear infinite; }
+.fs-bird.b2 { animation-delay: -10s; animation-duration: 30s; }
 @keyframes fly { from { transform: translate(-80px, 0); } 50% { transform: translate(620px, -20px); } to { transform: translate(1300px, 10px); } }
-.fs-wing { animation: flap 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
-@keyframes flap { to { transform: scaleY(-0.6); } }
 .fs-family .pb-person { cursor: pointer; transition: transform 0.35s var(--ease-pop); transform-box: fill-box; transform-origin: 50% 100%; outline: none; }
-.fs-family .pb-person:hover, .fs-family .pb-person:focus-visible { transform: translateY(-8px); }
+.fs-family .pb-person:hover, .fs-family .pb-person:focus-visible { transform: translateY(-8px) rotate(-2deg); }
 .fs-heart { animation: rise 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes rise { 0% { transform: translateY(10px) scale(0.6); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-40px) scale(1.1); opacity: 0; } }
-
-/* ---------- Watch stats (from stats.html): staggered colour blocks ---------- */
-.mv--arabic { background: #f4f482; color: #206466; }
-.mv--foreign { background: #31bfda; color: #fdfdec; }
-.mv--kids { background: #15e6cd; color: #0b4d4f; }
-.mv--other { background: #bdf195; color: #206466; }
-.binge { position: relative; display: grid; gap: 10px; margin-top: 32px; padding: clamp(16px, 4vw, 40px); border-radius: 28px; background: #cfe2e8; overflow: hidden; }
-.binge__title { margin: 0; color: #206466; font: 800 clamp(2.2rem, 7vw, 4.2rem)/1.05 var(--f-body); text-transform: uppercase; letter-spacing: -0.02em; }
-.binge__title small { display: block; margin-top: 10px; font: 400 1rem/1.5 var(--f-body); text-transform: none; color: #2d5d68; }
-.binge__title small span { font: 700 1.5rem var(--f-hand); color: #206466; }
-.binge__legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 6px 0 10px; font-weight: 600; color: #206466; }
-.binge__legend span { display: inline-flex; align-items: center; gap: 8px; }
-.binge__legend i { width: 1.4rem; height: 1.4rem; display: inline-block; border-radius: 4px; }
-.binge__box { padding: 1.4rem; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; min-height: 160px; box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12), 0 20px 30px rgba(0, 0, 0, 0.05); transition: transform 0.3s var(--ease-pop); }
-.binge__box:hover { transform: translateY(-4px) rotate(-0.5deg); }
-.binge__box h4 { margin: 0; font: 800 clamp(1.4rem, 2.6vw, 2.2rem)/1.05 var(--f-body); text-transform: uppercase; overflow-wrap: anywhere; }
-.binge__box p { margin: 0; font-size: 0.95rem; }
-.binge__hearts { letter-spacing: 2px; } .binge__hearts i { font-style: normal; opacity: 0.35; }
-.binge__note { font: 1.25rem/1.3 var(--f-hand) !important; }
-.binge__by { font-size: 0.8rem !important; opacity: 0.85; } .binge__by .link { color: inherit; padding: 0; }
-@media (min-width: 700px) {
-	.binge { grid-template-columns: repeat(6, 1fr); padding-bottom: 80px; }
-	.binge__title, .binge__legend, .binge .empty { grid-column: 1 / -1; }
-	.binge__box { grid-column: span 2; aspect-ratio: 1; }
-	.binge__box:nth-of-type(4n + 1) { grid-column: span 3; aspect-ratio: auto; min-height: 220px; }
-	.binge__box:nth-of-type(3n + 2) { transform: translateY(24px); }
-	.binge__box:nth-of-type(5n + 3) { transform: translateY(-16px); }
-}
-@media (min-width: 1024px) {
-	.binge { grid-template-columns: 90px repeat(12, 1fr); column-gap: 0; row-gap: 0; }
-	.binge__title { grid-column: 1; grid-row: 1 / span 20; writing-mode: vertical-rl; transform: rotate(180deg); align-self: start; font-size: 3.4rem; }
-	.binge__title br, .binge__title small { display: none; }
-	:root[dir="rtl"] .binge__title { transform: none; }
-	.binge__legend, .binge .empty { grid-column: 2 / -1; }
-	.binge__box { grid-column: span 3; margin: 6px; }
-	.binge__box:nth-of-type(4n + 1) { grid-column: span 4; }
-	.binge__box:nth-of-type(4n + 2) { grid-column: span 5; aspect-ratio: auto; transform: translate(-10%, 18%); z-index: 2; }
-	.binge__box:nth-of-type(4n + 3) { transform: translateY(-12%); }
-}
+@keyframes rise { 0% { transform: translateY(10px) scale(0.6); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(-36px) scale(1.1); opacity: 0; } }
+/* the map's sea and the watch board, a little dimmer at night */
+:root[data-theme='dark'] .trip-map__map { background: radial-gradient(120% 90% at 30% 20%, #1d3640, #152a33 60%, #0f2129); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .trip-map__map { background: radial-gradient(120% 90% at 30% 20%, #1d3640, #152a33 60%, #0f2129); } }

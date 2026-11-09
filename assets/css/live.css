@@ -1,11 +1,11 @@
 /* The pages you write together: journal, songs, draws, settings, and the sketch pad. */
 
 /* ---------- Forms ---------- */
-.panel { background: #fff; border-radius: var(--radius); padding: clamp(18px, 4vw, 28px); box-shadow: var(--shadow); }
+.panel { background: var(--card); border-radius: var(--radius); padding: clamp(18px, 4vw, 28px); box-shadow: var(--shadow); }
 .panel h2 { font: 400 1.9rem/1.3 var(--f-script); color: var(--blue); margin: 0 0 12px; }
 .muted { color: var(--muted); }
-.f { display: grid; gap: 4px; margin-bottom: 14px; font-weight: 700; font-size: 0.92rem; color: var(--blue-ink); }
-.f input, .f textarea, .search, .add input { font: 400 1rem/1.6 var(--f-body); color: var(--blue-ink); border: 2px solid var(--line); border-radius: 14px; padding: 10px 14px; background: #fff; outline: none; width: 100%; min-height: 46px; transition: border-color 0.2s, box-shadow 0.2s; }
+.f { display: grid; gap: 4px; margin-bottom: 14px; font-weight: 700; font-size: 0.92rem; color: var(--text); }
+.f input, .f textarea, .search, .add input { font: 400 1rem/1.6 var(--f-body); color: var(--text); border: 2px solid var(--line); border-radius: 14px; padding: 10px 14px; background: var(--card); outline: none; width: 100%; min-height: 46px; transition: border-color 0.2s, box-shadow 0.2s; }
 .f textarea { resize: vertical; font-size: 1.05rem; line-height: 1.8; }
 .f input:focus, .f textarea:focus, .search:focus, .add input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(14, 105, 144, 0.12); }
 .f-row { display: flex; flex-wrap: wrap; gap: 0 12px; }
@@ -17,11 +17,11 @@
 .check input { width: 20px; height: 20px; accent-color: var(--coral); }
 .link--danger { color: var(--coral-deep); }
 
-.setup-note { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 18px; background: #fff8e6; border: 2px dashed #f0c96a; color: var(--blue-ink); text-decoration: none; margin-bottom: 22px; font-size: 1.4rem; }
+.setup-note { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 18px; background: var(--warn-bg); border: 2px dashed #f0c96a; color: var(--text); text-decoration: none; margin-bottom: 22px; font-size: 1.4rem; }
 .setup-note > span:nth-child(2) { flex: 1; display: grid; font-size: 1rem; }
 .setup-note small { color: var(--muted); }
 
-.composer { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 26px; overflow: hidden; }
+.composer { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 26px; overflow: hidden; }
 .composer summary { list-style: none; cursor: pointer; padding: 16px 20px; font-weight: 800; font-size: 1.1rem; color: var(--blue); display: flex; gap: 10px; align-items: center; }
 .composer summary::-webkit-details-marker { display: none; }
 .composer summary::after { content: '+'; margin-inline-start: auto; font-size: 1.6rem; line-height: 1; transition: transform 0.25s; }
@@ -43,7 +43,7 @@
 
 /* ---------- Journal ---------- */
 .journal__month { font: 1.4rem var(--f-label); letter-spacing: 0.04em; color: var(--muted); margin: 28px 0 10px; border-bottom: 2px dashed var(--line); padding-bottom: 4px; }
-.entry { --c: var(--coral); background: #fffdf8; border-radius: 18px; padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c); scroll-margin-top: calc(var(--hd) + 20px); }
+.entry { --c: var(--coral); background: var(--card-2); border-radius: 18px; padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c); scroll-margin-top: calc(var(--hd) + 20px); }
 .entry--him { --c: var(--blue); }
 .entry header { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
 .entry__mood { font-size: 2rem; }
@@ -62,14 +62,14 @@
 .sotd p { margin: 4px 0 8px; opacity: 0.85; max-width: 46ch; }
 .sotd .song__player { width: 100%; margin-top: 12px; }
 .songs { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.song { display: flex; gap: 14px; align-items: flex-start; background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); scroll-margin-top: calc(var(--hd) + 20px); }
+.song { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); scroll-margin-top: calc(var(--hd) + 20px); }
 .song.flash { animation: flash 1.2s; }
 @keyframes flash { 30% { box-shadow: 0 0 0 4px var(--coral), var(--shadow); } }
 .song__n { font: 1.6rem/1.2 var(--f-label); color: var(--coral); min-width: 1.6em; text-align: center; }
 .song__body { flex: 1; display: grid; gap: 2px; min-width: 0; }
 .song__body b { font-size: 1.1rem; }
 .song__body small { color: var(--muted); }
-.song__body p { margin: 4px 0 0; font: 1.35rem/1.35 var(--f-hand); color: var(--blue-ink); }
+.song__body p { margin: 4px 0 0; font: 1.35rem/1.35 var(--f-hand); }
 .song__body em { font-style: normal; font-size: 0.8rem; color: var(--muted); }
 .song__acts { display: grid; justify-items: center; gap: 4px; }
 .play { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--coral); color: #fff; font-size: 1.1rem; display: grid; place-items: center; cursor: pointer; text-decoration: none; box-shadow: 0 4px 0 var(--coral-deep); }
@@ -99,7 +99,7 @@
 .wheel__hub { position: absolute; inset: 0; margin: auto; width: 84px; height: 84px; border-radius: 50%; border: 5px solid #fff; background: var(--blue-ink); color: #fff; font: 1.5rem var(--f-label); cursor: pointer; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); z-index: 2; transition: transform 0.2s var(--ease-pop); }
 .wheel__hub:hover:not(:disabled) { transform: scale(1.08); }
 .wheel__hub:disabled { opacity: 0.8; cursor: progress; }
-.result { background: #fff; border-radius: 26px; padding: 24px; box-shadow: var(--shadow-lg); text-align: center; border-top: 6px solid var(--c); animation: stage-in 0.6s var(--ease-pop) both; width: 100%; }
+.result { background: var(--card); border-radius: 26px; padding: 24px; box-shadow: var(--shadow-lg); text-align: center; border-top: 6px solid var(--c); animation: stage-in 0.6s var(--ease-pop) both; width: 100%; }
 .result > small { color: var(--muted); font-weight: 700; }
 .result__pick { display: block; font: 400 clamp(2rem, 8vw, 3rem)/1.3 var(--f-script); color: var(--c); margin: 4px 0 14px; }
 .result__sketch img { max-width: 260px; margin: 0 auto 12px; border-radius: 12px; box-shadow: var(--shadow); }
@@ -123,7 +123,7 @@
 .add input { min-height: 42px; }
 .nights { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
 .nights--col { grid-template-columns: 1fr; }
-.night { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c); }
+.night { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); border-inline-start: 5px solid var(--c); }
 .night__e { font-size: 1.8rem; }
 .night > div { flex: 1; display: grid; gap: 2px; min-width: 160px; }
 .night small { color: var(--muted); }
@@ -146,16 +146,16 @@
 
 /* ---------- Sketch pad ---------- */
 .sketch { position: fixed; inset: 0; z-index: 400; background: #e9eef2; display: grid; grid-template-rows: auto auto 1fr auto; padding: env(safe-area-inset-top, 0px) 0 var(--safe-b); animation: fade 0.2s; }
-.sketch__bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: #fff; box-shadow: var(--shadow); }
+.sketch__bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: var(--card); box-shadow: var(--shadow); }
 .sketch__title { font: 400 1.4rem/1.3 var(--f-script); color: var(--blue); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sketch__hint { margin: 8px 12px 0; text-align: center; font: 1.4rem/1.3 var(--f-hand); color: var(--coral-deep); }
 .sketch__stage { margin: 10px; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); min-height: 0; }
 .sketch__stage canvas { display: block; touch-action: none; cursor: crosshair; }
-.sketch__tools { background: #fff; padding: 10px 12px; display: grid; gap: 8px; box-shadow: 0 -4px 16px rgba(19, 52, 71, 0.08); }
+.sketch__tools { background: var(--card); padding: 10px 12px; display: grid; gap: 8px; box-shadow: 0 -4px 16px rgba(19, 52, 71, 0.08); }
 .sketch__colors, .sketch__row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .sw { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #fff; background: var(--c); box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
 .sw.is-on { box-shadow: 0 0 0 3px var(--blue-ink); transform: scale(1.1); }
-.sz, .tool { width: 42px; height: 42px; border-radius: 12px; border: 2px solid var(--line); background: #fff; display: grid; place-items: center; cursor: pointer; font-size: 1.2rem; }
+.sz, .tool { width: 42px; height: 42px; border-radius: 12px; border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; cursor: pointer; font-size: 1.2rem; }
 .sz i { width: var(--s); height: var(--s); border-radius: 50%; background: var(--blue-ink); }
 .sz.is-on, .tool[aria-pressed='true'] { border-color: var(--coral); background: var(--blush); }
 

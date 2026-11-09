@@ -204,6 +204,15 @@ function fatal(msg) {
 	stage(`<div class="gate__card"><h1 class="gate__title">${L('أوبس', 'Oops')}</h1><p>${esc(msg)}</p><button class="btn" onclick="location.reload()">${L('جربي تاني', 'Try again')}</button></div>`, 'gate');
 }
 
+const THEME = 'us.theme';
+const isDark = () => document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+const themeBtn = () => `<button class="icon-btn theme-toggle" type="button" aria-pressed="${isDark()}" aria-label="${L('الوضع الليلي', 'Dark mode')}" title="${L('ليلي / نهاري', 'Dark / light')}"><span aria-hidden="true">${isDark() ? '☀️' : '🌙'}</span></button>`;
+function toggleTheme() {
+	const next = isDark() ? 'light' : 'dark';
+	document.documentElement.dataset.theme = next;
+	store.set(THEME, next);
+	for (const b of $$('.theme-toggle')) { b.setAttribute('aria-pressed', String(next === 'dark')); b.firstElementChild.textContent = next === 'dark' ? '☀️' : '🌙'; }
+}
 const langBtn = () => `<button class="lang-toggle" type="button" lang="${App.lang === 'ar' ? 'en' : 'ar'}">${App.lang === 'ar' ? 'English' : 'عربي'}</button>`;
 
 /* ------------------------------------------------------------------ 1. the gate */
@@ -218,7 +227,7 @@ function runGate() {
 		const q = qsList[i];
 		const last = i === qsList.length - 1;
 		const el = stage(`
-			<div class="stage__lang">${langBtn()}</div>
+			<div class="stage__lang">${themeBtn()}${langBtn()}</div>
 			<form class="gate__card" id="gate-form" autocomplete="off" novalidate>
 				<svg class="gate__lock" viewBox="0 0 64 72" aria-hidden="true">
 					<path class="gate__shackle" d="M18 32V22a14 14 0 0 1 28 0v10" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
@@ -250,6 +259,7 @@ function runGate() {
 		const form = $('#gate-form', el);
 		const input = $('#gate-input', el);
 		$('.lang-toggle', el).onclick = () => setLang(App.lang === 'ar' ? 'en' : 'ar');
+		$('.theme-toggle', el).onclick = toggleTheme;
 		$('#gate-hint-btn', el)?.addEventListener('click', (e) => { $('#gate-hint', el).hidden = false; e.currentTarget.hidden = true; });
 		$('#gate-back', el)?.addEventListener('click', () => { answers[i] = input.value; i--; wrong = false; draw(true); });
 		input.oninput = () => { $('#gate-msg', el).textContent = ''; };
@@ -571,7 +581,7 @@ function renderChrome() {
 				${PAGES.map((p, k) => `<a href="${p.href}" style="--i:${k}"${p.href === here ? ' aria-current="page"' : ''}>${icon(p.ic)}<span>${esc(L(p.ar, p.en))}</span><em aria-hidden="true">${num(k + 1)}</em></a>`).join('')}
 			</nav>
 			${megaHTML(s)}
-			<div class="tools">${langBtn()}</div>
+			<div class="tools">${themeBtn()}${langBtn()}</div>
 		</div>`;
 	const setMenu = (on) => {
 		header.classList.toggle('menu-open', on);
@@ -582,6 +592,7 @@ function renderChrome() {
 	$('.menu-btn', header).onclick = () => setMenu(!header.classList.contains('menu-open'));
 	$('.pnav', header).onclick = (ev) => { if (ev.target.closest('a')) setMenu(false); };
 	$('.lang-toggle', header).onclick = () => setLang(App.lang === 'ar' ? 'en' : 'ar');
+	$('.theme-toggle', header).onclick = toggleTheme;
 	wireMega(header);
 
 	let main = $('#main');
@@ -627,79 +638,107 @@ function pebble(cx, cy, rx, ry, rot = 0, seed = 1) {
 	return d + 'Z';
 }
 
-const PEBBLE_COLOURS = [['pbHoney', '#f1d29a', '#d3a25c', '#9c6a2c'], ['pbOchre', '#efc77f', '#c9953d', '#8f6220'], ['pbAmber', '#e9b56a', '#c0863a', '#7f5420'],
-	['pbSage', '#eef0dc', '#cfd3b4', '#9da184'], ['pbMoss', '#cfd2b4', '#a7ad8a', '#717757'], ['pbSand', '#efe1bf', '#d2bd8e', '#9e8858'],
-	['pbOrange', '#f3c27a', '#d99a44', '#a0661f'], ['pbCream', '#fbf3df', '#e6d6b2', '#b4a37d']];
-
+/* The footer scene, drawn by hand: pencil lines that wobble (two strokes each, never quite on top of each
+   other), watercolour washes that miss the lines a little, hatching for shadows, and our names written in with
+   arrows — the four pebbles from the portrait, sitting by the Nile. In dark mode it turns to chalk. */
 function familyScene(s) {
 	const members = s.family?.members || [];
 	const grown = members.filter((m) => !m.kid);
 	const kids = members.filter((m) => m.kid);
 	const [dad, mum] = grown;
+	let clipN = 0;
+	const f = (v) => v.toFixed(1);
+
+	// a pencil line: a firm stroke and a lighter one just beside it, each roughened differently
+	const ink = (d, cls = 'sk-ink', w = 2.2) =>
+		`<path d="${d}" class="${cls}" fill="none" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" filter="url(#skA)"/>` +
+		`<path d="${d}" class="${cls} sk-ghost" fill="none" stroke-width="${f(w * 0.6)}" stroke-linecap="round" stroke-linejoin="round" transform="translate(1.6 -1.2)" filter="url(#skB)"/>`;
+	// a watercolour wash, nudged off the lines with ragged edges
+	const wash = (d, color, dx = 4, dy = 3) => `<path d="${d}" fill="${color}" class="sk-wash" transform="translate(${dx} ${dy})" filter="url(#skW)"/>`;
+	// pencil hatching inside a shape
+	const hatch = (clip, x0, y0, x1, y1, gap = 7, cls = 'sk-ink') => {
+		const id = `skc${clipN++}`;
+		const h = y1 - y0;
+		let d = '';
+		for (let x = x0 - h; x < x1; x += gap) d += `M${f(x)} ${f(y1)}L${f(x + h)} ${f(y0)}`;
+		return `<clipPath id="${id}"><path d="${clip}"/></clipPath><path d="${d}" clip-path="url(#${id})" class="${cls} sk-hatch" fill="none" stroke-width="1.1" stroke-linecap="round" filter="url(#skA)"/>`;
+	};
+	const circle = (cx, cy, r) => `M${cx + r} ${cy}a${r} ${r} 0 1 0 ${-2 * r} 0a${r} ${r} 0 1 0 ${2 * r} 0`;
+
+	/* a pebble: wash, outline, and one curved stroke on its shadow side for roundness */
+	const DX = 288, DY = -24; // the portrait's layout, moved to the middle of the page
+	const stone = (cx, cy, rx, ry, rot, seed, color) => {
+		cx += DX; cy += DY;
+		const d = pebble(cx, cy, rx, ry, rot, seed);
+		const c = `M${f(cx + rx * 0.62)} ${f(cy - ry * 0.25)}Q${f(cx + rx * 0.82)} ${f(cy + ry * 0.55)} ${f(cx + rx * 0.05)} ${f(cy + ry * 0.82)}`;
+		return wash(d, color, 3, 2) + ink(d) + ink(c, 'sk-ink', 1.2);
+	};
 	const who = (m, inner, k) => (m
 		? `<a class="pb-person" href="member.html?id=${esc(m.id)}" style="--k:${k}"><title>${esc(t(m.name))}</title>${inner}</a>`
 		: `<g class="pb-person" style="--k:${k}">${inner}</g>`);
-	const stone = (d, fill) => `<path d="${d}" fill="url(#${fill})" filter="url(#pbShadow)"/>`;
-	// the shine on each stone, top-left
-	const shine = (cx, cy, r) => `<ellipse cx="${(cx - r * 0.35).toFixed(1)}" cy="${(cy - r * 0.45).toFixed(1)}" rx="${(r * 0.32).toFixed(1)}" ry="${(r * 0.18).toFixed(1)}" fill="#fff" opacity=".35" transform="rotate(-30 ${cx} ${cy})"/>`;
 
 	const people = [
-		// him: a big honey stone, head up to the side, his arm reaching across to her
-		who(dad, stone(pebble(238, 296, 39, 53, -8, 3), 'pbHoney') + shine(238, 296, 39)
-			+ stone(pebble(255, 213, 22, 25, 12, 5), 'pbOchre') + shine(255, 213, 22)
-			+ stone(pebble(264, 290, 15, 9, 38, 8), 'pbAmber'), 0),
-		// her: a pale sage stone with a grey-green head, cradling the baby
-		who(mum, stone(pebble(318, 298, 34, 49, 4, 11), 'pbSage') + shine(318, 298, 34)
-			+ stone(pebble(301, 232, 21, 21, 0, 13), 'pbMoss') + shine(301, 232, 21), 1),
-		// Fahd, standing beside his mother
-		kids[0] ? who(kids[0], stone(pebble(380, 310, 26, 31, 6, 17), 'pbSand') + shine(380, 310, 26)
-			+ stone(pebble(357, 266, 15, 15, 0, 19), 'pbOrange') + shine(357, 266, 15), 2) : '',
-		// Abdulrahman, a tiny stone in her arms, her arm wrapped round him
-		kids[1] ? who(kids[1], stone(pebble(298, 300, 17, 10, -18, 23), 'pbCream')
-			+ stone(pebble(281, 289, 8.5, 8.5, 0, 29), 'pbOrange') + shine(281, 289, 8.5), 3) : '',
-		mum ? `<path d="${pebble(306, 313, 15, 8, -12, 31)}" fill="url(#pbAmber)" filter="url(#pbShadow)"/>` : ''
+		who(dad, stone(238, 296, 39, 53, -8, 3, '#e3b46a') + stone(255, 213, 22, 25, 12, 5, '#d99a44') + stone(264, 290, 15, 9, 38, 8, '#c98a3a'), 0),
+		who(mum, stone(318, 298, 34, 49, 4, 11, '#c9cfa6') + stone(301, 232, 21, 21, 0, 13, '#9fa77f'), 1),
+		kids[0] ? who(kids[0], stone(380, 310, 26, 31, 6, 17, '#e2cf9d') + stone(357, 266, 15, 15, 0, 19, '#e6a24c'), 2) : '',
+		kids[1] ? who(kids[1], stone(298, 300, 17, 10, -18, 23, '#f1e3c0') + stone(281, 289, 8.5, 8.5, 0, 29, '#e6a24c'), 3) : '',
+		mum ? stone(306, 313, 15, 8, -12, 31, '#c98a3a') : ''
 	].join('');
-	// any more children stand in a row to the right
-	const more = kids.slice(2).map((m, k) => who(m, stone(pebble(420 + k * 26, 320, 12, 16, 0, 41 + k), 'pbSand')
-		+ stone(pebble(418 + k * 26, 297, 8, 8, 0, 47 + k), 'pbOrange'), 4 + k)).join('');
+	const more = kids.slice(2).map((m, k) => who(m, stone(420 + k * 26, 320, 12, 16, 0, 41 + k, '#e2cf9d') + stone(418 + k * 26, 297, 8, 8, 0, 47 + k, '#e6a24c'), 4 + k)).join('');
 
-	const palm = (x, h, flip = 1) => `<g transform="translate(${x} 300) scale(${flip} 1)"><path d="M0 0c-2-${h * 0.4}-6-${h * 0.75}-2-${h}" fill="none" stroke="#5b3a29" stroke-width="7" stroke-linecap="round"/>
-		<g fill="#3e5a2a" transform="translate(-2 -${h})">${[-150, -115, -70, -30, 10, 50].map((r) => `<path d="M0 0c22-8 46-4 64 10-24-4-44-2-64-10Z" transform="rotate(${r})"/>`).join('')}</g></g>`;
-	return `<svg class="fs" viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax slice" role="img" aria-label="${esc(L('إحنا الأربعة حجارة صغيرة قاعدين على الرملة جنب النيل وقت الغروب', 'The four of us as pebbles, sitting on the sand by the Nile at sunset'))}">
+	/* names written beside each of us, with a little arrow */
+	const label = (m, x, y, d) => (m ? `<text class="sk-label" x="${x}" y="${y}" text-anchor="middle">${esc(t(m.name))}</text>${ink(d, 'sk-ink', 1.4)}` : '');
+	const labels = label(dad, 430, 236, 'M450 244q22 4 34 20m0 0l-1-9m1 9l-9-2')
+		+ label(mum, 520, 166, 'M548 172q24 4 32 26m0 0l1-9m-1 9l-8-4')
+		+ label(kids[0], 770, 240, 'M744 246q-30 2-44 18m0 0l9-2m-9 2l1-9')
+		+ label(kids[1], 470, 352, 'M500 340q40-6 70-46m0 0l-9 3m9-3l-1 9');
+
+	/* pyramids: outline, sand wash, hatching on the shaded face */
+	const pyramid = (x, w, h) => {
+		const base = 244, apex = `${x + w / 2} ${base - h}`;
+		const d = `M${x} ${base}L${apex}L${x + w} ${base}`;
+		const face = `M${apex}L${x + w} ${base}L${x + w / 2 + w * 0.08} ${base}Z`;
+		return wash(`${d}Z`, '#e8c48a', 5, 2) + hatch(face, x + w / 2, base - h, x + w, base, 6) + ink(d) + ink(`M${apex}L${x + w / 2 + w * 0.08} ${base}`, 'sk-ink', 1.3);
+	};
+	const palm = (x, h, lean = 1) => {
+		const tx = x + 6 * lean, ty = 244 - h;
+		const trunk = `M${x} 244q${-6 * lean} ${-h * 0.5} ${6 * lean} ${-h}`;
+		const ticks = Array.from({ length: Math.floor(h / 12) }, (_, k) => `M${f(x - 3 + lean * k * 0.4)} ${244 - 10 - k * 12}l7 -3`).join('');
+		const fronds = [[-46, 6], [-38, -14], [-14, -24], [16, -22], [40, -10], [48, 8]].map(([dx, dy]) => `M${tx} ${ty}q${f(dx * 0.5)} ${dy - 14} ${dx} ${dy}`).join('');
+		return wash(`M${tx - 40} ${ty}c10-26 70-26 80 0c-20 10-60 10-80 0Z`, '#9cbb7a', 0, 4) + ink(trunk, 'sk-ink', 2.4) + ink(ticks, 'sk-ink', 1) + ink(fronds, 'sk-green', 2);
+	};
+	const waves = [[60, 262], [210, 280], [380, 268], [540, 288], [700, 264], [860, 282], [1010, 268], [1120, 286], [300, 292], [960, 296]]
+		.map(([x, y]) => `M${x} ${y}q8-6 16 0t16 0t16 0`).join('');
+	const rays = Array.from({ length: 12 }, (_, k) => {
+		const a = (k / 12) * Math.PI * 2;
+		return `M${f(880 + Math.cos(a) * 46)} ${f(118 + Math.sin(a) * 46)}L${f(880 + Math.cos(a) * 62)} ${f(118 + Math.sin(a) * 62)}`;
+	}).join('');
+	const cloud = (x, y, k = 1) => `M${x} ${y}c${10 * k}-${18 * k} ${34 * k}-${18 * k} ${40 * k}-${4 * k}c${12 * k}-${12 * k} ${34 * k}-${6 * k} ${32 * k} ${8 * k}c${12 * k} ${2 * k} ${12 * k} ${18 * k}-${4 * k} ${18 * k}H${x}c-${14 * k} 0-${16 * k}-${18 * k} 0-${22 * k}Z`;
+	const heart = 'M612 160c-5-7-16-4-16 4 0 9 16 18 16 18s16-9 16-18c0-8-11-11-16-4Z';
+
+	return `<svg class="fs fs--sketch" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMax slice" role="img" aria-label="${esc(L('رسمة بالقلم الرصاص: إحنا الأربعة حجارة صغيرة قاعدين جنب النيل', 'A pencil sketch: the four of us as pebbles, sitting by the Nile'))}">
 		<defs>
-			<linearGradient id="fsSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b6e8f"/><stop offset=".45" stop-color="#e99a6b"/><stop offset=".75" stop-color="#f6c37c"/><stop offset="1" stop-color="#fbe0a8"/></linearGradient>
-			<radialGradient id="fsSun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6d8"/><stop offset=".5" stop-color="#ffd27a"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
-			<linearGradient id="fsNile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d9bb4"/><stop offset="1" stop-color="#2f6f8c"/></linearGradient>
-			<linearGradient id="fsSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1cf92"/><stop offset="1" stop-color="#d9a964"/></linearGradient>
-			<linearGradient id="fsSand2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7bd7a"/><stop offset="1" stop-color="#c98f4c"/></linearGradient>
-			${PEBBLE_COLOURS.map(([id, a, b, c]) => `<radialGradient id="${id}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></radialGradient>`).join('')}
-			<filter id="pbShadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="3" dy="4" stdDeviation="2.5" flood-color="#6b3f1a" flood-opacity=".45"/></filter>
+			<filter id="skA" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+			<filter id="skB" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+			<filter id="skW" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="3" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/></filter>
 		</defs>
-		<rect width="1200" height="380" fill="url(#fsSky)"/>
-		<circle class="fs-sun" cx="860" cy="176" r="120" fill="url(#fsSun)"/>
-		<circle cx="860" cy="176" r="38" fill="#fff1c7"/>
-		<g fill="#fff" opacity=".7">
-			<g class="fs-cloud"><ellipse cx="0" cy="70" rx="60" ry="14"/><ellipse cx="30" cy="60" rx="34" ry="14"/></g>
-			<g class="fs-cloud c2"><ellipse cx="0" cy="110" rx="80" ry="12"/><ellipse cx="-30" cy="101" rx="30" ry="12"/></g>
-		</g>
-		${[0, 1].map((k) => `<g class="fs-bird${k ? ' b2' : ''}"><g transform="translate(0 ${90 + k * 30}) scale(${k ? 0.8 : 1})" fill="none" stroke="#2b3b4a" stroke-width="2.4" stroke-linecap="round"><path class="fs-wing" d="M0 0q8-8 16 0"/><path class="fs-wing" d="M16 0q8-8 16 0"/></g></g>`).join('')}
-		<!-- the pyramids of Giza, far away in the haze -->
-		<g fill="#c9845a" opacity=".85"><path d="M140 252l70-84 70 84z"/><path d="M250 252l52-62 52 62z" fill="#b8744f"/><path d="M60 252l40-46 40 46z" fill="#d1936a"/></g>
-		<g fill="#a8653f" opacity=".7"><path d="M210 168l70 84h-70z"/><path d="M302 190l52 62h-52z"/></g>
-		<!-- the far bank -->
-		<path d="M0 250c120-10 260-6 380 0s300 8 420-2 300-8 400 0v20H0z" fill="#7f9a5a"/>
-		${palm(470, 70)}${palm(520, 54, -1)}${palm(1080, 80, -1)}${palm(1130, 60)}
-		<!-- the Nile, with a felucca sailing by -->
-		<rect y="262" width="1200" height="48" fill="url(#fsNile)"/>
-		<g class="fs-water" stroke="#cfe8f1" stroke-width="2" stroke-linecap="round" opacity=".8"><path d="M80 278h40M300 290h60M560 276h30M760 294h50M1000 282h40"/></g>
-		<g class="fs-boat"><g class="fs-boat-bob"><path d="M0 286h70l-10 12H8z" fill="#5b3a29"/><path d="M34 286V214" stroke="#5b3a29" stroke-width="3"/><path d="M36 216c18 20 26 44 26 66H36z" fill="#fffaf0"/><path d="M33 222c-12 16-20 36-22 60h22z" fill="#f7efe0"/></g></g>
-		<!-- our dune -->
-		<path d="M0 380V318c140-26 300-30 460-18 120-30 260-34 380-14 140-12 260 0 360 16V380z" fill="url(#fsSand2)"/>
-		<path d="M260 380c40-52 160-80 340-80s300 28 340 80z" fill="url(#fsSand)"/>
-		<g stroke="#c48a47" stroke-width="1.5" fill="none" opacity=".5"><path d="M380 350q40-8 80 0M700 344q50-10 100 0M520 366q30-6 60 0"/></g>
-		<ellipse cx="600" cy="342" rx="120" ry="12" fill="#a8723a" opacity=".35"/>
-		<g class="fs-family" transform="translate(600 342) scale(.98) translate(-312 -346)">${people}${more}</g>
-		<path class="fs-heart" d="M612 170c-5-6-14-3-14 4 0 7 14 15 14 15s14-8 14-15c0-7-9-10-14-4Z" fill="#f2726f" stroke="#fff" stroke-width="2"/>
+		<g class="fs-cloud">${ink(cloud(0, 70), 'sk-ink', 1.4)}</g>
+		<g class="fs-cloud c2">${ink(cloud(0, 104, 0.8), 'sk-ink', 1.2)}</g>
+		<g class="fs-sun">${wash(circle(880, 118, 34), '#ffd36b', 5, 4)}${ink(circle(880, 118, 34), 'sk-sun', 2.2)}${ink(rays, 'sk-sun', 1.8)}</g>
+		${[0, 1].map((k) => `<g class="fs-bird${k ? ' b2' : ''}"><g transform="translate(0 ${80 + k * 34}) scale(${k ? 0.8 : 1})">${ink('M0 0q8-9 16 0q8-9 16 0', 'sk-ink', 1.8)}</g></g>`).join('')}
+		${pyramid(60, 80, 44)}${pyramid(120, 170, 94)}${pyramid(250, 120, 66)}
+		${palm(400, 60)}${palm(1060, 74, -1)}${palm(1112, 56)}
+		${ink('M0 246C200 238 420 244 620 240S1000 236 1200 244', 'sk-ink', 1.8)}
+		${wash('M0 252C300 246 600 258 900 250S1150 254 1200 250L1200 294C900 302 600 290 300 298S50 292 0 296Z', '#9cc9de', 0, 0)}
+		${ink(waves, 'sk-blue', 1.6)}
+		<g class="fs-boat"><g class="fs-boat-bob">${wash('M37 212q26 30 24 62H37Z', '#fff4dc', 3, 2)}${ink('M2 276q34 16 70 0', 'sk-ink', 2.2)}${ink('M35 278V206M37 212q26 30 24 62H37Z', 'sk-ink', 1.8)}</g></g>
+		${wash('M0 360V322C200 304 380 300 470 290C540 280 660 280 740 290S1000 306 1200 316V360Z', '#e9cf9c', 0, 0)}
+		${ink('M0 322C200 304 380 300 470 290C540 280 660 280 740 290S1000 306 1200 316', 'sk-ink', 2)}
+		${ink('M380 342q40-8 80 0M720 336q50-10 100 0M540 352q30-6 60 0M180 336q30-6 60 0M960 344q40-8 70 0', 'sk-ink', 1.1)}
+		${hatch(`M${600 - 130} 330a130 13 0 1 0 260 0a130 13 0 1 0 -260 0`, 470, 316, 730, 344, 6)}
+		<g class="fs-family" transform="translate(0 6)">${people}${more}</g>
+		${labels}
+		<g class="fs-heart">${wash(heart, '#f2726f', 2, 2)}${ink(heart, 'sk-red', 2.4)}</g>
 	</svg>`;
 }
 
