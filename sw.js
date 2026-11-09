@@ -5,7 +5,7 @@
    VERSION is rewritten by tools/build.mjs on every build. */
 'use strict';
 
-var VERSION = 'us-44a6cc3ffe';
+var VERSION = 'us-d46d837612';
 var SHELL = [
 	'./',
 	'birthday.html',
@@ -19,17 +19,23 @@ var SHELL = [
 	'letters.html',
 	'member.html',
 	'moment.html',
+	'movies.html',
 	'music.html',
 	'notes.html',
 	'places.html',
 	'settings.html',
 	'story.html',
+	'trip.html',
+	'trips.html',
 	'wishes.html',
 	'manifest.webmanifest',
 	'assets/css/app.css',
 	'assets/css/chrome.css',
 	'assets/css/live.css',
+	'assets/css/trips.css',
 	'assets/js/core.js',
+	'assets/js/egypt.js',
+	'assets/js/hang.js',
 	'assets/js/live.js',
 	'assets/js/shell.js',
 	'assets/js/sketch.js',
@@ -44,11 +50,14 @@ var SHELL = [
 	'assets/js/pages/letters.js',
 	'assets/js/pages/member.js',
 	'assets/js/pages/moment.js',
+	'assets/js/pages/movies.js',
 	'assets/js/pages/music.js',
 	'assets/js/pages/notes.js',
 	'assets/js/pages/places.js',
 	'assets/js/pages/settings.js',
 	'assets/js/pages/story.js',
+	'assets/js/pages/trip.js',
+	'assets/js/pages/trips.js',
 	'assets/js/pages/wishes.js',
 	'assets/icons/apple-touch-icon.png',
 	'assets/icons/icon-192.png',

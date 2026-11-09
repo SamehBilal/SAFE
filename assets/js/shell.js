@@ -368,8 +368,10 @@ export const PAGES = [
 	{ href: 'story.html', id: 'story', ic: 'book', ar: 'حكايتنا', en: 'Our story', dar: 'كل تاريخ عملنا إحنا', den: 'Every date that made us', group: 'story' },
 	{ href: 'chapters.html', id: 'chapters', ic: 'ring', ar: 'أيام فارقة', en: 'Big days', dar: 'الخطوبة، كتب الكتاب، الفرح', den: 'Engagement, wedding and more', group: 'story' },
 	{ href: 'places.html', id: 'places', ic: 'pin', ar: 'أماكننا', en: 'Our places', dar: 'أماكن فيها حتة مننا', den: 'Places that hold a piece of us', group: 'story' },
+	{ href: 'trips.html', id: 'trips', ic: 'map', ar: 'رحلات عيد جوازنا', en: 'Anniversary trips', dar: 'كل سنة محافظة جديدة على الخريطة', den: 'A new governorate every year, on the map', group: 'story' },
 	{ href: 'journal.html', id: 'journal', ic: 'pen', ar: 'دفترنا', en: 'Our journal', dar: 'بنكتب حكايتنا سوا، يوم بيوم', den: 'We write our story together, day by day', group: 'story' },
 	{ href: 'draw.html', id: 'draw', ic: 'dice', ar: 'قرعة الليلة', en: 'Tonight’s draw', dar: 'لبس، خروجة، دليفري، أو فيلم', den: 'Outfit, dinner out, delivery or a movie', group: 'nights' },
+	{ href: 'movies.html', id: 'movies', ic: 'film', ar: 'اتفرجنا على إيه', en: 'What we’ve watched', dar: 'أفلامنا ومسلسلاتنا بالأرقام', den: 'Our films and series, in numbers', group: 'nights' },
 	{ href: 'music.html', id: 'music', ic: 'music', ar: 'أغانينا', en: 'Our songs', dar: 'الأغاني اللي بتفكرنا ببعض', den: 'The songs that remind us of each other', group: 'nights' },
 	{ href: 'gallery.html', id: 'gallery', ic: 'image', ar: 'ألبوم الصور', en: 'Photo album', dar: 'إحنا بالصور، سنة بسنة', den: 'Us in pictures, year by year', group: 'memories' },
 	{ href: 'notes.html', id: 'notes', ic: 'note', ar: 'رسايل حب', en: 'Love notes', dar: 'كلام كتبناه لبعض', den: 'Little things we wrote', group: 'memories' },
@@ -388,7 +390,7 @@ export const DRAW_KINDS = [
 	{ id: 'movie', emoji: '🎬', color: '#0e6990', ar: 'سهرة فيلم', en: 'Movie night', dar: 'هنتفرج على إيه؟', den: 'What are we watching?', sketch: { ar: 'ارسمي بوستر الفيلم', en: 'Sketch the poster' } }
 ];
 /* pages that are one page per item, and which menu they belong to */
-const DETAIL_OF = { moment: 'story', chapter: 'story', member: 'family' };
+const DETAIL_OF = { moment: 'story', chapter: 'story', member: 'family', trip: 'story' };
 
 const ICONS = {
 	home: '<path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/>',
@@ -401,6 +403,8 @@ const ICONS = {
 	family: '<circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><circle cx="12" cy="13" r="1.8"/><path d="M3.5 20v-3.5A4 4 0 0 1 7.5 12.5h1M20.5 20v-3.5a4 4 0 0 0-4-4h-1M9 20v-1.5a3 3 0 0 1 6 0V20"/>',
 	cake: '<path d="M4 20h16v-7H4zM4 15.5c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0"/><path d="M8 13V10M12 13V10M16 13V10"/><path d="M8 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM12 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM16 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5Z"/>',
 	star: '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+	map: '<path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
+	film: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 9h17M3.5 15h17M8 5v4M12 5v4M16 5v4M8 15v4M12 15v4M16 15v4"/>',
 	pen: '<path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M13.5 7l3 3M4 20h6"/>',
 	music: '<path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/><path d="M9 9l11-2"/>',
 	dice: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>',
@@ -597,9 +601,9 @@ function renderChrome() {
 	owl();
 }
 
-/* The footer: the pebble portrait Sameh made for Esraa after Fahd was born — a house of wooden sticks on a
-   blackboard, the family as river stones inside it — redrawn with Abdulrahman in his mother's arms.
-   Each of us is a link to our own page. Then the links, the motto, and the maker's line with its owl. */
+/* The footer: the four of us as the river stones from the portrait Sameh made for Esraa, sitting together on a dune
+   by the Nile at sunset — pyramids, palms, a felucca, the places our anniversaries take us. Each of us is a link to
+   our own page. Then the links, the tools, and the maker's line with its owl. */
 
 /* A smooth, slightly uneven stone: points around an ellipse, nudged by a seed, joined with curves. */
 function pebble(cx, cy, rx, ry, rot = 0, seed = 1) {
@@ -623,27 +627,11 @@ function pebble(cx, cy, rx, ry, rot = 0, seed = 1) {
 	return d + 'Z';
 }
 
-/* A round wooden stick from (x1,y1) to (x2,y2): body, a lighter top edge, a few lines of grain, the cut end. */
-function stick(x1, y1, x2, y2, w = 26, seed = 1) {
-	const len = Math.hypot(x2 - x1, y2 - y1);
-	const ang = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
-	const grain = [0.3, 0.55, 0.75].map((f, k) => {
-		const y = (f - 0.5) * w;
-		const a = len * (0.08 + ((seed * 7 + k * 13) % 10) / 60), b = len * (0.55 + ((seed * 3 + k * 11) % 10) / 30);
-		return `<path d="M${a.toFixed(0)} ${y.toFixed(1)}q${((b - a) / 2).toFixed(0)} ${k % 2 ? 2 : -2} ${(b - a).toFixed(0)} 0"/>`;
-	}).join('');
-	return `<g transform="translate(${x1} ${y1}) rotate(${ang.toFixed(2)})">
-		<rect x="0" y="${-w / 2}" width="${len.toFixed(1)}" height="${w}" rx="5" fill="url(#pbWood)" filter="url(#pbShadow)"/>
-		<rect x="2" y="${-w / 2 + 2}" width="${(len - 4).toFixed(1)}" height="${(w * 0.28).toFixed(1)}" rx="3" fill="#fff" opacity=".22"/>
-		<g fill="none" stroke="#b58547" stroke-width=".9" opacity=".55">${grain}</g>
-		<ellipse cx="${len.toFixed(1)}" cy="0" rx="3" ry="${w / 2 - 1}" fill="#e9cf9f" opacity=".7"/></g>`;
-}
-
 const PEBBLE_COLOURS = [['pbHoney', '#f1d29a', '#d3a25c', '#9c6a2c'], ['pbOchre', '#efc77f', '#c9953d', '#8f6220'], ['pbAmber', '#e9b56a', '#c0863a', '#7f5420'],
 	['pbSage', '#eef0dc', '#cfd3b4', '#9da184'], ['pbMoss', '#cfd2b4', '#a7ad8a', '#717757'], ['pbSand', '#efe1bf', '#d2bd8e', '#9e8858'],
 	['pbOrange', '#f3c27a', '#d99a44', '#a0661f'], ['pbCream', '#fbf3df', '#e6d6b2', '#b4a37d']];
 
-function familyBoard(s) {
+function familyScene(s) {
 	const members = s.family?.members || [];
 	const grown = members.filter((m) => !m.kid);
 	const kids = members.filter((m) => m.kid);
@@ -675,30 +663,43 @@ function familyBoard(s) {
 	const more = kids.slice(2).map((m, k) => who(m, stone(pebble(420 + k * 26, 320, 12, 16, 0, 41 + k), 'pbSand')
 		+ stone(pebble(418 + k * 26, 297, 8, 8, 0, 47 + k), 'pbOrange'), 4 + k)).join('');
 
-	const dust = [[96, 70], [170, 120], [540, 96], [470, 300], [88, 330], [380, 150], [560, 360], [250, 120], [520, 220]]
-		.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4"/>`).join('');
-	return `<svg class="pb" viewBox="0 0 640 420" role="img" aria-label="${esc(L('بيتنا: العيلة حجارة صغيرة جوه بيت من خشب', 'Our home: the family as pebbles inside a house of sticks'))}">
+	const palm = (x, h, flip = 1) => `<g transform="translate(${x} 300) scale(${flip} 1)"><path d="M0 0c-2-${h * 0.4}-6-${h * 0.75}-2-${h}" fill="none" stroke="#5b3a29" stroke-width="7" stroke-linecap="round"/>
+		<g fill="#3e5a2a" transform="translate(-2 -${h})">${[-150, -115, -70, -30, 10, 50].map((r) => `<path d="M0 0c22-8 46-4 64 10-24-4-44-2-64-10Z" transform="rotate(${r})"/>`).join('')}</g></g>`;
+	return `<svg class="fs" viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax slice" role="img" aria-label="${esc(L('إحنا الأربعة حجارة صغيرة قاعدين على الرملة جنب النيل وقت الغروب', 'The four of us as pebbles, sitting on the sand by the Nile at sunset'))}">
 		<defs>
-			<linearGradient id="pbWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0d6a6"/><stop offset=".5" stop-color="#dcb57a"/><stop offset="1" stop-color="#bf8f52"/></linearGradient>
-			<linearGradient id="pbFrame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecd0a3"/><stop offset=".5" stop-color="#d9af74"/><stop offset="1" stop-color="#c49558"/></linearGradient>
-			<radialGradient id="pbBoard" cx=".45" cy=".4" r=".8"><stop offset="0" stop-color="#1e1f21"/><stop offset="1" stop-color="#0b0b0c"/></radialGradient>
+			<linearGradient id="fsSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b6e8f"/><stop offset=".45" stop-color="#e99a6b"/><stop offset=".75" stop-color="#f6c37c"/><stop offset="1" stop-color="#fbe0a8"/></linearGradient>
+			<radialGradient id="fsSun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6d8"/><stop offset=".5" stop-color="#ffd27a"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
+			<linearGradient id="fsNile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d9bb4"/><stop offset="1" stop-color="#2f6f8c"/></linearGradient>
+			<linearGradient id="fsSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1cf92"/><stop offset="1" stop-color="#d9a964"/></linearGradient>
+			<linearGradient id="fsSand2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7bd7a"/><stop offset="1" stop-color="#c98f4c"/></linearGradient>
 			${PEBBLE_COLOURS.map(([id, a, b, c]) => `<radialGradient id="${id}" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></radialGradient>`).join('')}
-			<filter id="pbShadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="2" dy="4" stdDeviation="2.5" flood-color="#000" flood-opacity=".65"/></filter>
-			<filter id="pbChalk"><feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -1.5 1.3" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter>
+			<filter id="pbShadow" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="3" dy="4" stdDeviation="2.5" flood-color="#6b3f1a" flood-opacity=".45"/></filter>
 		</defs>
-		<rect width="640" height="420" rx="4" fill="url(#pbFrame)"/>
-		<path d="M0 0L28 28M640 0L612 28M0 420L28 392M640 420L612 392" stroke="#a87638" stroke-width="1.5" opacity=".6"/>
-		<rect x="6" y="6" width="628" height="408" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
-		<rect x="28" y="28" width="584" height="364" fill="url(#pbBoard)"/>
-		<rect x="28" y="28" width="584" height="364" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="3"/>
-		<g fill="#fff" opacity=".18">${dust}</g>
-		${stick(150, 168, 150, 342, 30, 1)}${stick(470, 160, 470, 342, 30, 2)}
-		${stick(152, 148, 312, 62, 28, 3)}${stick(320, 62, 480, 152, 28, 4)}
-		<g class="pb-smoke" fill="#fff">${[0, 1, 2].map((k) => `<circle cx="413" cy="42" r="${6 + k * 2}" style="--d:${(k * 1.3).toFixed(1)}s"/>`).join('')}</g>
-		<g><rect x="398" y="52" width="30" height="36" rx="6" fill="url(#pbWood)" filter="url(#pbShadow)"/><ellipse cx="413" cy="53" rx="15" ry="5" fill="#e9cf9f"/><ellipse cx="413" cy="53" rx="9" ry="2.8" fill="#9c7440"/></g>
-		<g class="pb-family">${people}${more}</g>
-		<path class="pb-heart" d="M310 172c-5-6-14-3-14 4 0 7 14 15 14 15s14-8 14-15c0-7-9-10-14-4Z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" filter="url(#pbChalk)"/>
-		<text class="pb-chalk" x="320" y="377" text-anchor="middle" filter="url(#pbChalk)">${esc(t(s.closing))}</text>
+		<rect width="1200" height="380" fill="url(#fsSky)"/>
+		<circle class="fs-sun" cx="860" cy="176" r="120" fill="url(#fsSun)"/>
+		<circle cx="860" cy="176" r="38" fill="#fff1c7"/>
+		<g fill="#fff" opacity=".7">
+			<g class="fs-cloud"><ellipse cx="0" cy="70" rx="60" ry="14"/><ellipse cx="30" cy="60" rx="34" ry="14"/></g>
+			<g class="fs-cloud c2"><ellipse cx="0" cy="110" rx="80" ry="12"/><ellipse cx="-30" cy="101" rx="30" ry="12"/></g>
+		</g>
+		${[0, 1].map((k) => `<g class="fs-bird${k ? ' b2' : ''}"><g transform="translate(0 ${90 + k * 30}) scale(${k ? 0.8 : 1})" fill="none" stroke="#2b3b4a" stroke-width="2.4" stroke-linecap="round"><path class="fs-wing" d="M0 0q8-8 16 0"/><path class="fs-wing" d="M16 0q8-8 16 0"/></g></g>`).join('')}
+		<!-- the pyramids of Giza, far away in the haze -->
+		<g fill="#c9845a" opacity=".85"><path d="M140 252l70-84 70 84z"/><path d="M250 252l52-62 52 62z" fill="#b8744f"/><path d="M60 252l40-46 40 46z" fill="#d1936a"/></g>
+		<g fill="#a8653f" opacity=".7"><path d="M210 168l70 84h-70z"/><path d="M302 190l52 62h-52z"/></g>
+		<!-- the far bank -->
+		<path d="M0 250c120-10 260-6 380 0s300 8 420-2 300-8 400 0v20H0z" fill="#7f9a5a"/>
+		${palm(470, 70)}${palm(520, 54, -1)}${palm(1080, 80, -1)}${palm(1130, 60)}
+		<!-- the Nile, with a felucca sailing by -->
+		<rect y="262" width="1200" height="48" fill="url(#fsNile)"/>
+		<g class="fs-water" stroke="#cfe8f1" stroke-width="2" stroke-linecap="round" opacity=".8"><path d="M80 278h40M300 290h60M560 276h30M760 294h50M1000 282h40"/></g>
+		<g class="fs-boat"><g class="fs-boat-bob"><path d="M0 286h70l-10 12H8z" fill="#5b3a29"/><path d="M34 286V214" stroke="#5b3a29" stroke-width="3"/><path d="M36 216c18 20 26 44 26 66H36z" fill="#fffaf0"/><path d="M33 222c-12 16-20 36-22 60h22z" fill="#f7efe0"/></g></g>
+		<!-- our dune -->
+		<path d="M0 380V318c140-26 300-30 460-18 120-30 260-34 380-14 140-12 260 0 360 16V380z" fill="url(#fsSand2)"/>
+		<path d="M260 380c40-52 160-80 340-80s300 28 340 80z" fill="url(#fsSand)"/>
+		<g stroke="#c48a47" stroke-width="1.5" fill="none" opacity=".5"><path d="M380 350q40-8 80 0M700 344q50-10 100 0M520 366q30-6 60 0"/></g>
+		<ellipse cx="600" cy="342" rx="120" ry="12" fill="#a8723a" opacity=".35"/>
+		<g class="fs-family" transform="translate(600 342) scale(.98) translate(-312 -346)">${people}${more}</g>
+		<path class="fs-heart" d="M612 170c-5-6-14-3-14 4 0 7 14 15 14 15s14-8 14-15c0-7-9-10-14-4Z" fill="#f2726f" stroke="#fff" stroke-width="2"/>
 	</svg>`;
 }
 
@@ -706,14 +707,10 @@ function footerHTML(s) {
 	const col = (title, list) => `<nav class="ft-links" aria-label="${esc(title)}"><h2>${esc(title)}</h2>${list.map((p) => `<a href="${p.href}">${esc(L(p.ar, p.en))}</a>`).join('')}</nav>`;
 	const g = (id) => PAGES.filter((p) => p.group === id);
 	return `
-	<div class="ft-wall">
-		<figure class="ft-frame">${familyBoard(s)}</figure>
-		<span class="ft-skirting" aria-hidden="true"></span>
-	</div>
+	<div class="ft-scene">${familyScene(s)}</div>
 	<div class="ft-body"><div class="ft-wrap">
 		<div class="ft-brand">
 			<span class="ft-names">${T(s.him)} <i>♥</i> ${T(s.her)}</span>
-			<p class="ft-motto">${T(s.closing)}</p>
 			<span class="ft-dates" dir="ltr">${(s.met || '2009').slice(0, 4)} — ∞</span>
 			<div class="ft-tools">
 				<button class="btn btn--coral btn--sm" type="button" id="install-btn" hidden>${L('حطيه على الشاشة الرئيسية', 'Add to home screen')}</button>
@@ -732,7 +729,7 @@ function footerHTML(s) {
 				: `<p class="ft-copy" dir="ltr">Copyright @${new Date().getFullYear()}, <span class="ascii owl" aria-hidden="true">,___,\n[o,o]\n/)__)\n~"--"~</span>All love reserved. <span>Crafted with <span class="ft-heart">🧡</span> Sameh Bilal</span></p>`}
 		</div>
 	</div>
-	<p class="ft-end">${L('ولسه الحكاية مخلصتش…', 'And the story isn’t over…')} <span>${L('دي لسه بادئة', 'it’s only beginning')}</span></p></div>`;
+	<p class="ft-end">${T(s.closing)} <span aria-hidden="true">♥</span></p></div>`;
 }
 
 /* the footer owl (from Sameh's portfolio): blinks while idle, glances when the page scrolls */

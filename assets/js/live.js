@@ -145,9 +145,12 @@ export function sketchURL(id) {
 	if (!urls.has(id)) {
 		urls.set(id, (async () => {
 			let text = null;
+			// fresh from GitHub when this phone has a token; otherwise, or if that fails, the published copy
 			if (config().token) {
-				const r = await gh(`contents/content/live/s/${id}.bin?ref=${encodeURIComponent(config().branch)}`, { headers: { Accept: 'application/vnd.github.raw+json' } });
-				if (r.ok) text = await r.text();
+				try {
+					const r = await gh(`contents/content/live/s/${id}.bin?ref=${encodeURIComponent(config().branch)}`, { headers: { Accept: 'application/vnd.github.raw+json' } });
+					if (r.ok) text = await r.text();
+				} catch { /* fall back below */ }
 			}
 			if (text === null) {
 				const r = await fetch(`content/live/s/${id}.bin`);
@@ -156,6 +159,8 @@ export function sketchURL(id) {
 			}
 			return URL.createObjectURL(new Blob([await unlockText(text)], { type: 'image/webp' }));
 		})());
+		// a failure (offline, a slow deploy) isn't remembered: the next page tries again
+		urls.get(id).catch(() => urls.delete(id));
 	}
 	return urls.get(id);
 }

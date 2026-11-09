@@ -17,6 +17,8 @@ Questions only she can answer → loader → intro → the site. Installable as 
 | `journal.html` | **Our journal** — you both write pages from your phones (mood, sketch, optionally pinned to the timeline) |
 | `music.html` | **Our songs** — add songs with a link and why they're yours; YouTube/Spotify play right on the page; a song of the day |
 | `draw.html?k=outfit\|dining\|delivery\|movie` | **Tonight's draw** — a wheel picks from your list, you log the night (note, hearts, sketch), and recent picks are skipped |
+| `trips.html` → `trip.html?id=…` | **Anniversary trips** — the map of Egypt's 27 governorates, coloured where your anniversaries took you, with year pins; a draw for next year's governorate; every trip hangs as a polaroid on strings of lights, and each trip has its own photos, notes and sketches |
+| `movies.html` | **What we've watched** — a binge-stats board: one coloured block per film or series, with your totals |
 | `settings.html` | Whose phone this is, and the GitHub token that lets it save |
 
 ## Writing from your phones
