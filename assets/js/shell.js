@@ -6,7 +6,7 @@
 import { unlock, readVault, open, toB64, fromB64 } from './core.js';
 import { sky, dust } from './stardust.js';
 import { nightScene } from './scene.js';
-import { doodle, doodleDefs } from './doodles.js';
+import { doodle, doodleDefs, doodlePath } from './doodles.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -874,13 +874,56 @@ async function renderPage() {
 	if (location.hash) $(location.hash.replace(/[^\w#-]/g, ''))?.scrollIntoView();
 }
 
-/** Page heading used on every inner page. */
-export function pageHead(title, sub, crumbs = []) {
-	const trail = [{ href: 'index.html', ar: 'الرئيسية', en: 'Home' }, ...crumbs];
+/* The top of every inner page, after the Ahmed Khaled Tawfik site's page heroes: a night band with the intro's sky
+   and hill, and the page's own icons drawn big in gold, then a small label, a big title and a line about the page. */
+const BAND = {
+	story: ['calendar', 'book', 'heart', 'star'], chapters: ['ring', 'bride', 'groom', 'baby'], moment: ['calendar', 'heart', 'star'],
+	chapter: ['ring', 'heart', 'sparkle'], places: ['pin', 'couple', 'sun', 'walk'], trips: ['plane', 'suitcase', 'pin', 'camera'],
+	trip: ['suitcase', 'camera', 'pin'], journal: ['pen', 'book', 'coffee', 'heart'], draw: ['dress', 'dinner', 'dice', 'scooter', 'clapper'],
+	movies: ['popcorn', 'clapper', 'eyes', 'love'], music: ['music', 'heart', 'sparkle', 'music'], gallery: ['camera', 'family', 'heart', 'sun'],
+	notes: ['pen', 'letter', 'smitten', 'heart'], letters: ['letter', 'scroll', 'heart', 'pen'], family: ['lion', 'family', 'chick', 'baby'],
+	member: ['family', 'heart', 'star'], birthday: ['gift', 'cake', 'party', 'sparkle'], wishes: ['star', 'bottle', 'sparkle', 'moon'],
+	settings: ['phone', 'gear', 'lock']
+};
+const EYEBROW = {
+	story: ['حكايتنا', 'Our story'], nights: ['سهراتنا', 'Our nights'], memories: ['ذكرياتنا', 'Our memories'],
+	family: ['عيلتنا', 'Our family'], you: ['مناسباتنا', 'Our occasions'], app: ['التطبيق', 'The app']
+};
+/* steady pseudo-random numbers, so a page's sky is the same on every visit */
+const rnd = (i, salt) => { const x = Math.sin((i + 1) * 9301 + salt * 49297) * 233280; return x - Math.floor(x); };
+
+function band(id, icons) {
+	const salt = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
+	const stars = Array.from({ length: 46 }, (_, i) => {
+		const x = (rnd(i, salt) * 1200).toFixed(0), y = (rnd(i, salt + 1) * 190).toFixed(0), r = (0.6 + rnd(i, salt + 2) * 1.6).toFixed(1);
+		return `<circle cx="${x}" cy="${y}" r="${r}" style="--d:${(rnd(i, salt + 3) * 4).toFixed(1)}s"/>`;
+	}).join('');
+	const n = icons.length, w = Math.min(190, 760 / n), size = Math.min(124, w * 0.82);
+	const art = icons.map((name, i) => {
+		const cx = 600 + (i - (n - 1) / 2) * w, lift = i % 2 ? 26 : 0, s = (size * (i % 2 ? 0.84 : 1)) / 24;
+		return `<g class="pb__ic" style="--i:${i}" transform="translate(${(cx - 12 * s).toFixed(1)} ${(232 - lift - 24 * s).toFixed(1)}) scale(${s.toFixed(3)})"><path d="${doodlePath(name)}" filter="url(#dd-rough)"/></g>`;
+	}).join('');
+	return `<div class="pb" aria-hidden="true"><svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice">
+		<g class="pb__stars">${stars}</g>
+		<g class="pb__moon" transform="translate(${salt % 2 ? 1010 : 110} 34) scale(2.6)"><path d="${doodlePath('moon')}" filter="url(#dd-rough)"/></g>
+		<path class="pb__hill" d="M-20 300V252C160 226 330 238 470 246S760 222 900 230 1120 252 1220 240V300Z"/>
+		<path class="pb__line" d="M-20 252C160 226 330 238 470 246S760 222 900 230 1120 252 1220 240" filter="url(#dd-rough)"/>
+		${art}
+	</svg></div>`;
+}
+
+/** Page heading used on every inner page. icons: the band's drawings, when not the page's own. */
+export function pageHead(title, sub, crumbs = [], icons) {
+	const id = pageId(), trail = [{ href: 'index.html', ar: 'الرئيسية', en: 'Home' }, ...crumbs];
+	const eb = EYEBROW[groupOf(id)];
 	return `<header class="ph">
-		<nav class="crumbs" aria-label="${L('أنت هنا', 'You are here')}">${trail.map((c) => `<a href="${c.href}">${esc(c.ar ? L(c.ar, c.en) : t(c.label))}</a>`).join('<span aria-hidden="true">/</span>')}</nav>
-		<h1 class="ph__title">${esc(title)}</h1>
-		${sub ? `<p class="ph__sub">${esc(sub)}</p>` : ''}
+		${band(id, icons || BAND[id] || ['heart', 'star', 'heart'])}
+		<div class="ph__in">
+			<nav class="crumbs" aria-label="${L('أنت هنا', 'You are here')}">${trail.map((c) => `<a href="${c.href}">${esc(c.ar ? L(c.ar, c.en) : t(c.label))}</a>`).join('<span aria-hidden="true">/</span>')}</nav>
+			${eb ? `<p class="ph__eyebrow">${esc(L(...eb) === title ? L('حكاية حبنا', 'Our love story') : L(...eb))}</p>` : ''}
+			<h1 class="ph__title">${esc(title)}</h1>
+			${sub ? `<p class="ph__sub">${esc(sub)}</p>` : ''}
+		</div>
 	</header>`;
 }
 

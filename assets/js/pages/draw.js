@@ -40,7 +40,7 @@ export default {
 			${related(['music', 'journal', 'wishes'])}`;
 
 		return `
-			${pageHead(L(k.ar, k.en), L(k.dar, k.den), crumbs)}
+			${pageHead(L(k.ar, k.en), L(k.dar, k.den), crumbs, [k.emoji, 'heart', 'dice'])}
 			<div class="wrap">${tabs}</div>
 			<section class="sec sec--top"><div class="wrap">
 				<div class="draw" style="--c:${k.color}">

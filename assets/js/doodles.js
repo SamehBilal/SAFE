@@ -102,3 +102,6 @@ export function doodleDefs() {
 	box.innerHTML = `<svg id="dd-defs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="dd-rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale=".9" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>`;
 	document.body.prepend(box.firstChild);
 }
+
+/** The raw 24×24 path of an icon (for drawing it inside a bigger picture). */
+export const doodlePath = (key) => PATHS[doodleName(key)] || HEART;
