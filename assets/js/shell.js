@@ -376,6 +376,22 @@ async function enter({ key, story }, { intro, loader }) {
 	if (qs('intro') !== null) history.replaceState(null, '', location.pathname + location.hash);
 }
 
+/* A heart made of stars, in the colour of the intro's star dust: dots along the outline and scattered inside,
+   each twinkling on its own. Points inside satisfy (x² + y² − 1)³ − x²y³ ≤ 0, the classic heart curve. */
+function starHeart() {
+	const pts = [];
+	for (let k = 0; k < 34; k++) {
+		const a = (k / 34) * Math.PI * 2;
+		pts.push([16 * Math.sin(a) ** 3, -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a))]);
+	}
+	for (let tries = 0; pts.length < 90 && tries < 4000; tries++) {
+		const x = Math.random() * 2.4 - 1.2, y = Math.random() * 2.6 - 1.4;
+		if ((x * x + y * y - 1) ** 3 - x * x * y ** 3 <= 0) pts.push([x * 14, -y * 14 + 1]);
+	}
+	return `<svg viewBox="-19 -19 38 36" aria-hidden="true">${pts.map(([x, y], k) =>
+		`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(k < 34 ? 0.95 : 0.4 + Math.random() * 0.7).toFixed(2)}" style="--d:${(Math.random() * 2.4).toFixed(2)}s"/>`).join('')}</svg>`;
+}
+
 async function runIntro(story) {
 	let skipped = false;
 	let onSkip;
@@ -415,7 +431,7 @@ async function runIntro(story) {
 	$('.intro__skip', el).remove();
 	$('.intro__end', el).innerHTML = `
 		<div class="intro__final">
-			<div class="names"><span class="n1">${T(story.him)}</span><span class="heart">♥</span><span class="n2">${T(story.her)}</span></div>
+			<div class="names"><span class="n1">${T(story.him)}</span><span class="heart heart--stars" aria-label="♥">${starHeart()}</span><span class="n2">${T(story.her)}</span></div>
 			<h1 class="pop"><span>${esc(first)}</span>${rest.length ? `<span class="pop__word"><span>${esc(rest.join(' '))}</span></span>` : ''}</h1>
 			<p class="sub">${today ? esc(today.sub) : T(story.closing)}</p>
 			<button class="btn btn--light" type="button" id="intro-go">${L('ادخلوا ♥', 'Come in ♥')}</button>
