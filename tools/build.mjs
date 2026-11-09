@@ -115,6 +115,8 @@ async function main() {
 	// Remove encrypted files no longer referenced.
 	const keep = new Set([...used.values()].map((r) => r.slice(6).replace(/\.[^.]+$/, '') + '.bin'));
 	for (const f of await readdir(MEDIA_OUT)) if (!keep.has(f)) await rm(path.join(MEDIA_OUT, f));
+	const size = (await Promise.all([...keep].map((f) => stat(path.join(MEDIA_OUT, f)).then((s) => s.size)))).reduce((a, b) => a + b, 0);
+	sealedStory.$mediaMB = Math.max(1, Math.round(size / 1048576)); // for «Save for offline»
 
 	// 2) Story.
 	const data = await seal(key, new TextEncoder().encode(JSON.stringify(sealedStory)));
@@ -160,7 +162,6 @@ async function main() {
 		.replace(/var VERSION = '[^']*';/, `var VERSION = 'us-${hash.digest('hex').slice(0, 10)}';`)
 		.replace(/var SHELL = \[[\s\S]*?\];/, `var SHELL = [\n${shell.map((f) => `\t'${f}'`).join(',\n')}\n];`));
 
-	const size = (await Promise.all([...keep].map((f) => stat(path.join(MEDIA_OUT, f)).then((s) => s.size)))).reduce((a, b) => a + b, 0);
 	console.log(`✓ ${qs.length} question(s), ${used.size} media file(s) (${(size / 1048576).toFixed(1)} MB), vault ${(JSON.stringify(vault).length / 1024).toFixed(0)} KB`);
 	console.log(`✓ shared lists: ${live.lists} list(s), ${live.sketches} sketch(es)${live.changed ? `, ${live.changed} updated` : ''}`);
 	if (missing.size) console.warn('! Not found in private/media (left as-is): ' + [...missing].join(', '));

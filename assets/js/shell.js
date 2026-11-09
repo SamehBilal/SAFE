@@ -7,6 +7,7 @@ import { unlock, readVault, open, toB64, fromB64 } from './core.js';
 import { sky, dust } from './stardust.js';
 import { nightScene } from './scene.js';
 import { doodle, doodleDefs } from './doodles.js';
+import { initPWA, pwaChrome } from './pwa.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -193,7 +194,7 @@ async function boot() {
 	applyLang();
 	doodleDefs();
 	floatHearts();
-	registerSW();
+	initPWA();
 	const id = document.body.dataset.page || 'home';
 	const pageP = import(`./pages/${id}.js`).then((m) => m.default).catch(() => import('./pages/home.js').then((m) => m.default));
 	try {
@@ -255,7 +256,7 @@ function toggleTheme() {
 	store.set(THEME, next);
 	for (const b of $$('.theme-toggle')) { b.setAttribute('aria-pressed', String(next === 'dark')); b.firstElementChild.innerHTML = doodle(next === 'dark' ? 'sun' : 'moon', 20); }
 }
-const langBtn = () => `<button class="lang-toggle" type="button" lang="${App.lang === 'ar' ? 'en' : 'ar'}">${App.lang === 'ar' ? 'English' : 'عربي'}</button>`;
+const langBtn = () => `<button class="lang-toggle" type="button" lang="${App.lang === 'ar' ? 'en' : 'ar'}" aria-label="${App.lang === 'ar' ? 'English' : 'عربي'}"><span class="lang-long">${App.lang === 'ar' ? 'English' : 'عربي'}</span><span class="lang-short" aria-hidden="true">${App.lang === 'ar' ? 'EN' : 'ع'}</span></button>`;
 
 /* ------------------------------------------------------------------ 1. the gate */
 
@@ -679,7 +680,7 @@ function renderChrome() {
 		store.del(KEY);
 		location.href = 'index.html';
 	};
-	installUI(footer);
+	pwaChrome();
 	owl();
 }
 
@@ -822,11 +823,11 @@ function footerHTML(s) {
 			<span class="ft-names">${T(s.him)} <i>♥</i> ${T(s.her)}</span>
 			<span class="ft-dates" dir="ltr">${(s.met || '2009').slice(0, 4)} — ∞</span>
 			<div class="ft-tools">
-				<button class="btn btn--coral btn--sm" type="button" id="install-btn" hidden>${L('حطيه على الشاشة الرئيسية', 'Add to home screen')}</button>
+				<button class="btn btn--coral btn--sm" type="button" id="install-btn" hidden>${L('حطوها على الشاشة الرئيسية', 'Add to home screen')}</button>
+				<button class="btn btn--ghost btn--sm" type="button" id="save-btn" hidden>${L('احفظوها من غير نت', 'Save for offline')}</button>
 				<a class="btn btn--ghost btn--sm" href="index.html?intro">${L('شوفوا المقدمة تاني', 'Replay intro')}</a>
 				<button class="btn btn--ghost btn--sm" type="button" id="lock-btn">${doodle('lock', 16)} ${L('اقفلوا', 'Lock')}</button>
 			</div>
-			<p class="ios-tip" id="ios-tip" hidden>${L('على الآيفون: دوسوا على <b>مشاركة</b> وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'On iPhone: tap <b>Share</b> then <b>Add to Home Screen</b> ♥')}</p>
 		</div>
 		${col(L('حكايتنا', 'Our story'), [PAGES[0], ...g('story')])}
 		${col(L('ذكرياتنا', 'Memories'), g('memories'))}
@@ -995,22 +996,6 @@ function lightbox(root) {
 		document.body.append(box);
 		$('button', box).focus();
 	});
-}
-
-/* ------------------------------------------------------------------ PWA */
-
-function registerSW() {
-	if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-let installEvt;
-addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; const b = $('#install-btn'); if (b) b.hidden = false; });
-function installUI(root) {
-	const btn = $('#install-btn', root);
-	if (installEvt) btn.hidden = false;
-	btn.onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; btn.hidden = true; };
-	const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-	const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-	if (ios && !standalone) $('#ios-tip', root).hidden = false;
 }
 
 function floatHearts() {

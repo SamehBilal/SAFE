@@ -2,10 +2,11 @@
    - App shell + encrypted content: precached, refreshed in the background.
    - content/m/*.bin (encrypted photos): cached forever once seen — names change when files do.
    - Google Fonts: cached once seen.
+   A new version waits until the page asks it to take over (its «Update now», assets/js/pwa.js).
    VERSION is rewritten by tools/build.mjs on every build. */
 'use strict';
 
-var VERSION = 'us-09bbf9e887';
+var VERSION = 'us-31c8a8c688';
 var SHELL = [
 	'./',
 	'birthday.html',
@@ -40,6 +41,7 @@ var SHELL = [
 	'assets/js/hang.js',
 	'assets/js/live.js',
 	'assets/js/merge.js',
+	'assets/js/pwa.js',
 	'assets/js/scene.js',
 	'assets/js/shell.js',
 	'assets/js/sketch.js',
@@ -80,7 +82,11 @@ var FONT_CACHE = 'fonts-v1';
 self.addEventListener('install', function (e) {
 	e.waitUntil(caches.open(SHELL_CACHE).then(function (c) {
 		return c.addAll(SHELL.map(function (u) { return new Request(u, { cache: 'reload' }); }));
-	}).then(function () { return self.skipWaiting(); }));
+	}));
+});
+
+self.addEventListener('message', function (e) {
+	if (e.data === 'skipWaiting') self.skipWaiting();
 });
 
 self.addEventListener('activate', function (e) {

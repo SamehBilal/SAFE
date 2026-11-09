@@ -8,13 +8,22 @@
 	"start_url": "./?source=pwa",
 	"scope": "./",
 	"display": "standalone",
-	"orientation": "portrait",
+	"display_override": ["standalone", "minimal-ui"],
+	"orientation": "any",
 	"background_color": "#faf8f5",
 	"theme_color": "#0e6990",
+	"categories": ["lifestyle", "social"],
+	"launch_handler": { "client_mode": "navigate-existing" },
 	"icons": [
 		{ "src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
 		{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
 		{ "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
 		{ "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+	],
+	"shortcuts": [
+		{ "name": "حكايتنا", "short_name": "حكايتنا", "description": "Our story", "url": "./story.html?source=pwa", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+		{ "name": "صورنا", "short_name": "صورنا", "description": "Our photos", "url": "./gallery.html?source=pwa", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+		{ "name": "دفترنا", "short_name": "دفترنا", "description": "Our journal", "url": "./journal.html?source=pwa", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+		{ "name": "قرعة الليلة", "short_name": "القرعة", "description": "Tonight’s draw", "url": "./draw.html?source=pwa", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
 	]
 }

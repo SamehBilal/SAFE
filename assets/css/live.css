@@ -237,7 +237,7 @@
 .deck__screen iframe.is-spotify { aspect-ratio: auto; height: 152px; }
 #dk-open { justify-self: center; }
 
-.shelf { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 26px 20px; }
+.shelf { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 26px 20px; overflow: clip; overflow-clip-margin: 16px; } /* a record sliding out stops at the screen edge, not past it */
 .shelf .empty { grid-column: 1 / -1; }
 .sleeve { position: relative; }
 .sleeve__btn { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; text-align: center; color: inherit; }
