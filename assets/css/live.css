@@ -255,3 +255,9 @@
 .sleeve__cover b { font: 700 1.05rem/1.25 var(--f-body); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sleeve__cover small { font-weight: 600; opacity: 0.8; font-size: 0.8rem; }
 .sleeve__by { margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); text-align: center; }
+
+/* settings: what is new on this phone */
+.st-list { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.st-list li { background: var(--card-2); border-radius: 999px; padding: 4px 14px; }
+.settings label.btn { cursor: pointer; }
+.settings code { background: var(--card-2); padding: 1px 6px; border-radius: 6px; font-size: .9em; }

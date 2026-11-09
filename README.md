@@ -19,22 +19,33 @@ Questions only she can answer → loader → intro → the site. Installable as 
 | `draw.html?k=outfit\|dining\|delivery\|movie` | **Tonight's draw** — a wheel picks from your list, you log the night (note, hearts, sketch), and recent picks are skipped |
 | `trips.html` → `trip.html?id=…` | **Anniversary trips** — the map of Egypt's 27 governorates, coloured where your anniversaries took you, with year pins; a draw for next year's governorate; every trip hangs as a polaroid on strings of lights, and each trip has its own photos, notes and sketches |
 | `movies.html` | **What we've watched** — a binge-stats board: one coloured block per film or series, with your totals |
-| `settings.html` | Whose phone this is, and the GitHub token that lets it save |
+| `settings.html` | Whose phone this is, and sending what's new on it to the other phone or the PC |
 
 ## Writing from your phones
-The journal, songs, draw lists, logged nights and sketches are saved straight to this repo by the phone,
-encrypted with the same key as the story, in `content/live/` (one file per list, one per sketch). GitHub only
-ever stores unreadable data.
+No accounts and no tokens. The journal, songs, draws, trips, films and wishes are plain JSON files on this PC,
+in `private/live/<kind>.json` (sketches and photos in `private/live/s/`). The build encrypts them into `content/live/`
+with the same key as the story, so the site can show them and GitHub only ever holds unreadable data.
 
-Setup, once per phone, on **الإعدادات / Settings**:
-1. Pick whose phone it is.
-2. Make a fine-grained token at github.com/settings/personal-access-tokens/new: only the `SAFE` repo,
-   **Contents: Read and write**. One token per phone; delete it on GitHub if a phone is lost.
-3. Paste it, **Test connection**, Save.
+On a phone:
+1. **الإعدادات / Settings** → pick whose phone it is (once).
+2. Write as usual. It's saved on that phone straight away (only the changes) and shows on every page, even offline.
+3. **ابعتوا اللي جديد / Send what's new** makes one encrypted `us-<who>-<date>.json` file with everything new on the phone.
+   - To the other phone: open Settings there → **ضيفوا ملف من التاني / Add a file** — it sees it all at once.
+   - To the site: save the file on this PC, then
 
-Phones without a token can still read everything (from the published site, a minute or two behind).
-Because the phones commit to `main`, run `git pull` before you push a rebuild from this PC.
-**Never replace `private/.master-key`** — everything you've written is encrypted with it.
+```bash
+node tools/import.mjs us-esraa-20261109-2130.json
+```
+
+```bash
+node tools/build.mjs
+```
+
+   and push. Once the site has a change, each phone drops its own copy of it by itself.
+
+Changes merge by id: two phones adding at the same time never overwrite each other, and importing the same file twice
+changes nothing. You can also edit `private/live/*.json` by hand (`node tools/add-songs.mjs "Song — Artist"` adds songs).
+**Never replace `private/.master-key`** — the phones' files and the site are encrypted with it.
 
 Every page shares the header (mega menus on desktop, a “الفهرس” contents menu on phones), the footer,
 and the language switch. The code: `assets/js/shell.js` (shared), `assets/js/pages/<page>.js` (one per page).

@@ -4,12 +4,15 @@
    private/questions.json  the gate questions + every accepted answer   (never committed)
    private/story.json      everything shown on the site                 (never committed)
    private/media/*         photos and videos the story refers to         (never committed)
+   private/live/*.json     the shared lists (journal, songs, draws, trips, films, wishes); phones' files are merged in by tools/import.mjs
+   private/live/s/*        sketches and photos those lists show
    private/.master-key     created on first run; keep it — losing it makes her re-answer
 
    Output (safe to commit):
    content/gate.json       the questions and hints only
    content/vault.json      the encrypted story + the master key wrapped per answer combo
    content/m/<id>.bin      each photo/video, encrypted
+   content/live/*.bin      each shared list, encrypted (content/live/s/<id>.bin each sketch)
    sw.js                   VERSION bumped so phones pick up the new content
 
    Run:  node tools/build.mjs */
@@ -19,7 +22,7 @@ import { existsSync } from 'node:fs';
 import { createHash, createHmac } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ITERATIONS, deriveKek, importMaster, seal, randomBytes, toB64, fromB64 } from '../assets/js/core.js';
+import { ITERATIONS, deriveKek, importMaster, seal, open, randomBytes, toB64, fromB64 } from '../assets/js/core.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PRIV = path.join(ROOT, 'private');
@@ -139,7 +142,10 @@ async function main() {
 	await writeFile(path.join(OUT, 'vault.json'), JSON.stringify(vault));
 	await writeFile(path.join(OUT, 'gate.json'), JSON.stringify(gate, null, '\t') + '\n');
 
-	// 4) Service worker: list every page and script to precache, and bump its version.
+	// 4) The shared lists and their sketches.
+	const live = await sealLive(key);
+
+	// 5) Service worker: list every page and script to precache, and bump its version.
 	const swFile = path.join(ROOT, 'sw.js');
 	const sw = await readFile(swFile, 'utf8');
 	const pages = (await readdir(ROOT)).filter((f) => f.endsWith('.html')).sort();
@@ -156,9 +162,47 @@ async function main() {
 
 	const size = (await Promise.all([...keep].map((f) => stat(path.join(MEDIA_OUT, f)).then((s) => s.size)))).reduce((a, b) => a + b, 0);
 	console.log(`✓ ${qs.length} question(s), ${used.size} media file(s) (${(size / 1048576).toFixed(1)} MB), vault ${(JSON.stringify(vault).length / 1024).toFixed(0)} KB`);
+	console.log(`✓ shared lists: ${live.lists} list(s), ${live.sketches} sketch(es)${live.changed ? `, ${live.changed} updated` : ''}`);
 	if (missing.size) console.warn('! Not found in private/media (left as-is): ' + [...missing].join(', '));
 	const unused = files.filter((f) => !used.has(f) && !f.startsWith('.'));
 	if (unused.length) console.log('  (not used by story.json: ' + unused.join(', ') + ')');
+}
+
+/* private/live → content/live. A file is only rewritten when what's in it changed, so git sees real changes only.
+   The first time, lists that were saved in content/live before (by the phones, through GitHub) are copied out to private/live. */
+async function sealLive(key) {
+	const src = path.join(PRIV, 'live'), out = path.join(OUT, 'live');
+	await mkdir(path.join(src, 's'), { recursive: true });
+	await mkdir(path.join(out, 's'), { recursive: true });
+	const unseal = async (file) => Buffer.from(await open(key, fromB64((await readFile(file, 'utf8')).trim())));
+	let changed = 0;
+	const put = async (file, bytes) => {
+		if (existsSync(file)) { try { if ((await unseal(file)).equals(bytes)) return; } catch { /* rewrite */ } }
+		await writeFile(file, toB64(await seal(key, bytes)));
+		changed++;
+	};
+	// copy out what only exists encrypted
+	const BIN = /\.bin$/, EXT = /\.[^.]+$/;
+	for (const f of (await readdir(out)).filter((f) => BIN.test(f))) {
+		const json = path.join(src, f.replace(BIN, '.json'));
+		if (!existsSync(json)) {
+			await writeFile(json, JSON.stringify(JSON.parse((await unseal(path.join(out, f))).toString('utf8')), null, '\t') + '\n');
+			console.log('• Copied content/live/' + f + ' out to private/live/');
+		}
+	}
+	for (const f of await readdir(path.join(out, 's'))) {
+		const id = f.replace(BIN, '');
+		if (!(await readdir(path.join(src, 's'))).some((x) => x.replace(EXT, '') === id)) await writeFile(path.join(src, 's', id + '.webp'), await unseal(path.join(out, 's', f)));
+	}
+	const lists = (await readdir(src)).filter((f) => f.endsWith('.json'));
+	for (const f of lists) {
+		let data;
+		try { data = JSON.parse(await readFile(path.join(src, f), 'utf8')); } catch (e) { fail(`private/live/${f} isn't valid JSON: ${e.message}`); }
+		await put(path.join(out, f.replace(/\.json$/, '.bin')), Buffer.from(JSON.stringify(data)));
+	}
+	const sketches = await readdir(path.join(src, 's'));
+	for (const f of sketches) await put(path.join(out, 's', f.replace(EXT, '') + '.bin'), await readFile(path.join(src, 's', f)));
+	return { lists: lists.length, sketches: sketches.length, changed };
 }
 
 main().catch((e) => fail(e.stack || e.message));

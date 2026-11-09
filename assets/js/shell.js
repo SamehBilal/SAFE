@@ -460,7 +460,7 @@ export const PAGES = [
 	{ href: 'family.html', id: 'family', ic: 'family', ar: 'عيلتنا', en: 'Our family', dar: 'فهد وعبد الرحمن وإحنا', den: 'Fahd, Abdulrahman and us', group: 'family' },
 	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'أعياد الميلاد', en: 'Birthdays', dar: 'عيد ميلاد كل واحد فينا', den: 'Every one of our birthdays', group: 'you' },
 	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتنا في أمان هنا', den: 'Our wishes, kept safe', group: 'you' },
-	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين بيكتب، والمزامنة', den: 'Who’s writing, and syncing', group: 'app' }
+	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين ماسك الموبايل، وابعتوا الجديد', den: 'Whose phone, and sharing what’s new', group: 'app' }
 ];
 
 /* What a night can be drawn for (draw.html?k=…). */

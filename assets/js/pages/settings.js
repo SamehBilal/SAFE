@@ -1,24 +1,19 @@
-import { L, T, esc, pageHead, App, $, store } from '../shell.js';
+import { L, T, esc, pageHead, App, $ } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 
-/* Who's holding this phone, and the GitHub token that lets it save. Nothing here leaves the phone. */
+/* Whose phone this is, and passing what each of you added to the other phone and to the site, as a file. No accounts, no tokens. */
+const NAMES = {
+	journal: ['الدفتر', 'Journal'], music: ['الأغاني', 'Songs'], draw: ['القرعة', 'Draws'],
+	trips: ['الرحلات', 'Trips'], movies: ['الأفلام', 'Films'], wishes: ['الأمنيات', 'Wishes']
+};
+
 export default {
 	title: { ar: 'الإعدادات', en: 'Settings' },
 	render(s) {
-		const c = live.config();
 		const me = live.me();
-		const steps = App.lang === 'ar'
-			? ['افتحوا <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">صفحة إنشاء token جديد</a> على GitHub (من حساب سامح).',
-				'Repository access: <b>Only select repositories</b> واختاروا <b>' + esc(c.repo || 'SAFE') + '</b>.',
-				'Permissions → Repository permissions → <b>Contents: Read and write</b>.',
-				'اعملوا Generate، وانسخوا الـ token والزقوه هنا. اعملوا token لكل تليفون لوحده.']
-			: ['Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">the new-token page</a> on GitHub (from Sameh’s account).',
-				'Repository access: <b>Only select repositories</b>, and pick <b>' + esc(c.repo || 'SAFE') + '</b>.',
-				'Permissions → Repository permissions → <b>Contents: Read and write</b>.',
-				'Generate it, copy the token and paste it here. Make one token per phone.'];
 		return `
-		${pageHead(L('الإعدادات', 'Settings'), L('عشان تكتبوا في الدفتر والأغاني والقرعة من موبايلاتكم', 'So you can both write the journal, songs and draws from your phones'), [{ href: 'settings.html', ar: 'الإعدادات', en: 'Settings' }])}
+		${pageHead(L('الإعدادات', 'Settings'), L('مين ماسك الموبايل، وإزاي اللي بتكتبوه يوصل للتاني وللموقع', 'Whose phone this is, and how what you write reaches the other phone and the site'), [{ href: 'settings.html', ar: 'الإعدادات', en: 'Settings' }])}
 		<section class="sec sec--top"><div class="wrap narrow">
 			<form class="panel settings" id="st-form" autocomplete="off">
 				<fieldset class="who">
@@ -26,59 +21,70 @@ export default {
 					<label><input type="radio" name="me" value="him"${me === 'him' ? ' checked' : ''}><span>${doodle('groom', 28)} ${T(s.him)}</span></label>
 					<label><input type="radio" name="me" value="her"${me === 'her' ? ' checked' : ''}><span>${doodle('princess', 28)} ${T(s.her)}</span></label>
 				</fieldset>
+				<p class="form-msg" id="st-who" role="status"></p>
+			</form>
 
-				<h2>${L('الحفظ على GitHub', 'Saving to GitHub')}</h2>
-				<p class="muted">${L('اللي بتكتبوه بيتشفّر على الموبايل بنفس مفتاح الموقع، وبعدين يتحفظ في الريبو. GitHub نفسه مايقدرش يقراه.', 'What you write is encrypted on the phone with the site’s own key, then saved to the repo. GitHub itself can’t read it.')}</p>
-				<div class="f-row">
-					<label class="f f--grow"><span>${L('صاحب الريبو', 'Owner')}</span><input name="owner" dir="ltr" value="${esc(c.owner)}" required></label>
-					<label class="f f--grow"><span>${L('الريبو', 'Repository')}</span><input name="repo" dir="ltr" value="${esc(c.repo)}" required></label>
-					<label class="f"><span>${L('الفرع', 'Branch')}</span><input name="branch" dir="ltr" value="${esc(c.branch)}" required size="8"></label>
-				</div>
-				<label class="f"><span>GitHub token</span><input name="token" type="password" dir="ltr" autocomplete="off" spellcheck="false" placeholder="${c.token ? '••••••••  ' + L('(محفوظ)', '(saved)') : 'github_pat_…'}"></label>
-				<details class="howto"><summary>${L('أعمل token إزاي؟', 'How do I make a token?')}</summary><ol>${steps.map((x) => `<li>${x}</li>`).join('')}</ol></details>
+			<div class="panel settings" style="margin-top:20px">
+				<h2>${L('اللي جديد على الموبايل ده', 'What’s new on this phone')}</h2>
+				<p class="muted">${L('اللي بتكتبوه بيتحفظ على الموبايل على طول ويبان هنا. عشان يوصل للتاني أو للموقع، ابعتوه في ملف — الملف متشفّر بمفتاح موقعنا، محدش يقدر يفتحه غيرنا.', 'What you write is saved on the phone straight away and shows here. To get it to the other phone or onto the site, send it as a file — it’s encrypted with our site’s key, so nobody else can open it.')}</p>
+				<div id="st-pending" class="muted">${L('بنعد…', 'Counting…')}</div>
 				<p class="form-msg" id="st-msg" role="status"></p>
 				<div class="f-actions">
-					${c.token ? `<button type="button" class="btn btn--ghost" id="st-forget">${L('امسحوا الـ token', 'Forget the token')}</button>` : ''}
-					<button type="button" class="btn btn--ghost" id="st-test">${L('جربوا الاتصال', 'Test connection')}</button>
-					<button type="submit" class="btn btn--coral">${L('احفظوا', 'Save')}</button>
+					<label class="btn btn--ghost" for="st-file">${doodle('letter', 18)} ${L('ضيفوا ملف من التاني', 'Add a file from the other phone')}</label>
+					<input type="file" id="st-file" accept=".json,application/json" hidden>
+					<button type="button" class="btn btn--coral" id="st-send">${doodle('phone', 18)} ${L('ابعتوا اللي جديد', 'Send what’s new')}</button>
 				</div>
-			</form>
-			<p class="muted center" style="margin-top:20px">${L('الـ token بيفضل على الموبايل ده بس. لو الموبايل ضاع، امسحوه من GitHub.', 'The token stays on this phone only. If the phone is lost, delete it on GitHub.')}</p>
+				<details class="howto"><summary>${L('بيوصل للموقع إزاي؟', 'How does it get onto the site?')}</summary><ol>
+					<li>${L('ابعتوا الملف لنفسكم أو للتاني (واتساب، إيميل…). على الموبايل التاني: «ضيفوا ملف من التاني» وهيشوف كل حاجة على طول.', 'Send the file to yourselves or each other (WhatsApp, email…). On the other phone, “Add a file from the other phone” and it sees everything straight away.')}</li>
+					<li>${L('على كمبيوتر سامح: حطوا الملف في أي مكان وشغلوا', 'On Sameh’s PC: save the file anywhere and run')} <code dir="ltr">node tools/import.mjs us-….json</code></li>
+					<li>${L('وبعدين', 'then')} <code dir="ltr">node tools/build.mjs</code> ${L('وانشروا. لما الموقع يتحدث، الموبايلات بتمسح نسختها لوحدها.', 'and publish. Once the site has it, the phones drop their own copy by themselves.')}</li>
+				</ol></details>
+			</div>
 		</div></section>`;
 	},
 	after(main) {
 		const form = $('#st-form', main);
+		const who = $('#st-who', main);
 		const msg = $('#st-msg', main);
-		const keep = () => {
-			const c = live.config();
-			live.setConfig({ owner: form.owner.value.trim(), repo: form.repo.value.trim(), branch: form.branch.value.trim() || 'main', token: form.token.value.trim() || c.token });
+		const box = $('#st-pending', main);
+		form.onchange = () => {
 			if (form.me.value) live.setMe(form.me.value);
+			who.textContent = L('اتحفظ ✓ — تقدروا تكتبوا من الموبايل ده', 'Saved ✓ — you can write from this phone');
 		};
-		form.onsubmit = async (e) => {
-			e.preventDefault();
-			keep();
-			msg.textContent = L('اتحفظ ✓', 'Saved ✓');
-			form.token.value = '';
-			form.token.placeholder = '••••••••  ' + L('(محفوظ)', '(saved)');
+
+		const count = async () => {
+			const p = await live.pending();
+			const rows = Object.entries(p.lists).map(([k, n]) => `<li>${esc(L(...NAMES[k]))}: <b>${n}</b></li>`);
+			if (p.sketches) rows.push(`<li>${L('رسومات وصور', 'Sketches and photos')}: <b>${p.sketches}</b></li>`);
+			box.innerHTML = p.total ? `<ul class="st-list">${rows.join('')}</ul>` : `<p>${L('مفيش حاجة جديدة — كل اللي هنا موجود على الموقع ♥', 'Nothing new — everything here is already on the site ♥')}</p>`;
+			return p;
 		};
-		$('#st-test', main).onclick = async () => {
-			keep();
-			msg.textContent = L('بنجرب…', 'Testing…');
+		count();
+
+		$('#st-send', main).onclick = async () => {
+			msg.textContent = '';
 			try {
-				const r = await live.check();
-				msg.textContent = r.push
-					? L('تمام! الموبايل ده يقدر يحفظ ♥', 'All good! This phone can save ♥')
-					: L('شايف الريبو بس الـ token مالوش صلاحية كتابة (Contents: Read and write)', 'I can see the repo, but the token can’t write (Contents: Read and write)');
-				if (!live.me()) msg.textContent += ' — ' + L('اختاروا مين ماسك الموبايل فوق', 'choose whose phone this is above');
-			} catch (err) {
-				msg.textContent = err.code === 'repo' ? L('مش لاقي الريبو — راجعي الاسم', 'Repo not found — check the names') : live.why(err);
-			}
+				const file = await live.exportFile();
+				if (navigator.canShare?.({ files: [file] })) {
+					try { await navigator.share({ files: [file], title: file.name }); return; } catch (e) { if (e.name === 'AbortError') return; }
+				}
+				const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(file), download: file.name });
+				document.body.append(a); a.click(); a.remove();
+				setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+				msg.textContent = L('الملف اتنزل: ', 'Downloaded: ') + file.name;
+			} catch (err) { msg.textContent = live.why(err); }
 		};
-		$('#st-forget', main)?.addEventListener('click', () => {
-			const c = live.config();
-			live.setConfig({ ...c, token: '' });
-			for (const k of ['journal', 'music', 'draw']) store.del('us.live.' + k);
-			location.reload();
-		});
+
+		$('#st-file', main).onchange = async (e) => {
+			const f = e.target.files?.[0];
+			e.target.value = '';
+			if (!f) return;
+			msg.textContent = L('بنضيف…', 'Adding…');
+			try {
+				const n = await live.importFile(f);
+				msg.textContent = n ? L(`اتضاف ✓ (${n} حاجة)`, `Added ✓ (${n} thing${n === 1 ? '' : 's'})`) : L('اتضاف ✓ — مكانش فيه حاجة جديدة', 'Added ✓ — nothing new in it');
+				count();
+			} catch (err) { msg.textContent = live.why(err); }
+		};
 	}
 };

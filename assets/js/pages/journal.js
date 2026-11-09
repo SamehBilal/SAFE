@@ -176,5 +176,5 @@ export default {
 };
 
 export function setupNote() {
-	return `<a class="setup-note reveal" href="settings.html">${doodle('gear', 28)} <span><b>${L('عشان تكتبوا هنا، ظبطوا المزامنة مرة واحدة', 'To write here, set up syncing once')}</b><small>${L('اختاروا مين ماسك الموبايل وحطوا الـ GitHub token في صفحة الإعدادات', 'Choose who you are and add the GitHub token on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
+	return `<a class="setup-note reveal" href="settings.html">${doodle('gear', 28)} <span><b>${L('عشان تكتبوا هنا، قولوا مين ماسك الموبايل', 'To write here, say whose phone this is')}</b><small>${L('مرة واحدة بس، من صفحة الإعدادات', 'Just once, on the settings page')}</small></span><span aria-hidden="true">${App.arrow}</span></a>`;
 }
