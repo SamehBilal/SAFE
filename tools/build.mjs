@@ -144,8 +144,8 @@ async function main() {
 	const sw = await readFile(swFile, 'utf8');
 	const pages = (await readdir(ROOT)).filter((f) => f.endsWith('.html')).sort();
 	const code = [];
-	for (const dir of ['assets/css', 'assets/js', 'assets/js/pages', 'assets/icons']) {
-		for (const f of (await readdir(path.join(ROOT, dir))).sort()) if (/\.(css|js|svg|png)$/.test(f)) code.push(`${dir}/${f}`);
+	for (const dir of ['assets/css', 'assets/js', 'assets/js/pages', 'assets/icons', 'assets/audio']) {
+		for (const f of (await readdir(path.join(ROOT, dir))).sort()) if (/\.(css|js|svg|png|mp3)$/.test(f)) code.push(`${dir}/${f}`);
 	}
 	const shell = ['./', ...pages, 'manifest.webmanifest', ...code, 'content/gate.json', 'content/vault.json'];
 	const hash = createHash('sha256');

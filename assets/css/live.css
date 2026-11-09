@@ -205,3 +205,53 @@
 .bd-card b { font-size: 1.15rem; margin-top: 8px; }
 .bd-card small { color: var(--muted); }
 .bd-card em { font-style: normal; font: 1.4rem var(--f-label); color: var(--coral-deep); }
+
+/* ---------- Songs: the record player and the shelf of sleeves ---------- */
+.deck { --lab: #c2185b; --lab-ink: #ffd1dc; display: grid; gap: 22px; align-items: center; padding: clamp(14px, 3vw, 28px); border-radius: 30px; background: var(--card); box-shadow: var(--shadow-lg); }
+@media (min-width: 860px) { .deck { grid-template-columns: 1.35fr 1fr; } }
+.deck__svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.3)); }
+.deck__lp { transform-box: view-box; transform-origin: 400px 400px; }
+.deck__label { fill: var(--lab); transition: fill 0.4s; }
+.deck__label-t { fill: var(--lab-ink); font: 700 34px var(--f-body); }
+.deck__label-a { fill: var(--lab-ink); font: 600 24px var(--f-body); opacity: 0.85; }
+.deck__arm { transform-box: view-box; transform-origin: 860px 140px; transform: rotate(0deg); }
+.deck__led { fill: #4a4a50; transition: fill 0.3s; }
+.deck.is-swapping .deck__lp { animation: lp-drop 0.55s var(--ease-out); }
+@keyframes lp-drop { from { opacity: 0; transform: translateY(-40px) scale(0.92); } }
+.deck.is-playing .deck__lp { animation: lp-spin 1.8s linear infinite; }
+@keyframes lp-spin { to { transform: rotate(360deg); } }
+.deck.is-playing .deck__led { fill: #6be38b; filter: drop-shadow(0 0 8px #6be38b); }
+.deck__side { display: grid; gap: 8px; align-content: center; text-align: center; }
+.deck__eyebrow { margin: 0; color: var(--muted); font-size: 0.85rem; font-weight: 700; }
+.deck__title { margin: 0; font: 400 clamp(1.9rem, 6vw, 2.8rem)/1.3 var(--f-script); color: var(--blue); }
+.deck__artist { margin: 0; font-weight: 700; color: var(--text); }
+.deck__note { margin: 4px 0 0; font: 1.35rem/1.35 var(--f-hand); color: var(--muted); min-height: 1em; }
+.deck__ctrls { display: flex; gap: 14px; justify-content: center; align-items: center; margin-top: 10px; }
+.deck__btn { appearance: none; border: 2px solid var(--line); background: var(--card); color: var(--text); width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: transform 0.2s var(--ease-pop), border-color 0.2s; }
+.deck__btn:hover { transform: scale(1.08); border-color: var(--coral); }
+.deck__btn--main { width: 66px; height: 66px; background: var(--coral); border-color: var(--coral); color: #fff; font-size: 1.4rem; box-shadow: 0 5px 0 var(--coral-deep); }
+.deck .dk-ic-stop, .deck.is-playing .dk-ic-play { display: none; }
+.deck.is-playing .dk-ic-stop { display: inline; }
+.deck__crackle { justify-content: center; font-size: 0.9rem; color: var(--muted); }
+.deck__screen iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 14px; display: block; }
+.deck__screen iframe.is-spotify { aspect-ratio: auto; height: 152px; }
+#dk-open { justify-self: center; }
+
+.shelf { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 26px 20px; }
+.shelf .empty { grid-column: 1 / -1; }
+.sleeve { position: relative; }
+.sleeve__btn { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; text-align: center; color: inherit; }
+.sleeve__lp { position: absolute; inset: 5%; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1b1e 0 2px, #121214 2px 4px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); transform: translateX(calc(var(--dir, 1) * 12%)); transition: transform 0.5s var(--ease-out); }
+.sleeve__lp i { position: absolute; inset: 34%; border-radius: 50%; background: var(--ink); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25); }
+.sleeve__lp i::after { content: ''; position: absolute; inset: 44%; border-radius: 50%; background: #ddd; }
+.sleeve__btn:hover .sleeve__lp, .sleeve__btn:focus-visible .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 30%)) rotate(40deg); }
+.sleeve.is-out .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 70%)) rotate(120deg); }
+.sleeve.is-on .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 22%)); }
+.sleeve__cover { position: absolute; inset: 0; display: grid; align-content: end; justify-items: center; gap: 2px; padding: 12px; border-radius: 8px; background: linear-gradient(135deg, var(--paper) 0 55%, color-mix(in srgb, var(--ink) 25%, var(--paper)) 55% 60%, var(--paper) 60%); color: var(--ink); box-shadow: 0 10px 22px rgba(19, 52, 71, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.06); transition: transform 0.3s var(--ease-pop); overflow: hidden; }
+.sleeve__btn:hover .sleeve__cover { transform: rotate(-1.5deg); }
+.sleeve.is-on .sleeve__cover { box-shadow: 0 0 0 3px var(--coral), 0 10px 22px rgba(19, 52, 71, 0.22); }
+.sleeve__n { position: absolute; top: 8px; inset-inline-start: 10px; font: 1.3rem var(--f-label); opacity: 0.6; }
+.sleeve__art { position: absolute; top: 18%; left: 50%; translate: -50% 0; opacity: 0.85; }
+.sleeve__cover b { font: 700 1.05rem/1.25 var(--f-body); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sleeve__cover small { font-weight: 600; opacity: 0.8; font-size: 0.8rem; }
+.sleeve__by { margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); text-align: center; }

@@ -15,7 +15,7 @@ Questions only she can answer → loader → intro → the site. Installable as 
 | `family.html` → `member.html?id=…` | The family newspaper; one page per person with age and next birthday |
 | `birthday.html` · `wishes.html` | Everyone's birthdays with countdowns and a cake to blow out · our shared wish jar |
 | `journal.html` | **Our journal** — you both write pages from your phones (mood, sketch, optionally pinned to the timeline) |
-| `music.html` | **Our songs** — add songs with a link and why they're yours; YouTube/Spotify play right on the page; a song of the day |
+| `music.html` | **Our songs** on a record player (after Codrops' Interactive Record Player): songs are sleeves on a shelf; tap one and its vinyl goes on the turntable, the tonearm drops and it plays from its YouTube/Spotify link over a soft needle crackle |
 | `draw.html?k=outfit\|dining\|delivery\|movie` | **Tonight's draw** — a wheel picks from your list, you log the night (note, hearts, sketch), and recent picks are skipped |
 | `trips.html` → `trip.html?id=…` | **Anniversary trips** — the map of Egypt's 27 governorates, coloured where your anniversaries took you, with year pins; a draw for next year's governorate; every trip hangs as a polaroid on strings of lights, and each trip has its own photos, notes and sketches |
 | `movies.html` | **What we've watched** — a binge-stats board: one coloured block per film or series, with your totals |
@@ -74,3 +74,7 @@ Open http://localhost:5174 (add `?intro` to replay the intro).
 ## Publishing (GitHub Pages)
 Commit everything except `private/` (already ignored), push, enable Pages on `main`.
 Back up `private/` — it's the only readable copy of the story.
+
+## Credits
+- Record player idea: [Codrops — Interactive Record Player](https://tympanus.net/codrops/?p=27200). Needle crackle: Vinyl Noise SFX by Chia (99Sounds), free to use.
+- Intro night scene and star dust: [The programmer's romantic](https://codepen.io/CCG/pen/aZpVVv) by CCG.
