@@ -14,7 +14,7 @@ export default {
 		return `
 		<section class="chapter-hero">
 			<div class="fairy" aria-hidden="true">${Array.from({ length: 36 }, () => `<i style="--x:${rand(0, 100)}%;--y:${rand(0, 100)}%;--d:${rand(2, 5)}s;--delay:-${rand(0, 5)}s"></i>`).join('')}</div>
-			${pageHead(App.t(c.title), [longDate(c.date), yearsAgo(c.date)].filter(Boolean).join(" · "), [{ href: 'chapters.html', ar: 'أيام فارقة', en: 'Big days' }, { href: '#', label: c.title }])}
+			${pageHead(App.t(c.title), [longDate(c.date), yearsAgo(c.date)].filter(Boolean).join(" · "), [{ href: 'chapters.html', ar: 'أيام فارقة', en: 'Big days' }, { href: '#', label: c.title }], { photos: (c.photos || []).map((p) => (typeof p === 'string' ? p : p.photo)).concat(c.photo || []) })}
 			${c.sub ? `<p class="chapter-hero__sub">${T(c.sub)}</p>` : ''}
 		</section>
 		<article class="sec sec--top"><div class="wrap narrow">

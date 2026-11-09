@@ -15,7 +15,7 @@ export default {
 		const photos = [...(m.photos || []), ...(s.gallery || []).filter((g) => (g.who || []).includes(m.id))].map((p) => (typeof p === 'string' ? { photo: p } : p));
 		const next = m.born ? nextBirthday(m.born) : null;
 		return `
-		${pageHead(name, App.t(m.role), [{ href: 'family.html', ar: 'عيلتنا', en: 'Our family' }, { href: '#', label: m.name }])}
+		${pageHead(name, App.t(m.role), [{ href: 'family.html', ar: 'عيلتنا', en: 'Our family' }, { href: '#', label: m.name }], { photos: [m.photo].filter(Boolean) })}
 		<section class="sec sec--top"><div class="wrap narrow">
 			<div class="member reveal" style="--c:${esc(m.color || '#0e6990')}">
 				<span class="fam__pic fam__pic--lg">${m.photo ? `<span data-media-box>${img(m.photo, name, 'zoom')}</span>` : `<span class="fam__emoji">${doodle(m.emoji, 52)}</span>`}</span>

@@ -6,7 +6,7 @@
 import { unlock, readVault, open, toB64, fromB64 } from './core.js';
 import { sky, dust } from './stardust.js';
 import { nightScene } from './scene.js';
-import { doodle, doodleDefs, doodlePath } from './doodles.js';
+import { doodle, doodleDefs } from './doodles.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -874,50 +874,84 @@ async function renderPage() {
 	if (location.hash) $(location.hash.replace(/[^\w#-]/g, ''))?.scrollIntoView();
 }
 
-/* The top of every inner page, after the Ahmed Khaled Tawfik site's page heroes: a night band with the intro's sky
-   and hill, and the page's own icons drawn big in gold, then a small label, a big title and a line about the page. */
+/* The top of every inner page: polaroids tossed on the page (after &Toc's «Scattered Polaroids — CSS random()» on CodePen),
+   each at its own tilt, nudge and shadow, placed so no two overlap by more than about a third; then a small label, the
+   title and a line about the page. Our own photos mix in with drawn ones, each with a word in handwriting. The scatter is
+   the same on every visit to a page, and is worked out twice: once for wide screens and once for phones. */
 const BAND = {
-	story: ['calendar', 'book', 'heart', 'star'], chapters: ['ring', 'bride', 'groom', 'baby'], moment: ['calendar', 'heart', 'star'],
-	chapter: ['ring', 'heart', 'sparkle'], places: ['pin', 'couple', 'sun', 'walk'], trips: ['plane', 'suitcase', 'pin', 'camera'],
-	trip: ['suitcase', 'camera', 'pin'], journal: ['pen', 'book', 'coffee', 'heart'], draw: ['dress', 'dinner', 'dice', 'scooter', 'clapper'],
-	movies: ['popcorn', 'clapper', 'eyes', 'love'], music: ['music', 'heart', 'sparkle', 'music'], gallery: ['camera', 'family', 'heart', 'sun'],
-	notes: ['pen', 'letter', 'smitten', 'heart'], letters: ['letter', 'scroll', 'heart', 'pen'], family: ['lion', 'family', 'chick', 'baby'],
-	member: ['family', 'heart', 'star'], birthday: ['gift', 'cake', 'party', 'sparkle'], wishes: ['star', 'bottle', 'sparkle', 'moon'],
-	settings: ['phone', 'gear', 'lock']
+	story: [['calendar', 'كل تاريخ', 'Every date'], ['book', 'حكايتنا', 'Our story'], ['heart', 'من أول يوم', 'Since day one'], ['star', 'لسه جاي', 'More to come']],
+	chapters: [['ring', 'الخطوبة', 'Engaged'], ['bride', 'الفرح', 'The wedding'], ['groom', 'العريس', 'The groom'], ['baby', 'وجه فهد', 'Then Fahd']],
+	moment: [['calendar', 'اليوم ده', 'This day'], ['heart', 'فاكرينه', 'We remember'], ['star', 'ذكرى', 'A memory']],
+	chapter: [['ring', 'يوم فارق', 'A big day'], ['heart', 'إحنا', 'Us'], ['sparkle', 'للأبد', 'Forever']],
+	places: [['pin', 'هنا', 'Here'], ['couple', 'إحنا الاتنين', 'The two of us'], ['sun', 'مشوار', 'A day out'], ['walk', 'سوا', 'Together']],
+	trips: [['plane', 'يلا بينا', 'Let’s go'], ['suitcase', 'الشنط', 'Packed'], ['pin', 'محافظة جديدة', 'A new place'], ['camera', 'صور', 'Snapshots']],
+	trip: [['suitcase', 'رحلتنا', 'Our trip'], ['camera', 'صورنا', 'Our photos'], ['pin', 'هنا', 'Here']],
+	journal: [['pen', 'بقلمنا', 'In our hand'], ['book', 'دفترنا', 'Our journal'], ['coffee', 'صباحية', 'Mornings'], ['heart', 'يوم بيوم', 'Day by day']],
+	draw: [['dress', 'لبس', 'Outfit'], ['dinner', 'عشا', 'Dinner'], ['dice', 'نصيبنا', 'Luck'], ['scooter', 'دليفري', 'Delivery'], ['clapper', 'فيلم', 'A film']],
+	movies: [['popcorn', 'فشار', 'Popcorn'], ['clapper', 'أكشن', 'Action'], ['eyes', 'مركزين', 'Glued'], ['love', 'حبيناه', 'Loved it']],
+	music: [['music', 'أغنيتنا', 'Our song'], ['heart', 'بتفكرنا', 'Reminds us'], ['sparkle', 'ليلة حلوة', 'A good night']],
+	gallery: [['camera', 'كليك', 'Click'], ['family', 'إحنا', 'Us'], ['heart', 'ذكرى', 'A memory'], ['sun', 'أحلى يوم', 'Best day']],
+	notes: [['pen', 'كلمتين', 'A few words'], ['letter', 'ليكي', 'For you'], ['smitten', 'بحبك', 'Love you'], ['heart', '♥', '♥']],
+	letters: [['letter', 'افتحيه', 'Open me'], ['scroll', 'جواب', 'A letter'], ['heart', 'من القلب', 'From the heart'], ['pen', 'بخط إيدي', 'By hand']],
+	family: [['lion', 'فهد', 'Fahd'], ['family', 'إحنا الأربعة', 'The four of us'], ['chick', 'عبد الرحمن', 'Abdulrahman'], ['baby', 'بيتنا', 'Home']],
+	member: [['family', 'عيلتنا', 'Family'], ['heart', 'حبيبنا', 'Our dear'], ['star', 'نجم', 'A star']],
+	birthday: [['gift', 'هدية', 'A gift'], ['cake', 'تورتة', 'Cake'], ['party', 'هيييه', 'Hooray'], ['sparkle', 'سنة حلوة', 'Happy year']],
+	wishes: [['star', 'أمنية', 'A wish'], ['bottle', 'البرطمان', 'The jar'], ['sparkle', 'هتتحقق', 'It’ll come true'], ['moon', 'بالليل', 'At night']],
+	settings: [['phone', 'موبايلي', 'My phone'], ['gear', 'ظبط', 'Set up'], ['lock', 'في أمان', 'Safe']]
 };
 const EYEBROW = {
 	story: ['حكايتنا', 'Our story'], nights: ['سهراتنا', 'Our nights'], memories: ['ذكرياتنا', 'Our memories'],
 	family: ['عيلتنا', 'Our family'], you: ['مناسباتنا', 'Our occasions'], app: ['التطبيق', 'The app']
 };
-/* steady pseudo-random numbers, so a page's sky is the same on every visit */
+/* steady pseudo-random numbers, so a page's polaroids land the same way every visit */
 const rnd = (i, salt) => { const x = Math.sin((i + 1) * 9301 + salt * 49297) * 233280; return x - Math.floor(x); };
 
-function band(id, icons) {
-	const salt = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
-	const stars = Array.from({ length: 46 }, (_, i) => {
-		const x = (rnd(i, salt) * 1200).toFixed(0), y = (rnd(i, salt + 1) * 190).toFixed(0), r = (0.6 + rnd(i, salt + 2) * 1.6).toFixed(1);
-		return `<circle cx="${x}" cy="${y}" r="${r}" style="--d:${(rnd(i, salt + 3) * 4).toFixed(1)}s"/>`;
-	}).join('');
-	const n = icons.length, w = Math.min(190, 760 / n), size = Math.min(124, w * 0.82);
-	const art = icons.map((name, i) => {
-		const cx = 600 + (i - (n - 1) / 2) * w, lift = i % 2 ? 26 : 0, s = (size * (i % 2 ? 0.84 : 1)) / 24;
-		return `<g class="pb__ic" style="--i:${i}" transform="translate(${(cx - 12 * s).toFixed(1)} ${(232 - lift - 24 * s).toFixed(1)}) scale(${s.toFixed(3)})"><path d="${doodlePath(name)}" filter="url(#dd-rough)"/></g>`;
-	}).join('');
-	return `<div class="pb" aria-hidden="true"><svg viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice">
-		<g class="pb__stars">${stars}</g>
-		<g class="pb__moon" transform="translate(${salt % 2 ? 1010 : 110} 34) scale(2.6)"><path d="${doodlePath('moon')}" filter="url(#dd-rough)"/></g>
-		<path class="pb__hill" d="M-20 300V252C160 226 330 238 470 246S760 222 900 230 1120 252 1220 240V300Z"/>
-		<path class="pb__line" d="M-20 252C160 226 330 238 470 246S760 222 900 230 1120 252 1220 240" filter="url(#dd-rough)"/>
-		${art}
-	</svg></div>`;
+/* Where n cards go on a band W×H (card w×h, all in % of the band's width): each tries spots until it overlaps the
+   ones already down by at most 35% of a card (the pen's permissive anti-collision), else takes the least crowded spot. */
+function scatter(n, W, H, w, h, salt) {
+	const put = [];
+	for (let i = 0; i < n; i++) {
+		let best = null, bestHit = Infinity;
+		for (let t = 0; t < 400; t++) {
+			const x = w / 2 + 1 + rnd(i * 401 + t, salt) * (W - w - 2);
+			const y = h / 2 + 1 + rnd(i * 401 + t, salt + 7) * (H - h - 2);
+			const hit = Math.max(0, ...put.map((p) => Math.max(0, w - Math.abs(p.x - x)) * Math.max(0, h - Math.abs(p.y - y)) / (w * h)));
+			if (hit < bestHit) { best = { x, y }; bestHit = hit; }
+			if (hit <= 0.35 && t > 20) break; // a few tries in, take any spot that's allowed
+		}
+		put.push(best);
+	}
+	return put;
 }
 
-/** Page heading used on every inner page. icons: the band's drawings, when not the page's own. */
-export function pageHead(title, sub, crumbs = [], icons) {
+function polaroids(id, cards) {
+	const salt = [...id].reduce((a, c) => a + c.charCodeAt(0), 0);
+	const wide = scatter(cards.length, 100, 38, 12.5, 15, salt);
+	const phone = scatter(Math.min(cards.length, 4), 100, 70, 27, 32.4, salt + 3);
+	return `<div class="pb" aria-hidden="true">${cards.map((c, i) => {
+		const r = (rnd(i, salt + 11) * 2 - 1) * 13, s = rnd(i, salt + 13);
+		const p = phone[i] || { x: -50, y: 0 };
+		const pic = c.photo
+			? `<div class="pol__ph">${img(c.photo, '', 'pol__img')}</div>`
+			: `<div class="pol__ph pol__ph--dd">${doodle(c.icon, 64)}</div>`;
+		return `<figure class="pol${i >= 4 ? ' pol--wide' : ''}"${c.photo ? ' data-media-box' : ''} style="--x:${wide[i].x.toFixed(1)};--y:${wide[i].y.toFixed(1)};--px:${p.x.toFixed(1)};--py:${p.y.toFixed(1)};--r:${r.toFixed(1)}deg;--s:${s.toFixed(2)};--i:${i}">
+			${pic}<figcaption>${esc(c.cap)}</figcaption></figure>`;
+	}).join('')}</div>`;
+}
+
+/** Page heading used on every inner page. opts: icon names for the drawn polaroids (an array), or { icons, photos }. */
+export function pageHead(title, sub, crumbs = [], opts = {}) {
+	if (Array.isArray(opts)) opts = { icons: opts };
 	const id = pageId(), trail = [{ href: 'index.html', ar: 'الرئيسية', en: 'Home' }, ...crumbs];
 	const eb = EYEBROW[groupOf(id)];
+	const drawn = opts.icons ? opts.icons.map((ic) => (Array.isArray(ic) ? ic : [ic, title, title])) : BAND[id] || [['heart', '♥', '♥'], ['star', 'إحنا', 'Us']];
+	// our photos: the page's own, else a couple from the album
+	const photos = (opts.photos?.length ? opts.photos : (App.story?.gallery || []).map(firstPhoto)).filter(Boolean)
+		.map((ref, n) => ({ ref, n: rnd(n, id.length) })).sort((a, b) => a.n - b.n).slice(0, 2).map((p) => p.ref);
+	const cards = drawn.map(([icon, ar, en]) => ({ icon, cap: L(ar, en) }));
+	photos.forEach((photo, n) => cards.splice(1 + n * 2, 0, { photo, cap: L('إحنا', 'Us') }));
 	return `<header class="ph">
-		${band(id, icons || BAND[id] || ['heart', 'star', 'heart'])}
+		${polaroids(id, cards.slice(0, 7))}
 		<div class="ph__in">
 			<nav class="crumbs" aria-label="${L('أنت هنا', 'You are here')}">${trail.map((c) => `<a href="${c.href}">${esc(c.ar ? L(c.ar, c.en) : t(c.label))}</a>`).join('<span aria-hidden="true">/</span>')}</nav>
 			${eb ? `<p class="ph__eyebrow">${esc(L(...eb) === title ? L('حكاية حبنا', 'Our love story') : L(...eb))}</p>` : ''}

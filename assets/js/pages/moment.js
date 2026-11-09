@@ -17,7 +17,7 @@ export default {
 		const photos = photosOf(x);
 		const story = App.t(x.story || '');
 		return `
-		${pageHead(App.t(x.title), [longDate(x.date), yearsAgo(x.date)].filter(Boolean).join(" · "), [{ href: 'story.html', ar: 'حكايتنا', en: 'Our story' }, { href: '#', label: x.title }])}
+		${pageHead(App.t(x.title), [longDate(x.date), yearsAgo(x.date)].filter(Boolean).join(" · "), [{ href: 'story.html', ar: 'حكايتنا', en: 'Our story' }, { href: '#', label: x.title }], { photos: (x.photos || []).map((p) => (typeof p === 'string' ? p : p.photo)).concat(x.photo || []) })}
 		<article class="sec sec--top"><div class="wrap narrow">
 			<div class="moment-hero reveal"><span class="moment-hero__ic">${doodle(x.icon, 56)}</span><time datetime="${esc(x.date)}">${fmtDate(x.date)}</time></div>
 			${x.text ? `<p class="lede reveal">${T(x.text)}</p>` : ''}
