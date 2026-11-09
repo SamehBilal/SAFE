@@ -4,6 +4,7 @@
    Each page is a plain HTML file with <body data-page="story"> and one script tag for this file.
    This file loads assets/js/pages/<page>.js and calls its render() once the story is unlocked. */
 import { unlock, readVault, open, toB64, fromB64 } from './core.js';
+import { sky, dust } from './stardust.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -341,26 +342,46 @@ async function runIntro(story) {
 	let onSkip;
 	const skipP = new Promise((r) => (onSkip = r));
 	const pause = (ms) => Promise.race([sleep(ms), skipP]);
-	const el = stage(`<button class="intro__skip link" type="button">${L('تخطي ←', 'Skip →')}</button><div class="intro__lines" aria-live="polite"></div>`, 'intro');
+	/* a starry night over a hill where the four of us sit; each sentence is spelt out in golden dust,
+	   which then scatters and re-forms into the next (after codepen.io/CCG/pen/aZpVVv) */
+	const P = (cx, cy, rx, ry, rot, seed) => `<path d="${pebble(cx, cy, rx, ry, rot, seed)}"/>`;
+	const el = stage(`
+		<canvas class="intro__sky" aria-hidden="true"></canvas>
+		<svg class="intro__hill" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+			<path d="M0 240V204C220 176 470 150 700 146C760 145 840 145 900 146C1130 152 1380 178 1600 206V240Z"/>
+			<g transform="translate(800 150) scale(.42) translate(-310 -346)">
+				${P(238, 296, 39, 53, -8, 3)}${P(255, 213, 22, 25, 12, 5)}${P(318, 298, 34, 49, 4, 11)}${P(301, 232, 21, 21, 0, 13)}
+				${P(380, 310, 26, 31, 6, 17)}${P(357, 266, 15, 15, 0, 19)}${P(298, 300, 17, 10, -18, 23)}${P(281, 289, 8.5, 8.5, 0, 29)}
+			</g>
+			<path d="M520 152l4-10 3 10M560 150l3-8 3 8M1040 153l4-11 3 11M1080 156l3-8 3 8" fill="none" stroke-width="2"/>
+		</svg>
+		<button class="intro__skip link" type="button">${L('تخطي ←', 'Skip →')}</button>
+		<canvas class="intro__dust" aria-hidden="true"></canvas>
+		<p class="intro__lines" aria-live="polite"></p>
+		<div class="intro__end"></div>`, 'intro');
 	$('.intro__skip', el).onclick = () => { skipped = true; onSkip(); };
 	const lines = $('.intro__lines', el);
+	sky($('.intro__sky', el));
+	const sand = REDUCE ? null : dust($('.intro__dust', el), { font: getComputedStyle(document.documentElement).getPropertyValue('--f-script').trim() || 'serif' });
+	if (sand) lines.classList.add('sr-only');
 
 	for (const line of story.intro) {
 		if (skipped) break;
-		const words = t(line).split(/(\s+)/).filter(Boolean);
-		let n = 0;
-		lines.innerHTML = `<p class="intro__line">${words.map((w) => (/^\s+$/.test(w) ? ' ' : `<span style="--i:${n++}">${esc(w)}</span>`)).join('')}</p>`;
-		await pause(900 + n * 170 + 1500);
-		if (skipped) break;
-		$('.intro__line', lines)?.classList.add('is-out');
-		await pause(600);
+		const text = t(line);
+		lines.textContent = text;
+		if (sand) await sand.show(text);
+		await pause(Math.min(4600, 2200 + text.length * 45));
 	}
+	if (sand) { sand.scatter(); await pause(900); sand.stop(); }
+	lines.textContent = '';
 
 	const b = story.birthday || {};
 	const bday = b.show !== false;
 	const words = (bday ? t(b.title) || L('عيد ميلاد سعيد', 'Happy Birthday') : L('حكاية حبنا', 'Our Love Story')).split(' ');
 	const [first, ...rest] = words;
-	el.innerHTML = `
+	$('.intro__dust', el).remove();
+	$('.intro__skip', el).remove();
+	$('.intro__end', el).innerHTML = `
 		<div class="intro__final">
 			<div class="names"><span class="n1">${T(story.him)}</span><span class="heart">♥</span><span class="n2">${T(story.her)}</span></div>
 			<h1 class="pop"><span>${esc(first)}</span>${rest.length ? `<span class="pop__word"><span>${esc(rest.join(' '))}</span></span>` : ''}</h1>
