@@ -1,5 +1,7 @@
 # Everything readable lives here — it must never be pushed.
 private/
 node_modules/
+# this PC's own Claude Code permissions
+.claude/settings.local.json
 .DS_Store
 Thumbs.db
