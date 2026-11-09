@@ -5,6 +5,7 @@
    This file loads assets/js/pages/<page>.js and calls its render() once the story is unlocked. */
 import { unlock, readVault, open, toB64, fromB64 } from './core.js';
 import { sky, dust } from './stardust.js';
+import { nightScene } from './scene.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -347,14 +348,7 @@ async function runIntro(story) {
 	const P = (cx, cy, rx, ry, rot, seed) => `<path d="${pebble(cx, cy, rx, ry, rot, seed)}"/>`;
 	const el = stage(`
 		<canvas class="intro__sky" aria-hidden="true"></canvas>
-		<svg class="intro__hill" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-			<path d="M0 240V204C220 176 470 150 700 146C760 145 840 145 900 146C1130 152 1380 178 1600 206V240Z"/>
-			<g transform="translate(800 150) scale(.42) translate(-310 -346)">
-				${P(238, 296, 39, 53, -8, 3)}${P(255, 213, 22, 25, 12, 5)}${P(318, 298, 34, 49, 4, 11)}${P(301, 232, 21, 21, 0, 13)}
-				${P(380, 310, 26, 31, 6, 17)}${P(357, 266, 15, 15, 0, 19)}${P(298, 300, 17, 10, -18, 23)}${P(281, 289, 8.5, 8.5, 0, 29)}
-			</g>
-			<path d="M520 152l4-10 3 10M560 150l3-8 3 8M1040 153l4-11 3 11M1080 156l3-8 3 8" fill="none" stroke-width="2"/>
-		</svg>
+		${nightScene(`<g transform="translate(810 249) scale(.6) translate(-302 -349)">${P(238, 296, 39, 53, -8, 3)}${P(255, 213, 22, 25, 12, 5)}${P(318, 298, 34, 49, 4, 11)}${P(301, 232, 21, 21, 0, 13)}${P(380, 310, 26, 31, 6, 17)}${P(357, 266, 15, 15, 0, 19)}${P(298, 300, 17, 10, -18, 23)}${P(281, 289, 8.5, 8.5, 0, 29)}</g>`)}
 		<button class="intro__skip link" type="button">${L('تخطي ←', 'Skip →')}</button>
 		<canvas class="intro__dust" aria-hidden="true"></canvas>
 		<p class="intro__lines" aria-live="polite"></p>
