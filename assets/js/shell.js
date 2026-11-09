@@ -402,7 +402,7 @@ async function runIntro(story) {
 	const P = (cx, cy, rx, ry, rot, seed) => `<path d="${pebble(cx, cy, rx, ry, rot, seed)}"/>`;
 	const el = stage(`
 		<canvas class="intro__sky" aria-hidden="true"></canvas>
-		${nightScene(`<g transform="translate(810 249) scale(.6) translate(-302 -349)">${P(238, 296, 39, 53, -8, 3)}${P(255, 213, 22, 25, 12, 5)}${P(318, 298, 34, 49, 4, 11)}${P(301, 232, 21, 21, 0, 13)}${P(380, 310, 26, 31, 6, 17)}${P(357, 266, 15, 15, 0, 19)}${P(298, 300, 17, 10, -18, 23)}${P(281, 289, 8.5, 8.5, 0, 29)}</g>`)}
+		${nightScene(`<g transform="translate(800 249) scale(.6) translate(-323 -349)">${P(238, 296, 39, 53, -8, 3)}${P(255, 213, 22, 25, 12, 5)}${P(318, 298, 34, 49, 4, 11)}${P(301, 232, 21, 21, 0, 13)}${P(380, 310, 26, 31, 6, 17)}${P(357, 266, 15, 15, 0, 19)}${P(432, 322, 16, 21, 4, 23)}${P(429, 292, 11, 11, 0, 29)}</g>`)}
 		<button class="intro__skip link" type="button">${L('تخطي ←', 'Skip →')}</button>
 		<canvas class="intro__dust" aria-hidden="true"></canvas>
 		<p class="intro__lines" aria-live="polite"></p>
@@ -750,17 +750,16 @@ function familyScene(s) {
 		who(dad, stone(238, 296, 39, 53, -8, 3, '#e3b46a') + stone(255, 213, 22, 25, 12, 5, '#d99a44') + stone(264, 290, 15, 9, 38, 8, '#c98a3a'), 0),
 		who(mum, stone(318, 298, 34, 49, 4, 11, '#c9cfa6') + stone(301, 232, 21, 21, 0, 13, '#9fa77f'), 1),
 		kids[0] ? who(kids[0], stone(380, 310, 26, 31, 6, 17, '#e2cf9d') + stone(357, 266, 15, 15, 0, 19, '#e6a24c'), 2) : '',
-		kids[1] ? who(kids[1], stone(298, 300, 17, 10, -18, 23, '#f1e3c0') + stone(281, 289, 8.5, 8.5, 0, 29, '#e6a24c'), 3) : '',
-		mum ? stone(306, 313, 15, 8, -12, 31, '#c98a3a') : ''
+		kids[1] ? who(kids[1], stone(432, 322, 16, 21, 4, 23, '#f1e3c0') + stone(429, 292, 11, 11, 0, 29, '#e6a24c'), 3) : '',
 	].join('');
-	const more = kids.slice(2).map((m, k) => who(m, stone(420 + k * 26, 320, 12, 16, 0, 41 + k, '#e2cf9d') + stone(418 + k * 26, 297, 8, 8, 0, 47 + k, '#e6a24c'), 4 + k)).join('');
+	const more = kids.slice(2).map((m, k) => who(m, stone(466 + k * 26, 326, 12, 16, 0, 41 + k, '#e2cf9d') + stone(464 + k * 26, 303, 8, 8, 0, 47 + k, '#e6a24c'), 4 + k)).join('');
 
 	/* names written beside each of us, with a little arrow */
 	const label = (m, x, y, d) => (m ? `<text class="sk-label" x="${x}" y="${y}" text-anchor="middle">${esc(t(m.name))}</text>${ink(d, 'sk-ink', 1.4)}` : '');
 	const labels = label(dad, 430, 236, 'M450 244q22 4 34 20m0 0l-1-9m1 9l-9-2')
 		+ label(mum, 520, 166, 'M548 172q24 4 32 26m0 0l1-9m-1 9l-8-4')
-		+ label(kids[0], 770, 240, 'M744 246q-30 2-44 18m0 0l9-2m-9 2l1-9')
-		+ label(kids[1], 470, 352, 'M500 340q40-6 70-46m0 0l-9 3m9-3l-1 9');
+		+ label(kids[0], 690, 196, 'M682 204q-12 8-26 24m0 0l9-2m-9 2l1-9')
+		+ label(kids[1], 800, 300, 'M770 304q-16 0-30 4m0 0l8 4m-8-4l7-6');
 
 	/* pyramids: outline, sand wash, hatching on the shaded face */
 	const pyramid = (x, w, h) => {
