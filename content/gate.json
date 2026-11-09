@@ -4,54 +4,53 @@
 		"en": "Hey you 👀"
 	},
 	"intro": {
-		"ar": "المكان ده بتاع شخص واحد بس. أثبتي إنه انتي.",
-		"en": "This little corner of the internet belongs to one person only. Prove it’s you."
+		"ar": "المكان ده بتاعنا إحنا بس. جاوبي وادخلي.",
+		"en": "This place is only ours. Answer and come in."
 	},
 	"wrong": {
 		"ar": "في إجابة مش مظبوطة 🙈 جربي تاني يا حبيبتي.",
-		"en": "Hmm… one of those isn’t quite right 🙈 Try again, ya 7abibti."
+		"en": "Hmm… one of those isn't quite right 🙈 Try again, ya 7abibti."
 	},
 	"questions": [
 		{
 			"q": {
-				"ar": "اتعرفنا على بعض فين؟",
-				"en": "Where did we first meet?"
-			},
-			"hint": {
-				"ar": "أزرق، وفيه زرار «لايك».",
-				"en": "Blue. Has a ‘Like’ button."
+				"ar": "الباسورد بتاعنا؟",
+				"en": "Our password?"
 			},
 			"placeholder": {
-				"ar": "اكتبي هنا…",
-				"en": "type it…"
+				"ar": "…",
+				"en": "…"
 			}
 		},
 		{
 			"q": {
-				"ar": "قلتلك «بحبك» أول مرة إمتى؟",
-				"en": "When did I first say “I love you”?"
-			},
-			"hint": {
-				"ar": "صيف ٢٠٠٩ — يوم.شهر.سنة",
-				"en": "Summer 2009 — day.month.year"
+				"ar": "الكلمة اللي بنقولها لما نتخانق عشان كل حاجة ترجع حلوة؟",
+				"en": "The word we say in a fight to make everything good again?"
 			},
 			"placeholder": {
-				"ar": "يوم.شهر.سنة",
-				"en": "dd.mm.yyyy"
+				"ar": "الكلمة…",
+				"en": "the word…"
 			}
 		},
 		{
 			"q": {
-				"ar": "«أحلى خرجة» بتاعة صور النوتة كانت فين؟",
-				"en": "Where was “a7la 5rga” with the notebook selfies?"
-			},
-			"hint": {
-				"ar": "حورية البحر الخضرا ☕",
-				"en": "Green mermaid ☕"
+				"ar": "رقم أوضتنا في شهر العسل؟",
+				"en": "Our honeymoon room number?"
 			},
 			"placeholder": {
-				"ar": "المكان…",
-				"en": "the place…"
+				"ar": "الرقم…",
+				"en": "the number…"
+			},
+			"type": "number"
+		},
+		{
+			"q": {
+				"ar": "اسم مكان شهر العسل؟",
+				"en": "The honeymoon place's name?"
+			},
+			"placeholder": {
+				"ar": "الاسم…",
+				"en": "the name…"
 			}
 		}
 	]

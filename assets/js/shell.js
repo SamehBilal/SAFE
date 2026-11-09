@@ -231,7 +231,7 @@ function runGate() {
 				<div class="gate__ask ${animate ? 'swap' : ''}">
 					<label class="gate__q" for="gate-input">${T(q.q)}</label>
 					<input class="gate__input" id="gate-input" type="text" dir="auto" autocapitalize="off" autocorrect="off" spellcheck="false"
-						enterkeyhint="${last ? 'go' : 'next'}" placeholder="${esc(t(q.placeholder))}" value="${esc(answers[i])}">
+						inputmode="${q.type === 'number' ? 'numeric' : 'text'}" enterkeyhint="${last ? 'go' : 'next'}" placeholder="${esc(t(q.placeholder))}" value="${esc(answers[i])}">
 					${q.hint ? `<button type="button" class="link" id="gate-hint-btn">${L('محتاجة تلميح؟', 'Need a hint?')}</button><p class="gate__hint" id="gate-hint" hidden>${T(q.hint)}</p>` : ''}
 				</div>
 				<p class="gate__msg" id="gate-msg" role="alert">${wrong ? T(gate.wrong) || L('في إجابة مش مظبوطة… جربي تاني ♥', 'Not quite — try again ♥') : ''}</p>

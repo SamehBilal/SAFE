@@ -14,6 +14,12 @@ const enc = new TextEncoder();
 
 /** Make an answer forgiving: case, spaces, punctuation, Arabic letter forms, Arabic digits. */
 export function normalize(input) {
+	const letters = forgiving(input);
+	// an answer made only of punctuation (like ".") must match exactly, not by being empty
+	return letters || String(input ?? '').normalize('NFKC').replace(/\s+/g, '');
+}
+
+function forgiving(input) {
 	return String(input ?? '')
 		.normalize('NFKC')
 		.toLowerCase()
