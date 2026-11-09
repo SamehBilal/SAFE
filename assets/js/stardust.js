@@ -66,11 +66,11 @@ export function sky(canvas) {
 export function dust(canvas, { font = 'serif' } = {}) {
 	const ctx = canvas.getContext('2d');
 	let { w, h } = fitCanvas(canvas, ctx);
-	const N = w < 600 ? 1400 : 2200;
-	const home = () => ({ x: w / 2 + (Math.random() - 0.5) * w, y: h / 2 + (Math.random() - 0.5) * (h / 4) });
+	const N = w < 600 ? 2200 : 3600;
+	const home = () => ({ x: w / 2 + (Math.random() - 0.5) * w, y: h / 2 + (Math.random() - 0.5) * h * 0.5 });
 	const grains = Array.from({ length: N }, () => {
 		const p = home();
-		return { x: p.x, y: p.y, hx: p.x, hy: p.y, s: Math.random() * 1.2, o: 0, tx: 0, ty: 0, on: false };
+		return { x: p.x, y: p.y, hx: p.x, hy: p.y, s: rand(1, 2.2), o: 0, tx: 0, ty: 0, on: false, ease: rand(0.07, 0.13) };
 	});
 	addEventListener('resize', () => ({ w, h } = fitCanvas(canvas, ctx)));
 
@@ -88,7 +88,7 @@ export function dust(canvas, { font = 'serif' } = {}) {
 		o.textBaseline = 'middle';
 		o.fillStyle = '#fff';
 		const words = text.split(/\s+/).filter(Boolean);
-		let size = Math.min(w * (w < 600 ? 0.11 : 0.08), 60);
+		let size = Math.min(w * (w < 600 ? 0.14 : rtl ? 0.1 : 0.09), 84);
 		let lines;
 		for (; size > 16; size -= 2) {
 			o.font = `${size}px ${face}`;
@@ -112,39 +112,28 @@ export function dust(canvas, { font = 'serif' } = {}) {
 		return pts.length > N ? pts.slice(0, N) : pts;
 	}
 
-	/* the pen's own motion: a step every 60 ms (its setInterval), each grain moving 15% of the way with a random
-	   0–5px quiver, fading in by 0.02 a step; grains with no place in the word drift home at half speed, fading by 0.06 */
 	let raf = 0;
-	let last = 0;
-	const step = () => {
+	const frame = () => {
+		if (!canvas.isConnected) return;
+		ctx.clearRect(0, 0, w, h);
+		ctx.fillStyle = 'rgb(236,226,150)';
 		for (const g of grains) {
 			if (g.on) {
-				g.x += (g.tx - (g.x + Math.random() * 5)) * 0.15;
-				g.y += (g.ty - (g.y + Math.random() * 5)) * 0.15;
-				g.o = g.o > 0.98 ? 1 : g.o + 0.02;
+				// to its place in the word, with the quiver of the original
+				g.x += (g.tx + rand(-0.8, 0.8) - g.x) * g.ease;
+				g.y += (g.ty + rand(-0.8, 0.8) - g.y) * g.ease;
+				g.o = Math.min(1, g.o + 0.03);
 			} else {
-				g.x += (g.hx - g.x) * 0.075;
-				g.y += (g.hy - g.y) * 0.075;
-				g.o = Math.max(0, g.o - 0.06);
+				g.x += (g.hx - g.x) * g.ease * 0.35;
+				g.y += (g.hy - g.y) * g.ease * 0.35;
+				g.o = Math.max(0, g.o - 0.04);
+			}
+			if (g.o > 0.01) {
+				ctx.globalAlpha = g.o;
+				ctx.fillRect(g.x, g.y, g.s, g.s);
 			}
 		}
-	};
-	const frame = (now) => {
-		if (!canvas.isConnected) return;
-		if (now - last >= 60) {
-			// one step per 60 ms of real time, so a slow or busy phone still forms the words on time
-			const steps = last ? Math.min(20, Math.floor((now - last) / 60)) : 1;
-			last = now;
-			for (let k = 0; k < steps; k++) step();
-			ctx.clearRect(0, 0, w, h);
-			for (const g of grains) {
-				if (g.o <= 0 || g.s <= 0) continue;
-				ctx.fillStyle = `rgba(226,225,142,${g.o})`;
-				ctx.beginPath();
-				ctx.arc(g.x, g.y, g.s, 0, Math.PI * 2);
-				ctx.fill();
-			}
-		}
+		ctx.globalAlpha = 1;
 		raf = requestAnimationFrame(frame);
 	};
 	raf = requestAnimationFrame(frame);
