@@ -171,8 +171,10 @@ export function pwaChrome() {
 }
 
 /* ---------- service worker and new versions ---------- */
+let updateCard = null;
 function offerUpdate(worker) {
-	const n = notify(L('فيه نسخة أجدد من حكايتنا. <button type="button" class="ns-action">حدّثوا دلوقتي</button>', 'A newer version of our story is ready. <button type="button" class="ns-action">Update now</button>'),
+	updateCard?.dismiss(); // one card, for the newest version
+	const n = updateCard = notify(L('فيه نسخة أجدد من حكايتنا. <button type="button" class="ns-action">حدّثوا دلوقتي</button>', 'A newer version of our story is ready. <button type="button" class="ns-action">Update now</button>'),
 		{ title: L('جديد ♥', 'New ♥'), html: true, ttl: 0 });
 	$('.ns-action', n.el).onclick = () => { reloading = true; worker.postMessage('skipWaiting'); n.dismiss(); };
 }
