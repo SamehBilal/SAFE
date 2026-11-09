@@ -94,7 +94,9 @@ export function occasions(s, from = new Date()) {
 		const name = t(m.name);
 		list.push({ kind: 'birthday', id: m.id, member: m, emoji: '🎂', date: m.born, days, years: n,
 			title: L(`عيد ميلاد ${name}`, `${name}'s birthday`),
-			sub: (() => { const yrs = n === 1 ? 'سنة' : n === 2 ? 'سنتين' : `${num(n)} ${n <= 10 ? 'سنين' : 'سنة'}`; return days === 0 ? L(`${name} بقى عنده ${yrs} ♥`, `${name} turns ${n} today ♥`) : L(`${name} هيكمل ${yrs}`, `${name} turns ${n}`); })() });
+			sub: (() => { const yrs = n === 1 ? 'سنة' : n === 2 ? 'سنتين' : `${num(n)} ${n <= 10 ? 'سنين' : 'سنة'}`; // Arabic follows whether it's him or her: هيكمل / هتكمل, بقى عنده / بقت عندها
+			const she = !!m.female;
+			return days === 0 ? L(`${name} ${she ? 'بقت عندها' : 'بقى عنده'} ${yrs} ♥`, `${name} turns ${n} today ♥`) : L(`${name} ${she ? 'هتكمل' : 'هيكمل'} ${yrs}`, `${name} turns ${n}`); })() });
 	}
 	if (s.married) {
 		const n = turning(s.married);

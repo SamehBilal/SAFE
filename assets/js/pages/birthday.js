@@ -16,7 +16,7 @@ export default {
 				<b>${T(o.member.name)}</b>
 				<small>${longDate(o.member.born).replace(/\s*\d{4}$|[\s،,]*[٠-٩]{4}$/, '')}</small>
 				<em>${o.days === 0 ? L('النهارده! 🎂', 'Today! 🎂') : L(`بعد ${num(o.days)} يوم`, `in ${o.days} days`)}</em>
-				<small>${L(`هيكمل ${num(o.years)}`, `turning ${o.years}`)}</small>
+				<small>${L(`${o.member.female ? 'هتكمل' : 'هيكمل'} ${num(o.years)}`, `turning ${o.years}`)}</small>
 			</a>`;
 		const n = pick ? Math.min(Math.max(pick.years, 1), 9) : 5;
 		const xs = Array.from({ length: n }, (_, k) => 40 + (k * 140) / Math.max(n - 1, 1));
@@ -50,7 +50,7 @@ export default {
 				</svg>
 			</div>
 			<div class="bday__msg" id="bday-msg" hidden>
-				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} طيب ✨`, `Happy birthday, ${App.t(pick.member.name)} ✨`)}</h2>
+				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} ${pick.member.female ? 'طيبة' : 'طيب'} ✨`, `Happy birthday, ${App.t(pick.member.name)} ✨`)}</h2>
 				<p class="center"><a class="btn btn--coral" href="wishes.html">${L('اكتبوا الأمنية في البرطمان', 'Put the wish in the jar')} ${App.arrow}</a></p>
 			</div>
 		</div></section>` : ''}
