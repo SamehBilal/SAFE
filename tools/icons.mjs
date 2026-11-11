@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* The app's icon: the pebble tableau Sameh made for Esraa — a house of wooden sticks on a blackboard in a wooden frame,
-   and the four of us inside as beach pebbles (Sameh with Abdulrahman in his arms, Esraa, Fahd).
+   and the four of us inside as beach pebbles: Sameh, Esraa with Abdulrahman in her arms, and Fahd.
    Writes assets/icons/icon.svg (and its maskable twin), then the PNGs if @resvg/resvg-wasm can be found:
      node tools/icons.mjs [path/to/node_modules/@resvg/resvg-wasm] */
 import { writeFile, readFile } from 'node:fs/promises';
@@ -44,6 +44,9 @@ const tableau = `
 		${stone(326, 314, 19, 18, 0, '#d9973f')}
 		${stone(232, 330, 17, 10, 40, '#c4873a')}
 		${stone(256, 346, 15, 9, -18, '#c4873a')}
+		${stone(288, 325, 22, 14, -8, '#efc795')}
+		${stone(262, 318, 13, 13, 0, '#e09a45')}
+		${stone(289, 342, 13, 7, -6, '#b9bb98')}
 	</g>`;
 const drop = `<filter id="drop" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity=".45"/></filter>`;
 

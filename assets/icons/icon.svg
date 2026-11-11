@@ -56,5 +56,14 @@
 		<g transform="translate(256 346) rotate(-18)">
 	<ellipse rx="15" ry="9" fill="#c4873a"/><ellipse rx="15" ry="9" fill="url(#shine)"/>
 	<ellipse rx="15" ry="9" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(288 325) rotate(-8)">
+	<ellipse rx="22" ry="14" fill="#efc795"/><ellipse rx="22" ry="14" fill="url(#shine)"/>
+	<ellipse rx="22" ry="14" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(262 318) rotate(0)">
+	<ellipse rx="13" ry="13" fill="#e09a45"/><ellipse rx="13" ry="13" fill="url(#shine)"/>
+	<ellipse rx="13" ry="13" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(289 342) rotate(-6)">
+	<ellipse rx="13" ry="7" fill="#b9bb98"/><ellipse rx="13" ry="7" fill="url(#shine)"/>
+	<ellipse rx="13" ry="7" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
 	</g></g>
 </svg>

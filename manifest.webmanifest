@@ -1,7 +1,7 @@
 {
 	"id": "./",
-	"name": "S..!..E",
-	"short_name": "S..!..E",
+	"name": "S..\"!\"..E",
+	"short_name": "S..\"!\"..E",
 	"description": "حكاية حبنا — Our love story. A private place for two.",
 	"lang": "ar",
 	"dir": "rtl",
@@ -106,6 +106,50 @@
 					"type": "image/png"
 				}
 			]
+		}
+	],
+	"screenshots": [
+		{
+			"src": "assets/screens/home.png",
+			"sizes": "824x1830",
+			"type": "image/png",
+			"form_factor": "narrow",
+			"label": "حكايتنا من أول يوم"
+		},
+		{
+			"src": "assets/screens/songs.png",
+			"sizes": "824x1830",
+			"type": "image/png",
+			"form_factor": "narrow",
+			"label": "أغانينا على الجرامافون"
+		},
+		{
+			"src": "assets/screens/trips.png",
+			"sizes": "824x1830",
+			"type": "image/png",
+			"form_factor": "narrow",
+			"label": "رحلات عيد جوازنا على خريطة مصر"
+		},
+		{
+			"src": "assets/screens/draw.png",
+			"sizes": "824x1830",
+			"type": "image/png",
+			"form_factor": "narrow",
+			"label": "قرعة الليلة"
+		},
+		{
+			"src": "assets/screens/songs-wide.png",
+			"sizes": "1920x1200",
+			"type": "image/png",
+			"form_factor": "wide",
+			"label": "أغانينا على الجرامافون"
+		},
+		{
+			"src": "assets/screens/trips-wide.png",
+			"sizes": "1920x1200",
+			"type": "image/png",
+			"form_factor": "wide",
+			"label": "رحلات عيد جوازنا على خريطة مصر"
 		}
 	]
 }
