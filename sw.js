@@ -1,12 +1,12 @@
 /* Service worker: installs the site as an app and keeps it working offline.
    - App shell + encrypted content: precached, refreshed in the background.
    - content/m/*.bin (encrypted photos): cached forever once seen — names change when files do.
-   - Google Fonts: cached once seen.
+   - Google Fonts and the places map's tiles: cached once seen.
    A new version waits until the page asks it to take over (its «Update now», assets/js/pwa.js).
    VERSION is rewritten by tools/build.mjs on every build. */
 'use strict';
 
-var VERSION = 'us-577e83b540';
+var VERSION = 'us-1f25f1f271';
 var SHELL = [
 	'./',
 	'birthday.html',
@@ -133,6 +133,11 @@ self.addEventListener('fetch', function (e) {
 
 	if (url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com') {
 		e.respondWith(cacheFirst(req, FONT_CACHE));
+		return;
+	}
+	// the places map's tiles: kept once seen, so the map works offline too
+	if (url.hostname === 'tile.openstreetmap.org') {
+		e.respondWith(cacheFirst(req, 'tiles-v1'));
 		return;
 	}
 	if (url.origin !== location.origin) return;
