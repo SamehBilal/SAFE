@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs>
+	<linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0d9a6"/><stop offset=".55" stop-color="#ddbb7c"/><stop offset="1" stop-color="#c49a5a"/></linearGradient>
+	<linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1dcaa"/><stop offset="1" stop-color="#cfa767"/></linearGradient>
+	<radialGradient id="board" cx=".45" cy=".4" r=".8"><stop offset="0" stop-color="#2a2c2a"/><stop offset="1" stop-color="#121312"/></radialGradient>
+	<radialGradient id="shine" cx=".34" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset=".8" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></radialGradient>
+<filter id="drop" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity=".45"/></filter></defs>
+	<rect width="512" height="512" fill="url(#board)"/>
+	<g transform="translate(256 262) scale(.86) translate(-256 -278)">
+	<g transform="translate(140 252) rotate(90.00)">
+		<rect x="0" y="-13" width="150.0" height="26" rx="7" fill="url(#wood)"/>
+		<rect x="0" y="-13" width="150.0" height="26" rx="7" fill="none" stroke="#a87d43" stroke-opacity=".45" stroke-width="2"/>
+		<path d="M18 -3.12h45M82.5 4.68h45" stroke="#a87d43" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+	</g><g transform="translate(372 252) rotate(90.00)">
+		<rect x="0" y="-13" width="150.0" height="26" rx="7" fill="url(#wood)"/>
+		<rect x="0" y="-13" width="150.0" height="26" rx="7" fill="none" stroke="#a87d43" stroke-opacity=".45" stroke-width="2"/>
+		<path d="M18 -3.12h45M82.5 4.68h45" stroke="#a87d43" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+	</g>
+	<g transform="translate(116 262) rotate(-37.93)">
+		<rect x="0" y="-13" width="172.4" height="26" rx="7" fill="url(#wood)"/>
+		<rect x="0" y="-13" width="172.4" height="26" rx="7" fill="none" stroke="#a87d43" stroke-opacity=".45" stroke-width="2"/>
+		<path d="M20.69156349819897 -3.12h51.72890874549742M94.83633270007861 4.68h51.72890874549742" stroke="#a87d43" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+	</g><g transform="translate(260 156) rotate(37.93)">
+		<rect x="0" y="-13" width="172.4" height="26" rx="7" fill="url(#wood)"/>
+		<rect x="0" y="-13" width="172.4" height="26" rx="7" fill="none" stroke="#a87d43" stroke-opacity=".45" stroke-width="2"/>
+		<path d="M20.69156349819897 -3.12h51.72890874549742M94.83633270007861 4.68h51.72890874549742" stroke="#a87d43" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+	</g>
+	<g transform="translate(346 168) rotate(90.00)">
+		<rect x="0" y="-12" width="28.0" height="24" rx="7" fill="url(#wood)"/>
+		<rect x="0" y="-12" width="28.0" height="24" rx="7" fill="none" stroke="#a87d43" stroke-opacity=".45" stroke-width="2"/>
+		<path d="M3.36 -2.88h8.4M15.400000000000002 4.32h8.4" stroke="#a87d43" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+	</g>
+	<g filter="url(#drop)">
+		<g transform="translate(203 346) rotate(-8)">
+	<ellipse rx="47" ry="63" fill="#d6a65a"/><ellipse rx="47" ry="63" fill="url(#shine)"/>
+	<ellipse rx="47" ry="63" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(276 350) rotate(3)">
+	<ellipse rx="39" ry="56" fill="#e3ddc6"/><ellipse rx="39" ry="56" fill="url(#shine)"/>
+	<ellipse rx="39" ry="56" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(334 366) rotate(5)">
+	<ellipse rx="31" ry="38" fill="#dccaa0"/><ellipse rx="31" ry="38" fill="url(#shine)"/>
+	<ellipse rx="31" ry="38" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(216 254) rotate(10)">
+	<ellipse rx="30" ry="27" fill="#d2a24c"/><ellipse rx="30" ry="27" fill="url(#shine)"/>
+	<ellipse rx="30" ry="27" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(276 272) rotate(0)">
+	<ellipse rx="27" ry="26" fill="#a5a888"/><ellipse rx="27" ry="26" fill="url(#shine)"/>
+	<ellipse rx="27" ry="26" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(326 314) rotate(0)">
+	<ellipse rx="19" ry="18" fill="#d9973f"/><ellipse rx="19" ry="18" fill="url(#shine)"/>
+	<ellipse rx="19" ry="18" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(232 330) rotate(40)">
+	<ellipse rx="17" ry="10" fill="#c4873a"/><ellipse rx="17" ry="10" fill="url(#shine)"/>
+	<ellipse rx="17" ry="10" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+		<g transform="translate(256 346) rotate(-18)">
+	<ellipse rx="15" ry="9" fill="#c4873a"/><ellipse rx="15" ry="9" fill="url(#shine)"/>
+	<ellipse rx="15" ry="9" fill="none" stroke="#000" stroke-opacity=".18" stroke-width="2"/></g>
+	</g></g>
+</svg>
