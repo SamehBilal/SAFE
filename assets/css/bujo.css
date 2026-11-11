@@ -1,0 +1,105 @@
+/* Our bullet journal: a layer over the whole site after Olivia Ng's «Just Bullet Journal Things» on CodePen —
+   hand-drawn wobbly borders, cards with an offset pink shadow, highlighter swipes behind headings, washi tape on the
+   polaroids and the notes, sketchy inputs, chips and buttons with a hard ink shadow, and form groups with a dark
+   tilted label. It only restyles what's already there, in our own colours, so dark mode keeps working.
+   Loaded last on every page. */
+
+:root {
+	--ink: #37353f;
+	--sketch: 0 0 125px 3px / 3px 85px 5px 55px;      /* the pen's hand-drawn box */
+	--sketch-sm: 2px 14px 4px 18px / 14px 3px 16px 4px; /* the same wobble for small things */
+	--hl-yellow: rgba(253, 200, 48, 0.55);
+	--hl-pink: rgba(252, 139, 147, 0.5);
+	--hl-lime: rgba(205, 220, 57, 0.55);
+	--bujo-shadow: 4px 4px 0 0 rgba(252, 139, 147, 0.8);
+}
+:root[data-theme='dark'] { --ink: rgba(226, 234, 240, 0.7); --hl-yellow: rgba(253, 200, 48, 0.32); --hl-pink: rgba(252, 139, 147, 0.32); --hl-lime: rgba(205, 220, 57, 0.3); --bujo-shadow: 4px 4px 0 0 rgba(252, 139, 147, 0.45); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --ink: rgba(226, 234, 240, 0.7); --hl-yellow: rgba(253, 200, 48, 0.32); --hl-pink: rgba(252, 139, 147, 0.32); --hl-lime: rgba(205, 220, 57, 0.3); --bujo-shadow: 4px 4px 0 0 rgba(252, 139, 147, 0.45); } }
+/* the offset falls to the reading side's end */
+[dir='rtl'] { --bujo-x: -1; }
+[dir='ltr'] { --bujo-x: 1; }
+
+/* ---------- boxes: panels, tiles, counters, empty states ---------- */
+.panel, .tile, .counter, .trip-mini {
+	border: 1.5px solid var(--ink);
+	border-radius: var(--sketch);
+	box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 rgba(252, 139, 147, 0.8);
+	box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 color-mix(in srgb, var(--coral) 80%, transparent);
+}
+.tile:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 7px) 7px 0 0 var(--coral); }
+.counter:nth-child(3n + 2), .tile:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.counter:nth-child(3n), .tile:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.empty { border: 1.5px dashed var(--ink); border-radius: var(--sketch); }
+
+/* ---------- highlighter: behind panel headings and the big section titles ---------- */
+.panel h2, .sec__title {
+	width: fit-content;
+	padding-inline: 0.25em;
+	background: linear-gradient(to right, color-mix(in srgb, var(--hl-yellow) 55%, transparent), var(--hl-yellow)) no-repeat 0 82% / 100% 45%;
+	border-radius: 10px 0 / 100px 20px;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+[dir='rtl'] .panel h2, [dir='rtl'] .sec__title { background-image: linear-gradient(to left, color-mix(in srgb, var(--hl-yellow) 55%, transparent), var(--hl-yellow)); }
+.sec__title { margin-inline: auto; }
+section:nth-of-type(3n + 2) .sec__title { background-image: linear-gradient(to left, color-mix(in srgb, var(--hl-pink) 55%, transparent), var(--hl-pink)); }
+section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left, color-mix(in srgb, var(--hl-lime) 55%, transparent), var(--hl-lime)); }
+.hang-night .sec__title { background: none; } /* the fairy-light wall keeps its glow */
+
+/* ---------- buttons: ink outline and a hard shadow, pressed flat ---------- */
+.btn { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink); transition: transform 0.12s, box-shadow 0.12s, background 0.2s; }
+.btn:active { transform: translate(calc(var(--bujo-x) * 3px), 3px); box-shadow: 0 0 0 0 var(--ink); }
+.btn--coral { box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink); }
+.btn--ghost { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.btn--ghost:hover { background: var(--hl-lime); }
+.btn--light { box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink); }
+.btn--sm { box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+.btn--sm.btn--ghost { box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--hl-lime); }
+
+/* ---------- inputs, chips, the whose-phone choice ---------- */
+.f input, .f textarea, .f select, .search, .add input { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); }
+.f input:focus, .f textarea:focus, .f select:focus, .search:focus, .add input:focus { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(150, 87, 132, 0.5); }
+.chip { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); }
+.chip:hover { background: var(--hl-yellow); }
+.chip.is-on { background: var(--coral); border-color: var(--ink); color: #fff; box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+.who span { border: 1.5px dashed var(--ink); border-radius: var(--sketch); }
+.who input:checked + span { border-style: solid; box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--coral); }
+
+/* a form group's title: the pen's dark label, tilted, sitting on the box's edge */
+.who legend { background: var(--ink); color: var(--card); padding: 5px 14px; border-radius: var(--sketch-sm); rotate: -1.5deg; font-weight: 800; }
+[dir='ltr'] .who legend { rotate: 1.5deg; }
+
+/* lists inside panels: the pen's starred bullets */
+.panel ul:not([class]) li::marker, .panel ol li::marker, .howto ol li::marker { color: var(--coral); font-weight: 800; }
+.panel ul:not([class]) { list-style: '✱  '; }
+
+/* ---------- washi tape on the polaroids at the top of each page ---------- */
+.pol::before {
+	content: '';
+	position: absolute;
+	top: calc(var(--w) * -0.07);
+	left: 50%;
+	width: calc(var(--w) * 0.5);
+	height: calc(var(--w) * 0.14);
+	translate: -50% 0;
+	rotate: calc(var(--r) * -1.4 + 4deg);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+	opacity: 0.92;
+	z-index: 2;
+	/* polka dot (the pen's first tape) */
+	background-color: rgba(252, 139, 147, 0.35);
+	background-image: radial-gradient(circle, #fc8b93 20%, transparent 20%), radial-gradient(circle, #fc8b93 20%, transparent 20%);
+	background-size: 10px 10px;
+	background-position: 0 0, 5px 5px;
+}
+/* lines */
+.pol:nth-child(4n + 2)::before { background: rgba(233, 228, 240, 0.75) linear-gradient(to bottom, transparent 25%, #feac5e 25% 31%, transparent 31% 52%, #c779d0 52% 57%, transparent 58% 80%, #4bc0c8 80% 85%, transparent 85%); }
+/* dark polka dot */
+.pol:nth-child(4n + 3)::before { background-color: #965784; background-image: radial-gradient(circle, #fff 20%, transparent 20%), radial-gradient(circle, #fff 20%, transparent 20%); background-size: 10px 10px; background-position: 0 0, 5px 5px; }
+/* dream */
+.pol:nth-child(4n + 4)::before { background: radial-gradient(circle at 50% 60%, #95b0f9, rgba(149, 176, 249, 0) 50%), radial-gradient(circle at 10% 10%, #72e2fd, rgba(114, 226, 253, 0) 50%), radial-gradient(circle at 77% 16%, #b896ff, rgba(184, 150, 255, 0) 50%), radial-gradient(circle at 90% 90%, #56cfd2, rgba(86, 207, 210, 0) 50%), radial-gradient(circle at 10% 90%, #a870fd, rgba(168, 112, 253, 0) 50%) #c7d4fb; }
+.pol:hover::before { rotate: 0deg; }
+/* the notes on the notes page get the zigzag tape instead of plain pink */
+.note:nth-child(even)::before { background-color: #cddc39; background-image: repeating-linear-gradient(45deg, transparent 0 2px, #396afc 2px 4px, transparent 4px 9px), repeating-linear-gradient(-45deg, transparent 0 2px, #396afc 2px 4px, transparent 4px 9px); background-size: 20px 60px; background-position: center top -3px; opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) { .btn, .tile { transition: none; } }
