@@ -60,18 +60,40 @@ export function paintMap(svg, trips, { focus } = {}) {
 		el.classList.toggle('is-twice', n > 1);
 		el.classList.toggle('is-focus', el.dataset.gov === focus);
 	}
-	const pins = $('.eg__pins', svg);
-	pins.innerHTML = [...byGov.entries()].map(([id, list]) => {
+	/* a pin on each governorate we've been to, and a label with its year(s). Neighbours (Cairo and Qalyubia, say) sit close,
+	   so each label takes the first spot around its pin that covers no pin and no other label, with a line back to its pin
+	   when it had to move; all labels are drawn above all pins. */
+	const spots = [...byGov.entries()].map(([id, list]) => {
 		const el = $(`[data-gov="${id}"]`, svg);
-		if (!el) return '';
+		if (!el) return null;
 		let x, y;
 		if (DOTS[id]) [x, y] = DOTS[id];
 		else { const b = el.getBBox(); x = b.x + b.width / 2; y = b.y + b.height / 2; }
 		const label = list.map((v) => v.year).join(' · ');
-		const w = 22 + label.length * 13;
-		return `<g class="eg__pin" transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><path d="M0 0c-6-10-16-14-16-26a16 16 0 0 1 32 0c0 12-10 16-16 26Z" fill="#f2726f" stroke="#fff" stroke-width="3"/><circle cy="-26" r="6" fill="#fff"/>
-			<g transform="translate(0 -60)"><rect x="${-w / 2}" y="-16" width="${w}" height="30" rx="15" fill="#133447"/><text text-anchor="middle" dy="6" fill="#fff" font-size="20" font-weight="800">${esc(label)}</text></g></g>`;
-	}).join('');
+		return { x, y, label, w: 22 + label.length * 13 };
+	}).filter(Boolean).sort((a, b) => a.y - b.y || a.x - b.x);
+	const H = 30, GAP = 4;
+	const hit = (r, q) => r.x < q.x + q.w + GAP && q.x < r.x + r.w + GAP && r.y < q.y + q.h + GAP && q.y < r.y + r.h + GAP;
+	const heads = spots.map((p) => ({ x: p.x - 17, y: p.y - 44, w: 34, h: 44 }));
+	const taken = [];
+	for (const p of spots) {
+		const side = p.w / 2 + 22;
+		// label centre, as an offset from the pin's tip
+		const tries = [[0, -61], [side, -27], [-side, -27], [0, 22], [0, -97], [side, -63], [-side, -63], [side, 9], [-side, 9]];
+		let best = tries[0], bestN = Infinity;
+		for (const [dx, dy] of tries) {
+			const r = { x: p.x + dx - p.w / 2, y: p.y + dy - H / 2, w: p.w, h: H };
+			const n = heads.filter((h) => hit(r, h)).length + taken.filter((t) => hit(r, t)).length * 2;
+			if (n < bestN) { best = [dx, dy]; bestN = n; }
+			if (!n) break;
+		}
+		p.dx = best[0]; p.dy = best[1];
+		taken.push({ x: p.x + p.dx - p.w / 2, y: p.y + p.dy - H / 2, w: p.w, h: H });
+	}
+	const pins = $('.eg__pins', svg);
+	pins.innerHTML = spots.map((p) => `<g class="eg__pin" transform="translate(${p.x.toFixed(0)} ${p.y.toFixed(0)})"><path d="M0 0c-6-10-16-14-16-26a16 16 0 0 1 32 0c0 12-10 16-16 26Z" fill="#f2726f" stroke="#fff" stroke-width="3"/><circle cy="-26" r="6" fill="#fff"/></g>`).join('')
+		+ spots.map((p) => `<g class="eg__pin" transform="translate(${p.x.toFixed(0)} ${p.y.toFixed(0)})">${p.dx || p.dy !== -61 ? `<path d="M0 -26L${p.dx} ${p.dy}" stroke="#133447" stroke-width="2.5" stroke-linecap="round"/>` : ''}
+			<g transform="translate(${p.dx} ${p.dy})"><rect x="${-p.w / 2}" y="-15" width="${p.w}" height="${H}" rx="15" fill="#133447"/><text text-anchor="middle" dy="7" fill="#fff" font-size="20" font-weight="800">${esc(p.label)}</text></g></g>`).join('');
 }
 
 /** Phone photos → 1600px webp, so every saved photo is light and the same kind. */
