@@ -254,6 +254,13 @@
 .sleeve__art { position: absolute; top: 18%; left: 50%; translate: -50% 0; opacity: 0.85; }
 .sleeve__cover b { font: 700 1.05rem/1.25 var(--f-body); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sleeve__cover small { font-weight: 600; opacity: 0.8; font-size: 0.8rem; }
+/* a sleeve with its own cover art: the art fills it, the title sits on a dark strip at the bottom */
+.sleeve__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sleeve__cover.has-art { background: #fff; color: #fff; }
+.sleeve__cover.has-art::after { content: ''; position: absolute; inset: 55% 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, 0.72)); }
+.sleeve__cover.has-art > :not(.sleeve__img) { position: relative; z-index: 1; }
+.sleeve__cover.has-art .sleeve__art { display: none; }
+.sleeve__cover.has-art .sleeve__n { position: absolute; color: #37353f; opacity: 0.8; }
 .sleeve__by { margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); text-align: center; }
 
 /* settings: what is new on this phone */

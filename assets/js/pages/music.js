@@ -50,6 +50,8 @@ function deckSVG() {
 			<circle cx="400" cy="400" r="104" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>
 			<text class="deck__label-t" x="400" y="380" text-anchor="middle"></text>
 			<text class="deck__label-a" x="400" y="438" text-anchor="middle"></text>
+			<clipPath id="dkLabelClip"><circle cx="400" cy="400" r="118"/></clipPath>
+			<image class="deck__cover" x="282" y="282" width="236" height="236" preserveAspectRatio="xMidYMid slice" clip-path="url(#dkLabelClip)" visibility="hidden"/>
 			<circle cx="400" cy="400" r="9" fill="#d8d8d8"/>
 		</g>
 		<circle cx="400" cy="400" r="340" fill="url(#dkSheen)" pointer-events="none"/>
@@ -169,6 +171,10 @@ export default {
 			deck.style.setProperty('--lab-ink', paper);
 			$('.deck__label-t', deck).textContent = x.title.length > 18 ? x.title.slice(0, 17) + '…' : x.title;
 			$('.deck__label-a', deck).textContent = (x.artist || '').slice(0, 22);
+			// a song with its own cover art ("cover": a file in private/media) wears it as the record's label
+			const cover = $('.deck__cover', deck);
+			cover.setAttribute('visibility', 'hidden');
+			if (x.cover) mediaURL(x.cover).then((url) => { if (current === x) { cover.setAttribute('href', url); cover.setAttribute('visibility', 'visible'); } }).catch(() => {});
 			$('#dk-eyebrow', main).textContent = `${L('اختيار', 'Picked by')} ${App.t(x.by === 'him' ? s.him : s.her)}${x.date ? ` · ${L('من', 'since')} ${longDate(x.date)}` : ''}`;
 			$('#dk-title', main).textContent = x.title;
 			$('#dk-artist', main).textContent = x.artist || '';
@@ -233,7 +239,8 @@ export default {
 			return `<li class="sleeve reveal" data-id="${esc(x.id)}" style="--ink:${ink};--paper:${paper};--delay:${(n % 4) * 0.05}s">
 				<button class="sleeve__btn" type="button" data-play="${esc(x.id)}" aria-label="${L('شغلوا', 'Play')} ${esc(x.title)}">
 					<span class="sleeve__lp" aria-hidden="true"><i></i></span>
-					<span class="sleeve__cover">
+					<span class="sleeve__cover${x.cover ? ' has-art' : ''}">
+						${x.cover ? `<img class="sleeve__img" data-cover="${esc(x.cover)}" alt="" decoding="async">` : ''}
 						<span class="sleeve__n">${n}</span>
 						<span class="sleeve__art" aria-hidden="true">${doodle('music', 44)}</span>
 						<b dir="auto">${esc(x.title)}</b>
@@ -249,6 +256,7 @@ export default {
 			list.innerHTML = l.length ? l.map((x, k) => sleeve(x, l.length - k)).join('')
 				: `<li class="empty">${(data.items || []).length ? L('مفيش أسطوانات هنا لسه', 'No records here yet') : L('الرف فاضي… ضيفوا أول أسطوانة بتاعتكم ♥', 'The shelf is empty… add your first record ♥')}</li>`;
 			list.querySelectorAll('.reveal').forEach((e) => e.classList.add('is-in'));
+			for (const im of $$('img[data-cover]', list)) mediaURL(im.dataset.cover).then((url) => { im.src = url; }).catch(() => im.remove());
 			if (current) $$('.sleeve', list).forEach((el) => el.classList.toggle('is-on', el.dataset.id === current.id));
 		};
 
