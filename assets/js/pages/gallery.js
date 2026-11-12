@@ -16,6 +16,8 @@ function piles(s) {
 	};
 	for (const g of s.gallery || []) add(T(g.album) || L('صور', 'Photos'), g.photo, T(g.caption));
 	for (const p of s.places || []) if (p.at) for (const ph of firstOf(p)) add(T(p.title), ph, T(p.where));
+	// the gifts we gave each other (private/media/gifts/…): one pile each
+	for (const g of s.gifts || []) for (const ph of g.photos || []) add(`🎁 ${T(g.title)}`, ph, [L('من', 'From'), T(g.from === 'her' ? s.her : s.him), g.note ? '— ' + T(g.note) : ''].join(' ').trim());
 	return [...out.entries()].map(([name, items]) => ({ name, items }));
 }
 

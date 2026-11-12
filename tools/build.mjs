@@ -4,6 +4,7 @@
    private/questions.json  the gate questions + every accepted answer   (never committed)
    private/story.json      everything shown on the site                 (never committed)
    private/media/*         photos and videos the story refers to         (never committed)
+   private/media/<folders> images/, videos/, songs/, gifts/ — read by tools/library.mjs (see private/media/README.md)
    private/live/*.json     the shared lists (journal, songs, draws, trips, films, wishes); phones' files are merged in by tools/import.mjs
    private/live/s/*        sketches and photos those lists show (a list can also name a file in private/media, like a song's "audio")
    private/.master-key     created on first run; keep it — losing it makes her re-answer
@@ -22,6 +23,7 @@ import { existsSync } from 'node:fs';
 import { createHash, createHmac } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { library, intoStory, intoMusic } from './library.mjs';
 import { ITERATIONS, deriveKek, importMaster, seal, open, randomBytes, toB64, fromB64 } from '../assets/js/core.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -79,8 +81,14 @@ async function main() {
 
 	// 1) Media: every string in story.json that names a file in private/media becomes "media:<id>.<ext>".
 	const mediaDir = path.join(PRIV, 'media');
-	const files = existsSync(mediaDir) ? await readdir(mediaDir) : [];
+	// every file under private/media, by its path from there ("wedding.jpg", "images/wedding/1.jpg")
+	const files = existsSync(mediaDir) ? (await readdir(mediaDir, { recursive: true, withFileTypes: true }))
+		.filter((e) => e.isFile()).map((e) => path.relative(mediaDir, path.join(e.parentPath ?? e.path, e.name)).split(path.sep).join('/')) : [];
 	const byName = new Map(files.map((f) => [f.toLowerCase(), f]));
+	// what the folders hold goes into the story before it's sealed
+	const lib = await library(mediaDir);
+	intoStory(story, lib);
+	if (lib.count) console.log(`• ${lib.count} file(s) from the media folders`);
 	const used = new Map();
 	const missing = new Set();
 
@@ -105,13 +113,13 @@ async function main() {
 			for (const [k, v] of Object.entries(node)) out[k] = await walk(v);
 			return out;
 		}
-		if (typeof node === 'string' && MIME[path.extname(node).toLowerCase()] && !/^(https?|media):|\//.test(node)) return encodeMedia(node);
+		if (typeof node === 'string' && MIME[path.extname(node).toLowerCase()] && !/^(https?|media|data):|^\/|:\/\//.test(node)) return encodeMedia(node);
 		return node;
 	}
 
 	const sealedStory = await walk(story);
 	// The shared lists and their sketches (a list can name a file in private/media too, like a song's own recording).
-	const live = await sealLive(key, walk);
+	const live = await sealLive(key, walk, lib);
 	sealedStory.$media = [...used.values()];
 
 	// Remove encrypted files no longer referenced.
@@ -165,13 +173,13 @@ async function main() {
 	console.log(`✓ ${qs.length} question(s), ${used.size} media file(s) (${(size / 1048576).toFixed(1)} MB), vault ${(JSON.stringify(vault).length / 1024).toFixed(0)} KB`);
 	console.log(`✓ shared lists: ${live.lists} list(s), ${live.sketches} sketch(es)${live.changed ? `, ${live.changed} updated` : ''}`);
 	if (missing.size) console.warn('! Not found in private/media (left as-is): ' + [...missing].join(', '));
-	const unused = files.filter((f) => !used.has(f) && !f.startsWith('.'));
+	const unused = files.filter((f) => !used.has(f) && !/(^|\/)\./.test(f) && !/(^|\/)(info\.json|readme\.md|desktop\.ini|thumbs\.db)$/i.test(f));
 	if (unused.length) console.log('  (not used by story.json: ' + unused.join(', ') + ')');
 }
 
 /* private/live → content/live. A file is only rewritten when what's in it changed, so git sees real changes only.
    The first time, lists that were saved in content/live before (by the phones, through GitHub) are copied out to private/live. */
-async function sealLive(key, walk) {
+async function sealLive(key, walk, lib) {
 	const src = path.join(PRIV, 'live'), out = path.join(OUT, 'live');
 	await mkdir(path.join(src, 's'), { recursive: true });
 	await mkdir(path.join(out, 's'), { recursive: true });
@@ -199,6 +207,7 @@ async function sealLive(key, walk) {
 	for (const f of lists) {
 		let data;
 		try { data = JSON.parse(await readFile(path.join(src, f), 'utf8')); } catch (e) { fail(`private/live/${f} isn't valid JSON: ${e.message}`); }
+		if (f === 'music.json' && lib?.songs.length) data = intoMusic(data, lib); // the songs/ folder joins the shelf
 		await put(path.join(out, f.replace(/\.json$/, '.bin')), Buffer.from(JSON.stringify(await walk(data))));
 	}
 	const sketches = await readdir(path.join(src, 's'));

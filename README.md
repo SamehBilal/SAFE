@@ -61,6 +61,7 @@ After she unlocks once, her phone remembers (footer: **اقفلي 🔒** to lock
 | `private/questions.json` | Questions + hints (`{ "ar": …, "en": … }`), and every accepted answer. Case, spaces, punctuation, Arabic letter forms and Arabic digits are ignored, so `١٣/٠٧/٢٠٠٩` = `13.07.2009`. |
 | `private/story.json` | All the content. Any text can be a plain string or `{ "ar": "…", "en": "…" }`. |
 | `private/media/` | Photos/videos. Refer to them by file name in `story.json` (`"photo": "wedding.jpg"`). |
+| `private/media/images/`, `videos/`, `songs/`, `gifts/` | **Just drop files in.** Albums, places, songs and gifts show up on the site by themselves at the next build: see `private/media/README.md` (read by `tools/library.mjs`). |
 | `private/.master-key` | Created on first build. **Keep it** — if it changes, she has to answer again. |
 
 Useful fields in `story.json`: `timeline[].photos`, `timeline[].story` (long text for its page),
