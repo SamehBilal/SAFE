@@ -24,6 +24,9 @@ const world = ({ lat, lng }) => {
 	return { x: ((lng + 180) / 360) * TILE, y: (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * TILE };
 };
 
+/** A place's photos: "photos": ["a.jpg", …] (or [{ photo }]), else its one "photo". */
+const photosOf = (m) => [...new Set([...(m.photos || []).map((p) => (typeof p === 'string' ? p : p?.photo)), m.photo].filter(Boolean))];
+
 const subtitle = (m) => [T(m.where), m.date ? fmtDate(m.date) : ''].filter(Boolean).map(esc).join(' · ');
 
 export default {
@@ -37,7 +40,7 @@ export default {
 			<p class="ip-hint" data-touch="${L('دوسي على أي دبوس على الخريطة', 'Tap any pin on the map')}">${L('قرّبي من أي دبوس على الخريطة… واضغطي عليه', 'Bring the mouse near a pin on the map… then click it')}</p>
 			<div class="ip" tabindex="-1" aria-label="${L('خريطة أماكننا', 'Map of our places')}">
 				<div class="ip__map" aria-hidden="true"></div>
-				<div class="ip__bgs" aria-hidden="true">${pinned.map(({ m }) => `<div class="ip__bg">${img(m.photo, '', 'ip__photo')}</div>`).join('')}</div>
+				<div class="ip__bgs" aria-hidden="true">${pinned.map(({ m }) => `<div class="ip__bg">${photosOf(m).map((p, j) => img(p, '', `ip__photo${j ? '' : ' is-on'}`)).join('')}</div>`).join('')}</div>
 				<div class="ip__pins">${pinned.map(({ m }, k) => `
 					<button class="ip__pin" type="button" data-k="${k}" aria-label="${esc(T(m.title))}${T(m.where) ? ` — ${esc(T(m.where))}` : ''}">
 						<svg viewBox="0 0 32 44" aria-hidden="true"><path d="M16 43C13 34 2 27 2 16a14 14 0 0 1 28 0c0 11-11 18-14 27Z"/><circle cx="16" cy="16" r="5.5"/></svg>
@@ -92,7 +95,7 @@ function points(box, spots) {
 	const mapEl = $('.ip__map', box), pins = $$('.ip__pin', box), bgs = $$('.ip__bg', box), tips = $$('.ip__tip', box);
 	const content = $('.ip__content', box), stories = $$('.ip__story', box);
 	const MAX_OP = 0.55, ACTIVE_ON = 30;
-	let pos = [], dmax = 100, active = -1, open = -1, drawn = '';
+	let pos = [], dmax = 100, active = -1, open = -1, drawn = '', slides = 0;
 
 	// Fit every pin in the box at the biggest zoom that holds them all, and lay the tiles out under them.
 	function layout() {
@@ -153,11 +156,24 @@ function points(box, spots) {
 		stories.forEach((st, j) => st.classList.toggle('is-on', j === i));
 		box.classList.add('is-open');
 		$('.ip__close', box).focus({ preventScroll: true });
+		// a place with several photos goes through them while it's open
+		clearInterval(slides);
+		const shots = $$('.ip__photo', bgs[i]);
+		if (shots.length > 1 && !REDUCE) {
+			let n = 0;
+			slides = setInterval(() => {
+				const live = shots.filter((s) => s.isConnected);
+				if (live.length < 2) return;
+				n = (n + 1) % live.length;
+				live.forEach((s, j) => s.classList.toggle('is-on', j === n));
+			}, 3500);
+		}
 	}
 	function close() {
 		if (open < 0) return;
 		const was = open;
 		open = -1;
+		clearInterval(slides);
 		box.classList.remove('is-open');
 		stories.forEach((st) => st.classList.remove('is-on'));
 		bgs.forEach((b) => { b.style.opacity = '0'; });
