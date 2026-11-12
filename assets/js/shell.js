@@ -952,7 +952,7 @@ export function pageHead(title, sub, crumbs = [], opts = {}) {
 	const cards = drawn.map(([icon, ar, en]) => ({ icon, cap: L(ar, en) }));
 	photos.forEach((photo, n) => cards.splice(1 + n * 2, 0, { photo, cap: L('إحنا', 'Us') }));
 	return `<header class="ph">
-		${polaroids(id, cards.slice(0, 7))}
+		${opts.band ?? polaroids(id, cards.slice(0, 7))}
 		<div class="ph__in">
 			<nav class="crumbs" aria-label="${L('أنت هنا', 'You are here')}">${trail.map((c) => `<a href="${c.href}">${esc(c.ar ? L(c.ar, c.en) : t(c.label))}</a>`).join('<span aria-hidden="true">/</span>')}</nav>
 			${eb ? `<p class="ph__eyebrow">${esc(L(...eb) === title ? L('حكاية حبنا', 'Our love story') : L(...eb))}</p>` : ''}

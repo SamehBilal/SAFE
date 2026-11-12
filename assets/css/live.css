@@ -286,3 +286,6 @@
 @keyframes neon-march-star { to { stroke-dashoffset: -11; } }
 .sky__count { position: absolute; z-index: 2; bottom: 12px; left: 0; right: 0; margin: 0; text-align: center; font: 1.4rem/1.3 var(--f-hand); color: #fee3ac; text-shadow: 0 0 10px rgba(241, 196, 15, 0.6); }
 @media (prefers-reduced-motion: reduce) { .neon, .sky__stars .tw { animation: none; } }
+/* on top of the wishes page, in the polaroids' place above the title */
+.sky--band { width: min(1240px, 100% - 2 * var(--gutter)); height: auto; aspect-ratio: 100 / 34; min-height: 260px; margin: clamp(12px, 3vw, 28px) auto 0; text-align: start; }
+@media (max-width: 640px) { .sky--band { aspect-ratio: 100 / 80; } }

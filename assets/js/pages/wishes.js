@@ -28,14 +28,21 @@ const NEON = `<svg class="sky__jar" viewBox="0 0 220 300" aria-hidden="true">
 </svg>`;
 const STAR = `<symbol id="sky-star" viewBox="-6 -6 12 12"><circle class="shine" r="5.5" fill="url(#sky-glow)"/><path d="M0-4.2L1.1-1.1 4.2 0 1.1 1.1 0 4.2-1.1 1.1-4.2 0-1.1-1.1Z" fill="#fff4c8"/></symbol>`;
 
+/* the night sky takes the place of the polaroids above the page title */
+const SKY = `<div class="sky sky--band" id="wish-sky">
+	<svg class="sky__stars" aria-hidden="true"><defs><radialGradient id="sky-glow"><stop offset="10%" stop-color="rgba(254,202,87,1)"/><stop offset="95%" stop-color="rgba(254,202,87,0)"/></radialGradient>${STAR}</defs><g class="sky__field"></g></svg>
+	${NEON}
+	<p class="sky__count" id="sky-count"></p>
+</div>`;
+
 function sky(el) {
 	const svg = el.querySelector('.sky__stars');
-	const jar = el.querySelector('.sky__jar');
 	const draw = () => {
 		const W = el.clientWidth, H = el.clientHeight;
 		if (!W) return;
-		const r = jar.getBoundingClientRect(), b = el.getBoundingClientRect();
-		const keep = { x0: r.left - b.left - 24, x1: r.right - b.left + 24, y0: r.top - b.top - 24, y1: r.bottom - b.top + 24 };
+		// the jar sits centred, 5% from the top and 74% of the sky's height (see .sky__jar), so its box follows from the sky's size
+		const jh = H * 0.74, jw = (jh * 220) / 300;
+		const keep = { x0: (W - jw) / 2 - 24, x1: (W + jw) / 2 + 24, y0: H * 0.05 - 24, y1: H * 0.05 + jh + 24 };
 		const clear = (x, y) => x < keep.x0 || x > keep.x1 || y < keep.y0 || y > keep.y1;
 		const rnd = (a, z) => a + Math.random() * (z - a);
 		let html = '';
@@ -60,12 +67,7 @@ export default {
 	title: { ar: 'برطمان الأمنيات', en: 'Wish jar' },
 	render() {
 		return `
-		${pageHead(L('برطمان الأمنيات', 'Wish jar'), L('أمنياتنا إحنا الاتنين، في برطمان واحد', 'Both our wishes, in one jar'), [{ href: 'wishes.html', ar: 'برطمان الأمنيات', en: 'Wish jar' }])}
-		<section class="sec sec--top"><div class="wrap"><div class="sky" id="wish-sky">
-			<svg class="sky__stars" aria-hidden="true"><defs><radialGradient id="sky-glow"><stop offset="10%" stop-color="rgba(254,202,87,1)"/><stop offset="95%" stop-color="rgba(254,202,87,0)"/></radialGradient>${STAR}</defs><g class="sky__field"></g></svg>
-			${NEON}
-			<p class="sky__count" id="sky-count"></p>
-		</div></div></section>
+		${pageHead(L('برطمان الأمنيات', 'Wish jar'), L('أمنياتنا إحنا الاتنين، في برطمان واحد', 'Both our wishes, in one jar'), [{ href: 'wishes.html', ar: 'برطمان الأمنيات', en: 'Wish jar' }], { band: SKY })}
 		${live.canWrite() ? '' : `<div class="wrap narrow" style="margin-top:16px">${setupNote()}</div>`}
 		<section class="sec sec--top"><div class="wrap jar-wrap">
 			<form class="wish-form reveal" id="wish-form" autocomplete="off">
