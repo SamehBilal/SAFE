@@ -102,4 +102,64 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 /* the notes on the notes page get the zigzag tape instead of plain pink */
 .note:nth-child(even)::before { background-color: #cddc39; background-image: repeating-linear-gradient(45deg, transparent 0 2px, #396afc 2px 4px, transparent 4px 9px), repeating-linear-gradient(-45deg, transparent 0 2px, #396afc 2px 4px, transparent 4px 9px); background-size: 20px 60px; background-position: center top -3px; opacity: 0.85; }
 
-@media (prefers-reduced-motion: reduce) { .btn, .tile { transition: none; } }
+/* ---------- every button gets the gate's «Next» shape: a filled, hand-drawn box with an ink outline and a hard ink
+   shadow that presses flat. Each kind keeps its own colour (--pen-bg / --pen-fg). ---------- */
+.icon-btn, .lang-toggle, .mnav-cta, .ns-action, .deck__btn, .tool, .sz, .quick__btn, .pager a, .wheel__hub, .ip__close {
+	--pen-bg: var(--card);
+	--pen-fg: var(--blue-ink);
+	background: var(--pen-bg);
+	color: var(--pen-fg);
+	border: 1.5px solid var(--ink);
+	border-radius: var(--sketch-sm);
+	box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink);
+	transition: transform 0.12s, box-shadow 0.12s, background 0.2s, color 0.2s;
+}
+:is(.icon-btn, .lang-toggle, .mnav-cta, .ns-action, .deck__btn, .tool, .sz, .quick__btn, .pager a, .wheel__hub):hover { transform: translate(calc(var(--bujo-x) * -1px), -1px); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--ink); }
+:is(.icon-btn, .lang-toggle, .mnav-cta, .ns-action, .deck__btn, .tool, .sz, .quick__btn, .pager a, .wheel__hub, .ip__close):active { transform: translate(calc(var(--bujo-x) * 3px), 3px); box-shadow: 0 0 0 0 var(--ink); }
+/* the colours, kind by kind */
+.lang-toggle { --pen-bg: #fdc830; --pen-fg: #37353f; }
+.lang-toggle:hover { border-color: var(--ink); }
+.theme-toggle { --pen-bg: var(--blue-ink); --pen-fg: #fdc830; }
+.menu-btn { --pen-bg: var(--blue); --pen-fg: #fff; }
+.install-app { --pen-bg: #cddc39; --pen-fg: #37353f; }
+.app-back { --pen-bg: var(--card); --pen-fg: var(--blue); }
+.mnav-cta, .mnav-cta:hover { --pen-bg: var(--coral); --pen-fg: #fff; background: var(--pen-bg); color: var(--pen-fg); }
+.mnav-cta[aria-current='page']::after { display: none; }
+.ns-action { --pen-bg: var(--coral); --pen-fg: #fff; }
+.ns-action + .ns-action { --pen-bg: var(--blue); background: var(--pen-bg); }
+.ns-action.ns-later { --pen-bg: var(--card); --pen-fg: var(--muted); background: var(--pen-bg); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--hl-lime); }
+.quick__btn:nth-child(3n + 1) { --pen-bg: var(--hl-yellow); }
+.quick__btn:nth-child(3n + 2) { --pen-bg: var(--hl-pink); }
+.quick__btn:nth-child(3n) { --pen-bg: var(--hl-lime); }
+.quick__btn { --pen-fg: var(--text); }
+.pager a { --pen-fg: var(--text); padding: 12px 16px; }
+.pager__next { --pen-bg: var(--blush) !important; }
+.deck__btn { --pen-fg: var(--text); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; }
+.deck__btn:hover { border-color: var(--ink); }
+.deck__btn--main { --pen-bg: var(--coral); --pen-fg: #fff; }
+.wheel__hub { --pen-bg: var(--blue-ink); --pen-fg: #fdc830; border: 1.5px solid #37353f; border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; box-shadow: 3px 3px 0 0 #37353f; }
+.tool, .sz { --pen-fg: var(--text); }
+.sz.is-on, .tool[aria-pressed='true'] { --pen-bg: var(--hl-yellow); border-color: var(--ink); }
+.ip__close { --pen-bg: rgba(10, 30, 42, 0.55); --pen-fg: #fff; border-color: #fff; box-shadow: 3px 3px 0 0 rgba(255, 255, 255, 0.7); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; }
+/* the header's menu items: the same box shows up on hover and on the page you're on */
+.mnav-link:not(.mnav-cta), .mnav-btn { border: 1.5px solid transparent; border-radius: var(--sketch-sm); transition: background 0.2s, border-color 0.2s, box-shadow 0.12s, transform 0.12s; }
+.mnav-link:not(.mnav-cta):hover, .mnav-btn:hover, .mnav-btn[aria-expanded='true'] { background: var(--hl-yellow); color: var(--text); border-color: var(--ink); box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+.mnav-link:not(.mnav-cta):active, .mnav-btn:active { transform: translate(calc(var(--bujo-x) * 2px), 2px); box-shadow: none; }
+/* chips: card-coloured boxes with the ink shadow; the chosen one is coral */
+.chip { box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); transition: transform 0.12s, box-shadow 0.12s, background 0.2s; }
+.chip:active { transform: translate(calc(var(--bujo-x) * 2px), 2px); box-shadow: none; }
+/* the ghost buttons are boxes too, on the card colour */
+.btn--ghost { background: var(--card); border-color: var(--ink); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink); }
+.btn--ghost:hover { background: var(--hl-lime); }
+.btn--sm.btn--ghost { box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+/* dark: the boxes keep their colours, the ink turns light */
+:root[data-theme='dark'] .lang-toggle { --pen-bg: #e0b12b; }
+:root[data-theme='dark'] .theme-toggle { --pen-bg: #24323d; }
+:root[data-theme='dark'] .install-app { --pen-bg: #aab82e; }
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) .lang-toggle { --pen-bg: #e0b12b; }
+	:root:not([data-theme='light']) .theme-toggle { --pen-bg: #24323d; }
+	:root:not([data-theme='light']) .install-app { --pen-bg: #aab82e; }
+}
+
+@media (prefers-reduced-motion: reduce) { .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
