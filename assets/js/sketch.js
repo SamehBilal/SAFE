@@ -57,8 +57,10 @@ export function openSketch({ title = '', hint = '' } = {}) {
 			ctx.fillRect(0, 0, w, h);
 			for (const s of strokes) drawStroke(ctx, s, w, h);
 		};
-		addEventListener('resize', fit);
-		requestAnimationFrame(fit);
+		// size it now (it is already on the page), and again whenever the drawing area changes size
+		const ro = new ResizeObserver(fit);
+		ro.observe(canvas.parentElement);
+		fit();
 
 		const pt = (e) => { const r = canvas.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, e.pressure && e.pointerType === 'pen' ? e.pressure : 0.5]; };
 		canvas.addEventListener('pointerdown', (e) => {
@@ -102,7 +104,7 @@ export function openSketch({ title = '', hint = '' } = {}) {
 		});
 
 		function close(v) {
-			removeEventListener('resize', fit);
+			ro.disconnect();
 			document.body.classList.remove('menu-lock');
 			box.remove();
 			resolve(v);

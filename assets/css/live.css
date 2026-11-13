@@ -145,7 +145,9 @@
 .howto ol { margin: 8px 0 0; padding-inline-start: 22px; line-height: 1.9; }
 
 /* ---------- Sketch pad ---------- */
-.sketch { position: fixed; inset: 0; z-index: 400; background: #e9eef2; display: grid; grid-template-rows: auto auto 1fr auto; padding: env(safe-area-inset-top, 0px) 0 var(--safe-b); animation: fade 0.2s; }
+.sketch { position: fixed; inset: 0; z-index: 400; background: #e9eef2; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; padding: env(safe-area-inset-top, 0px) 0 var(--safe-b); animation: fade 0.2s; }
+/* each part keeps its own row, so a pad opened without a hint still gives the drawing all the room */
+.sketch__bar { grid-row: 1; } .sketch__hint { grid-row: 2; } .sketch__stage { grid-row: 3; } .sketch__tools { grid-row: 4; }
 .sketch__bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; background: var(--card); box-shadow: var(--shadow); }
 .sketch__title { font: 400 1.4rem/1.3 var(--f-script); color: var(--blue); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sketch__hint { margin: 8px 12px 0; text-align: center; font: 1.4rem/1.3 var(--f-hand); color: var(--coral-deep); }
@@ -538,3 +540,11 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 .entry__sketch { border: 0; border-radius: 2px; padding: 8px 8px 22px; background: #fff; rotate: 1.5deg; box-shadow: 0 4px 12px rgba(30, 20, 10, 0.22); }
 .entry footer { margin-top: 10px; }
 @media (prefers-reduced-motion: reduce) { .composer, .entry { transition: none; } }
+/* the journal's pages three to a row (two on a tablet, one on a phone); the form and the setup note stay reading-width */
+.journal-wrap > .composer, .journal-wrap > .setup-note { width: min(760px, 100%); margin-inline: auto; }
+.journal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 26px; align-items: start; padding-top: 6px; }
+.journal > .journal__month, .journal > .empty { grid-column: 1 / -1; margin-bottom: 0; }
+.journal > .entry { margin: 0; }
+.entry h3, .entry__text { overflow-wrap: anywhere; }
+@media (max-width: 960px) { .journal { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .journal { grid-template-columns: minmax(0, 1fr); } }

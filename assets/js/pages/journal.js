@@ -13,7 +13,7 @@ export default {
 		const ok = live.canWrite();
 		return `
 		${pageHead(L('دفترنا', 'Our journal'), L('هنا بنكتب حكايتنا سوا — كل واحد بقلمه', 'Where we write our story together — each in our own hand'), [{ href: 'journal.html', ar: 'دفترنا', en: 'Our journal' }])}
-		<section class="sec sec--top"><div class="wrap narrow">
+		<section class="sec sec--top"><div class="wrap journal-wrap">
 			${ok ? '' : setupNote()}
 			<details class="composer reveal" id="composer"${ok ? '' : ' hidden'}>
 				<summary><span>${doodle('pen', 22)}</span> ${Y('اكتب صفحة جديدة', 'اكتبي صفحة جديدة', 'Write a new page')}</summary>
