@@ -196,7 +196,19 @@ export default {
 			crackleOn();
 		};
 		const quiet = radio.on(sync);
-		this.leave = () => { quiet(); clearTimeout(armTimer); crackle.pause(); crackle.src = ''; };
+		/* the record slides out toward the next sleeve; a sleeve in the last column has no room there (the screen edge
+		   would crop it), so its record slides back the other way, over its neighbour */
+		const edges = () => {
+			const box = list.getBoundingClientRect();
+			const rtl = document.documentElement.dir === 'rtl';
+			for (const el of $$('.sleeve', list)) {
+				const r = el.getBoundingClientRect();
+				el.classList.toggle('is-edge', (rtl ? r.left - box.left : box.right - r.right) < r.width / 2);
+			}
+		};
+		const ro = new ResizeObserver(edges);
+		ro.observe(list);
+		this.leave = () => { quiet(); ro.disconnect(); clearTimeout(armTimer); crackle.pause(); crackle.src = ''; };
 
 		const step = (dir) => {
 			if (radio.state().item) return radio.step(dir);
@@ -231,6 +243,7 @@ export default {
 			list.querySelectorAll('.reveal').forEach((e) => e.classList.add('is-in'));
 			for (const im of $$('img[data-cover]', list)) mediaURL(im.dataset.cover).then((url) => { im.src = url; }).catch(() => im.remove());
 			if (current) $$('.sleeve', list).forEach((el) => el.classList.toggle('is-on', el.dataset.id === current.id));
+			edges();
 		};
 
 		list.onclick = async (e) => {

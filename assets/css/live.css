@@ -239,14 +239,18 @@
 
 .shelf { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 26px 20px; overflow: clip; overflow-clip-margin: 16px; } /* a record sliding out stops at the screen edge, not past it */
 .shelf .empty { grid-column: 1 / -1; }
-.sleeve { position: relative; }
+.sleeve { position: relative; --slide: 1; }
+/* the sleeve being handled sits above its neighbours, so the record sliding out goes over the next one, not under it */
+.sleeve.is-on { z-index: 2; }
+.sleeve:hover, .sleeve:focus-within, .sleeve.is-out { z-index: 3; }
+.sleeve.is-edge { --slide: -1; }
 .sleeve__btn { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; text-align: center; color: inherit; }
-.sleeve__lp { position: absolute; inset: 5%; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1b1e 0 2px, #121214 2px 4px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); transform: translateX(calc(var(--dir, 1) * 12%)); transition: transform 0.5s var(--ease-out); }
+.sleeve__lp { position: absolute; inset: 5%; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1b1e 0 2px, #121214 2px 4px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 12%)); transition: transform 0.5s var(--ease-out); }
 .sleeve__lp i { position: absolute; inset: 34%; border-radius: 50%; background: var(--ink); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25); }
 .sleeve__lp i::after { content: ''; position: absolute; inset: 44%; border-radius: 50%; background: #ddd; }
-.sleeve__btn:hover .sleeve__lp, .sleeve__btn:focus-visible .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 30%)) rotate(40deg); }
-.sleeve.is-out .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 70%)) rotate(120deg); }
-.sleeve.is-on .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 22%)); }
+.sleeve__btn:hover .sleeve__lp, .sleeve__btn:focus-visible .sleeve__lp { transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 30%)) rotate(40deg); }
+.sleeve.is-out .sleeve__lp { transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 70%)) rotate(120deg); }
+.sleeve.is-on .sleeve__lp { transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 22%)); }
 .sleeve__cover { position: absolute; inset: 0; display: grid; align-content: end; justify-items: center; gap: 2px; padding: 12px; border-radius: 8px; background: linear-gradient(135deg, var(--paper) 0 55%, color-mix(in srgb, var(--ink) 25%, var(--paper)) 55% 60%, var(--paper) 60%); color: var(--ink); box-shadow: 0 10px 22px rgba(19, 52, 71, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.06); transition: transform 0.3s var(--ease-pop); overflow: hidden; }
 .sleeve__btn:hover .sleeve__cover { transform: rotate(-1.5deg); }
 .sleeve.is-on .sleeve__cover { box-shadow: 0 0 0 3px var(--coral), 0 10px 22px rgba(19, 52, 71, 0.22); }
