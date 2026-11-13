@@ -6,7 +6,7 @@
    VERSION is rewritten by tools/build.mjs on every build. */
 'use strict';
 
-var VERSION = 'us-51796ab8e1';
+var VERSION = 'us-683cb490f4';
 var SHELL = [
 	'./',
 	'birthday.html',
@@ -15,6 +15,7 @@ var SHELL = [
 	'capsule.html',
 	'chapter.html',
 	'chapters.html',
+	'chores.html',
 	'cities.html',
 	'distances.html',
 	'draw.html',
@@ -23,6 +24,7 @@ var SHELL = [
 	'firsts.html',
 	'food.html',
 	'gallery.html',
+	'games.html',
 	'gifts.html',
 	'goals.html',
 	'index.html',
@@ -36,6 +38,7 @@ var SHELL = [
 	'numbers.html',
 	'places.html',
 	'posts.html',
+	'questions.html',
 	'ramadan.html',
 	'settings.html',
 	'story.html',
@@ -74,6 +77,7 @@ var SHELL = [
 	'assets/js/pages/capsule.js',
 	'assets/js/pages/chapter.js',
 	'assets/js/pages/chapters.js',
+	'assets/js/pages/chores.js',
 	'assets/js/pages/cities.js',
 	'assets/js/pages/distances.js',
 	'assets/js/pages/draw.js',
@@ -82,6 +86,7 @@ var SHELL = [
 	'assets/js/pages/firsts.js',
 	'assets/js/pages/food.js',
 	'assets/js/pages/gallery.js',
+	'assets/js/pages/games.js',
 	'assets/js/pages/gifts.js',
 	'assets/js/pages/goals.js',
 	'assets/js/pages/home.js',
@@ -95,6 +100,7 @@ var SHELL = [
 	'assets/js/pages/numbers.js',
 	'assets/js/pages/places.js',
 	'assets/js/pages/posts.js',
+	'assets/js/pages/questions.js',
 	'assets/js/pages/ramadan.js',
 	'assets/js/pages/settings.js',
 	'assets/js/pages/story.js',
