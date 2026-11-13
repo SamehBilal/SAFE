@@ -1,70 +1,99 @@
 /* The night sky above the birthdays page, after two pens put together:
    - arcs' «Happy Birthday» (codepen.io/arcs/pen/XKKYZW): fireworks keep going up on their own, trails fading into
      the dark, and a tap anywhere sends three to five more to that spot;
-   - Matei Copot's «Happy birthday Tiffany!» (codepen.io/towc/pen/LGMGQG): the greeting arrives a piece at a time,
-     each piece shot up as a firework that blooms into it, and after a while every piece is tied to a balloon and
-     floats away, then it all starts again.
-   In Arabic the pieces are words (letters on their own would lose how they join); in English, letters.
-   sky(box, lines) starts it in box (lines: an array of lines, each an array of pieces) and returns stop(). */
+   - Matei Copot's «Happy birthday Tiffany!» (codepen.io/towc/pen/LGMGQG): the greeting arrives a letter at a time,
+     every letter its own colour of the rainbow, each shot up as a firework that blooms into it; after a while each
+     letter is tied to a balloon of its colour and floats away, swaying, then it all starts again.
+   An Arabic letter is the whole word drawn in that letter's colour and cut down to just its own slice (the browser
+   says where each letter sits in the word), so the joins stay perfect while every letter flies on its own.
+   Two canvases: the fireworks behind keep their fading trails; the letters in front are drawn clean every frame, as
+   the pen does, so the balloons glide.
+   sky(box, lines) starts it in box (lines: an array of strings) and returns stop(). */
 import { App, REDUCE } from './shell.js';
 
 const TAU = Math.PI * 2;
 const rnd = (a, b) => a + Math.random() * (b - a);
-
 export function sky(box, lines) {
-	const canvas = document.createElement('canvas');
-	canvas.setAttribute('aria-hidden', 'true');
-	box.prepend(canvas);
-	const ctx = canvas.getContext('2d');
+	const back = document.createElement('canvas');
+	const front = document.createElement('canvas');
+	for (const c of [back, front]) c.setAttribute('aria-hidden', 'true');
+	front.className = 'bd-sky__front';
+	box.prepend(back, front);
+	const bx = back.getContext('2d'), fx = front.getContext('2d');
 	const rtl = App.lang === 'ar';
 	const face = rtl ? 'Lalezar, Cairo, sans-serif' : '"Bebas Neue", Lalezar, sans-serif';
 	let w = 0, h = 0, size = 40, k = 1;       // k: the pens were tuned for a ~1000px-wide screen
 	let pieces = [], rockets = [], restart = 0, shown = 0;
 
-	/* ---------- the greeting, laid out to fit ---------- */
+	/* ---------- the greeting, laid out to fit, a piece per letter ---------- */
 	function layout() {
-		ctx.font = `100px ${face}`;
-		const gap = rtl ? 28 : 8;
-		const widths = lines.map((l) => l.reduce((a, p) => a + ctx.measureText(p).width, 0) + gap * (l.length - 1));
-		size = Math.min(100 * (w * 0.86) / Math.max(...widths, 1), h / (lines.length * 1.9), 92);
+		fx.font = `100px ${face}`;
+		const space = fx.measureText(' ').width * (rtl ? 1.6 : 1.2);
+		const track = rtl ? 0 : 6;                       // a little air between Latin capitals; Arabic letters touch
+		const plan = lines.map((line) => line.split(/\s+/).filter(Boolean).map((word) => (rtl ? slices(word) : [...word].map((t) => ({ t, w: fx.measureText(t).width })))));
+		const widths = plan.map((ws) => ws.reduce((a, word) => a + word.reduce((b, l) => b + l.w + track, 0), 0) + space * (ws.length - 1));
+		size = Math.min(100 * (w * 0.86) / Math.max(...widths, 1), h / (lines.length * 1.75), 96);
 		k = Math.max(0.5, Math.min(1.4, w / 1000));
-		ctx.font = `${size}px ${face}`;
-		const lh = size * 1.25, g = gap * (size / 100);
-		const total = lines.length * lh;
+		const s = size / 100, lh = size * 1.2, total = lines.length * lh;
 		const old = pieces;
 		pieces = [];
+		const count = plan.flat(2).length;
 		let n = 0;
-		lines.forEach((line, li) => {
-			const ws = line.map((p) => ctx.measureText(p).width);
-			const lw = ws.reduce((a, b) => a + b, 0) + g * (line.length - 1);
+		plan.forEach((ws, li) => {
+			const lw = widths[li] * s;
 			let x = rtl ? (w + lw) / 2 : (w - lw) / 2;
 			const y = h * 0.5 - total / 2 + lh * (li + 0.5);
-			line.forEach((p, i) => {
-				const cx = rtl ? x - ws[i] / 2 : x + ws[i] / 2;
-				x += (rtl ? -1 : 1) * (ws[i] + g);
-				const hue = Math.round((cx / w) * 300 + 320) % 360;   // a rainbow across, as in the pen
-				pieces.push(Object.assign(old[n] || fresh(), { text: p, x: cx, y, hue }));
-				n++;
+			ws.forEach((word, wi) => {
+				for (const l of word) {
+					const lwid = l.w * s;
+					const cx = rtl ? x - lwid / 2 : x + lwid / 2;
+					x += (rtl ? -1 : 1) * (lwid + track * s);
+					// every letter its own colour, around the rainbow in reading order, as in the pen
+					const hue = Math.round((n / Math.max(count - 1, 1)) * 330);
+					pieces.push(Object.assign(old[n] || fresh(), { text: l.t, x: cx, y, hue, cut: l.cut }));
+					n++;
+				}
+				if (wi < ws.length - 1) x += (rtl ? -1 : 1) * space * s;
 			});
 		});
 	}
-	function fresh() { return { phase: 'wait', t: 0, wait: rnd(0, 3.2), shards: [], trail: [] }; }
-	function reset() { pieces = pieces.map((p) => Object.assign(fresh(), { text: p.text, x: p.x, y: p.y, hue: p.hue })); }
+	/* where each letter of an Arabic word sits, measured by the browser on the same font (at 100px) */
+	function slices(word) {
+		const probe = document.createElement('span');
+		probe.style.cssText = `position:absolute;visibility:hidden;white-space:pre;direction:rtl;font:100px ${face};left:0;top:0`;
+		probe.textContent = word;
+		box.append(probe);
+		const node = probe.firstChild, all = probe.getBoundingClientRect(), range = document.createRange(), out = [];
+		let at = 0;
+		for (const ch of [...word]) {
+			range.setStart(node, at); range.setEnd(node, at + ch.length); at += ch.length;
+			const r = range.getBoundingClientRect();
+			// marks and the like take no room of their own: they ride with the letter before
+			if (r.width < 0.5 && out.length) { out[out.length - 1].t += ch; continue; }
+			out.push({ t: ch, l: r.left - all.left, r: r.right - all.left });
+		}
+		probe.remove();
+		return out.map((o) => ({ t: o.t, w: o.r - o.l, cut: { word, l: o.l, r: o.r } }));
+	}
+	function fresh() { return { phase: 'wait', t: 0, wait: rnd(0, 3.3), shards: [], trail: [] }; }
+	function reset() { pieces = pieces.map((p) => Object.assign(fresh(), { text: p.text, x: p.x, y: p.y, hue: p.hue, cut: p.cut })); }
 
 	function resize() {
 		const r = box.getBoundingClientRect();
 		const dpr = Math.min(devicePixelRatio || 1, 2);
 		w = r.width; h = r.height;
-		canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-		canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-		ctx.fillStyle = '#090d1e';
-		ctx.fillRect(0, 0, w, h);
+		for (const [c, x] of [[back, bx], [front, fx]]) {
+			c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+			c.style.width = w + 'px'; c.style.height = h + 'px';
+			x.setTransform(dpr, 0, 0, dpr, 0, 0);
+		}
+		bx.fillStyle = '#090d1e';
+		bx.fillRect(0, 0, w, h);
 		layout();
 		if (REDUCE) still();
 	}
 
-	/* ---------- arcs' fireworks ---------- */
+	/* ---------- arcs' fireworks, behind ---------- */
 	function rocket(tx, ty, hue = rnd(0, 360), kids = rnd(30, 110)) {
 		rockets.push({ x: rnd(w * 0.38, w * 0.62), y: h, tx, ty, hue, kids: kids * k, trail: [], dead: false });
 	}
@@ -83,39 +112,60 @@ export function sky(box, lines) {
 			r.trail.shift();
 		}
 		if (!r.trail.length) { r.dead = true; return; }
-		if (r.kids) r.trail.forEach(([x, y], i) => { ctx.fillStyle = `hsl(${r.hue},100%,${i * 2.5}%)`; ctx.beginPath(); ctx.arc(x, y, 1.2, 0, TAU); ctx.fill(); });
-		else { ctx.fillStyle = `hsl(${r.hue},100%,60%)`; ctx.beginPath(); ctx.arc(r.x, r.y, 1.3, 0, TAU); ctx.fill(); }
+		if (r.kids) r.trail.forEach(([x, y], i) => { bx.fillStyle = `hsl(${r.hue},100%,${i * 2.5}%)`; bx.beginPath(); bx.arc(x, y, 1.2, 0, TAU); bx.fill(); });
+		else { bx.fillStyle = `hsl(${r.hue},100%,60%)`; bx.beginPath(); bx.arc(r.x, r.y, 1.3, 0, TAU); bx.fill(); }
 	}
 
-	/* ---------- Matei's letters: up, bloom, wait, balloon away ---------- */
+	/* ---------- Matei's letters, in front: up, bloom, wait, balloon away ---------- */
 	const col = (p, l, a = 1) => `hsla(${p.hue},80%,${l}%,${a})`;
-	function word(p, x, y) { ctx.fillStyle = col(p, 72); ctx.fillText(p.text, x, y); }
-	function balloonPath(x, y, s) {
-		ctx.moveTo(x, y);
-		ctx.bezierCurveTo(x - s / 2, y - s / 2, x - s / 4, y - s, x, y - s);
-		ctx.bezierCurveTo(x + s / 4, y - s, x + s / 2, y - s / 2, x, y);
+	function letter(p, x, y) {
+		fx.fillStyle = col(p, 70);
+		if (!p.cut) { fx.fillText(p.text, x, y); return; }
+		// an Arabic letter: the whole word, cut down to this letter's slice
+		const s = size / 100, c = p.cut, sw = (c.r - c.l) * s;
+		fx.save();
+		fx.beginPath(); fx.rect(x - sw / 2 - 0.5, y - size, sw + 1, size * 2); fx.clip();
+		fx.textAlign = 'left';
+		fx.direction = 'rtl';
+		fx.fillText(c.word, x - sw / 2 - c.l * s, y);
+		fx.restore();
 	}
-	/* once the whole greeting has been up for a while, every piece gets its balloon */
+	/* the pen's balloon: a teardrop on its knot, with a little shine */
+	function balloon(p, x, y, s, tilt = 0) {
+		fx.save();
+		fx.translate(x, y); fx.rotate(tilt);
+		fx.beginPath();
+		fx.moveTo(0, 0);
+		fx.bezierCurveTo(-s / 2, -s / 2, -s / 4, -s, 0, -s);
+		fx.bezierCurveTo(s / 4, -s, s / 2, -s / 2, 0, 0);
+		fx.fillStyle = col(p, 52, p.alpha ?? 1); fx.fill();
+		fx.beginPath(); fx.ellipse(s * 0.1, -s * 0.72, s * 0.05, s * 0.11, 0.5, 0, TAU);
+		fx.fillStyle = `rgba(255,255,255,${0.45 * (p.alpha ?? 1)})`; fx.fill();
+		fx.restore();
+	}
 	function letGo(p) {
-		p.phase = 'balloon'; p.t = 0; p.spawn = rnd(0, 0.35); p.inflate = rnd(0.17, 0.34); p.bs = (rnd(20, 40) * size) / 34;
-		const a = -(Math.PI / 2 - 0.5) - Math.random(), v = rnd(0.4, 0.8) * 60 * k;
-		p.vx = Math.cos(a) * v; p.vy = Math.sin(a) * v; p.bx = p.x; p.by = p.y - size * 0.6;
+		p.phase = 'balloon'; p.t = 0; p.spawn = rnd(0, 0.6); p.inflate = rnd(0.35, 0.6);
+		p.bs = (rnd(24, 40) * size) / 34;
+		p.vx = rnd(-0.35, 0.15) * 60 * k;            // drifting a little, mostly up, like the pen's balloons
+		p.vy = -rnd(10, 22) * k;
+		p.sway = rnd(0, TAU); p.swayW = rnd(1.2, 2.1);
+		p.cx = p.x; p.cy = p.y;
 	}
 	function stepPiece(p, dt) {
 		p.t += dt;
-		if (p.phase === 'wait') { if (p.t >= p.wait) { p.phase = 'rise'; p.t = 0; p.reach = rnd(0.5, 1); p.sx = rnd(w * 0.35, w * 0.65); p.trail = [[p.sx, h]]; p.lw = rnd(5, 13) * k; } return; }
+		if (p.phase === 'wait') { if (p.t >= p.wait) { p.phase = 'rise'; p.t = 0; p.reach = rnd(0.5, 1); p.sx = rnd(w * 0.4, w * 0.6); p.trail = [[p.sx, h]]; p.lw = rnd(5, 13) * k; } return; }
 		if (p.phase === 'rise') {
 			const f = Math.min(1, p.t / p.reach), arc = Math.sin(f * Math.PI / 2);
 			const x = p.sx + (p.x - p.sx) * f, y = h + (p.y - h) * arc;
 			p.trail.push([x, y, f * p.lw]);
 			if (p.trail.length > 10) p.trail.shift();
 			for (let i = 1; i < p.trail.length; i++) {
-				ctx.strokeStyle = col(p, 50, i / p.trail.length);
-				ctx.lineWidth = (p.trail[i][2] || 1) * (i / p.trail.length);
-				ctx.beginPath(); ctx.moveTo(p.trail[i][0], p.trail[i][1]); ctx.lineTo(p.trail[i - 1][0], p.trail[i - 1][1]); ctx.stroke();
+				fx.strokeStyle = col(p, 50, i / p.trail.length);
+				fx.lineWidth = (p.trail[i][2] || 1) * (i / p.trail.length);
+				fx.beginPath(); fx.moveTo(p.trail[i][0], p.trail[i][1]); fx.lineTo(p.trail[i - 1][0], p.trail[i - 1][1]); fx.stroke();
 			}
 			if (f >= 1) {
-				p.phase = 'bloom'; p.t = 0; p.grow = rnd(0.5, 1); p.fade = rnd(0.17, 0.25); p.r = (rnd(20, 30) * size) / 34;
+				p.phase = 'bloom'; p.t = 0; p.grow = rnd(0.5, 1); p.fade = rnd(0.17, 0.25); p.r = (rnd(20, 30) * size) / 40;
 				const n = Math.round(rnd(5, 10));
 				p.shards = Array.from({ length: n }, (_, i) => { const a = (TAU * i) / n, v = rnd(4, 6) * 60 * k; return { x: p.x, y: p.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, s: rnd(3, 6) * k, trail: [] }; });
 			}
@@ -125,41 +175,54 @@ export function sky(box, lines) {
 			if (p.phase === 'bloom') {
 				if (p.t < p.grow) {
 					const f = p.t / p.grow, e = -Math.cos(f * Math.PI) / 2 + 0.5;
-					ctx.fillStyle = col(p, 50 + 50 * f, f); ctx.beginPath(); ctx.arc(p.x, p.y, e * p.r, 0, TAU); ctx.fill();
+					fx.fillStyle = col(p, 50 + 50 * f, f); fx.beginPath(); fx.arc(p.x, p.y, e * p.r, 0, TAU); fx.fill();
 				} else {
-					word(p, p.x, p.y);
+					letter(p, p.x, p.y);
 					const f = Math.min(1, (p.t - p.grow) / p.fade), e = -Math.cos(f * Math.PI) / 2 + 0.5;
-					ctx.fillStyle = col(p, 100, 1 - e); ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill();
+					fx.fillStyle = col(p, 100, 1 - e); fx.beginPath(); fx.arc(p.x, p.y, p.r, 0, TAU); fx.fill();
 					if (f >= 1) { p.phase = 'show'; p.t = 0; }
 				}
-			} else word(p, p.x, p.y);
+			} else letter(p, p.x, p.y);
 			for (const s of p.shards) {
 				s.x += s.vx * dt; s.vy += 360 * k * dt; s.y += s.vy * dt;
 				s.trail.push([s.x, s.y]); if (s.trail.length > 4) s.trail.shift();
 				for (let i = 0; i < s.trail.length - 1; i++) {
-					ctx.strokeStyle = col(p, 50, i / s.trail.length); ctx.lineWidth = (i * s.s) / s.trail.length;
-					ctx.beginPath(); ctx.moveTo(s.trail[i][0], s.trail[i][1]); ctx.lineTo(s.trail[i + 1][0], s.trail[i + 1][1]); ctx.stroke();
+					fx.strokeStyle = col(p, 50, i / s.trail.length); fx.lineWidth = (i * s.s) / s.trail.length;
+					fx.beginPath(); fx.moveTo(s.trail[i][0], s.trail[i][1]); fx.lineTo(s.trail[i + 1][0], s.trail[i + 1][1]); fx.stroke();
 				}
 			}
 			p.shards = p.shards.filter((s) => s.trail[0]?.[1] < h + 20);
 			return;
 		}
 		if (p.phase === 'balloon') {
-			ctx.strokeStyle = col(p, 80); ctx.lineWidth = 1;
-			const top = p.y - size * 0.6;
-			if (p.t < p.spawn) { word(p, p.x, p.y); return; }
+			const hang = size * 0.55;                      // the letter hangs this far under the knot
+			if (p.t < p.spawn) { letter(p, p.x, p.y); return; }
 			if (p.t < p.spawn + p.inflate) {
-				const f = (p.t - p.spawn) / p.inflate, by = top - p.bs * f;
-				ctx.fillStyle = `hsla(${p.hue},80%,50%,${f})`; ctx.beginPath(); balloonPath(p.x, by, p.bs * f); ctx.fill();
-				ctx.beginPath(); ctx.moveTo(p.x, by); ctx.lineTo(p.x, top); ctx.stroke();
-				word(p, p.x, p.y); p.by = by;
+				// the balloon blows up just above its letter, the string paying out
+				const f = (p.t - p.spawn) / p.inflate, e = 1 - (1 - f) ** 3;
+				p.alpha = e;
+				const ky = p.y - hang * e;
+				fx.strokeStyle = col(p, 80, e); fx.lineWidth = 1;
+				fx.beginPath(); fx.moveTo(p.x, ky); fx.lineTo(p.x, p.y - size * 0.35); fx.stroke();
+				balloon(p, p.x, ky, p.bs * e);
+				letter(p, p.x, p.y);
 				return;
 			}
-			p.bx += p.vx * dt; p.vy -= 360 * k * dt * 0.6; p.by += p.vy * dt;
-			ctx.fillStyle = `hsl(${p.hue},80%,50%)`; ctx.beginPath(); balloonPath(p.bx, p.by, p.bs); ctx.fill();
-			ctx.beginPath(); ctx.moveTo(p.bx, p.by); ctx.lineTo(p.bx, p.by + p.bs * 0.7); ctx.stroke();
-			word(p, p.bx, p.by + p.bs * 0.7 + size * 0.6);
-			if (p.by + p.bs * 0.7 + size < -10 || p.bx < -w * 0.2 || p.bx > w * 1.2) p.phase = 'done';
+			p.alpha = 1;
+			// float: a gentle push up that builds, a slow drift, and a sway side to side
+			const tt = p.t - p.spawn - p.inflate;
+			p.vy = Math.max(p.vy - 34 * k * dt, -95 * k);
+			p.cx += p.vx * dt; p.cy += p.vy * dt;
+			const sway = Math.sin(tt * p.swayW + p.sway) * 9 * k;
+			const kx = p.cx + sway, ky = p.cy - hang;
+			const tilt = Math.cos(tt * p.swayW + p.sway) * 0.12;
+			// the letter swings a beat behind the balloon, on a soft curved string
+			const lx = p.cx + Math.sin(tt * p.swayW + p.sway - 0.6) * 9 * k, ly = p.cy;
+			fx.strokeStyle = col(p, 80); fx.lineWidth = 1;
+			fx.beginPath(); fx.moveTo(kx, ky); fx.quadraticCurveTo((kx + lx) / 2 + sway * 0.6, (ky + ly) / 2, lx, ly - size * 0.35); fx.stroke();
+			balloon(p, kx, ky, p.bs, tilt);
+			letter(p, lx, ly);
+			if (ky + size < -20 || kx < -w * 0.25 || kx > w * 1.25) p.phase = 'done';
 		}
 	}
 
@@ -169,16 +232,18 @@ export function sky(box, lines) {
 		raf = requestAnimationFrame(frame);
 		const dt = Math.min(0.05, (now - (then || now)) / 1000);
 		then = now;
-		ctx.globalCompositeOperation = 'source-over';
-		ctx.fillStyle = `rgba(9,13,30,${Math.min(1, 9 * dt)})`;
-		ctx.fillRect(0, 0, w, h);
-		ctx.globalCompositeOperation = 'lighter';
+		// behind: fade a little each frame so the fireworks leave trails
+		bx.globalCompositeOperation = 'source-over';
+		bx.fillStyle = `rgba(9,13,30,${Math.min(1, 9 * dt)})`;
+		bx.fillRect(0, 0, w, h);
+		bx.globalCompositeOperation = 'lighter';
 		spawnIn -= dt;
-		if (spawnIn <= 0) { rocket(rnd(0, w), rnd(h * 0.08, h * 0.45)); spawnIn = rnd(0.45, 0.8); }
+		if (spawnIn <= 0) { rocket(rnd(0, w), rnd(h * 0.08, h * 0.45)); spawnIn = rnd(0.5, 0.9); }
 		for (const r of rockets) if (!r.dead) stepRocket(r, dt);
 		if (rockets.length > 600) rockets = rockets.filter((r) => !r.dead);
-		ctx.globalCompositeOperation = 'source-over';
-		ctx.font = `${size}px ${face}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		// in front: wiped clean every frame, like the pen
+		fx.clearRect(0, 0, w, h);
+		fx.font = `${size}px ${face}`; fx.textAlign = 'center'; fx.textBaseline = 'middle';
 		for (const p of pieces) stepPiece(p, dt);
 		if (pieces.every((p) => p.phase === 'show')) { shown += dt; if (shown > 6) { shown = 0; pieces.forEach(letGo); } } else shown = 0;
 		if (pieces.every((p) => p.phase === 'done')) { restart += dt; if (restart > 1) { restart = 0; reset(); } }
@@ -187,17 +252,18 @@ export function sky(box, lines) {
 	function pause() { on = false; cancelAnimationFrame(raf); }
 	/* with less motion asked for: just the greeting, still, on the night */
 	function still() {
-		ctx.fillStyle = '#090d1e'; ctx.fillRect(0, 0, w, h);
-		ctx.font = `${size}px ${face}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-		for (const p of pieces) word(p, p.x, p.y);
+		bx.fillStyle = '#090d1e'; bx.fillRect(0, 0, w, h);
+		fx.clearRect(0, 0, w, h);
+		fx.font = `${size}px ${face}`; fx.textAlign = 'center'; fx.textBaseline = 'middle';
+		for (const p of pieces) letter(p, p.x, p.y);
 	}
 
 	// a tap sends three to five to that spot, like the pen
 	const tap = (e) => {
-		const r = canvas.getBoundingClientRect();
+		const r = front.getBoundingClientRect();
 		for (let i = 0, n = Math.round(rnd(3, 5)); i < n; i++) rocket(e.clientX - r.left, e.clientY - r.top, rnd(0, 260));
 	};
-	canvas.addEventListener('pointerdown', tap);
+	front.addEventListener('pointerdown', tap);
 
 	const ro = new ResizeObserver(resize);
 	ro.observe(box);
@@ -206,8 +272,8 @@ export function sky(box, lines) {
 	const vis = () => (document.hidden ? pause() : box.isConnected && start());
 	document.addEventListener('visibilitychange', vis);
 	resize();
-	// the fonts may still be on their way: lay the words out again once they're here
+	// the fonts may still be on their way: lay the letters out again once they're here
 	document.fonts?.load(`40px ${face}`).then(() => { layout(); if (REDUCE) still(); }).catch(() => {});
 
-	return () => { pause(); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', vis); canvas.removeEventListener('pointerdown', tap); };
+	return () => { pause(); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', vis); front.removeEventListener('pointerdown', tap); };
 }

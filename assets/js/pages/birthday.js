@@ -93,8 +93,8 @@ export default {
 		/* the sky: the greeting for whoever is next */
 		const p = this.pick, name = p ? App.t(p.member.name) : '';
 		const lines = App.lang === 'ar'
-			? (p ? [['كل', 'سنة'], [`و${name}`, p.member.female ? 'طيبة' : 'طيب']] : [['كل', 'سنة'], ['وإحنا', 'مع', 'بعض']])
-			: [[...'HAPPY'], [...'BIRTHDAY'], ...(p ? [[...name.toUpperCase().replace(/\s+/g, '')]] : [])];
+			? (p ? ['كل سنة', `و${name} ${p.member.female ? 'طيبة' : 'طيب'}`] : ['كل سنة', 'وإحنا مع بعض'])
+			: ['HAPPY', 'BIRTHDAY', ...(p ? [name.toUpperCase()] : [])];
 		const box = $('#bd-sky', main);
 		const stopSky = box ? sky(box, lines) : () => {};
 
