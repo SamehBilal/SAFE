@@ -15,6 +15,17 @@ const HAT = `<svg class="bd-hat" viewBox="0 0 60 72" aria-hidden="true">
 	<circle cx="30" cy="7" r="6" fill="#ffc94a" stroke="#37353f" stroke-width="1.6"/>
 </svg>`;
 const BIT = ['#0e6990', '#f2726f', '#ffc94a', '#5a9e6f', '#c2185b'];
+/* the cake's icing: the round top, then drips hanging all along its edge, some long, some short */
+function frosting() {
+	const drips = [12, 5, 16, 7, 11, 4, 14, 6, 10, 15];
+	let d = 'M20 124C20 115 60 108 110 108S200 115 200 124V129';
+	const n = drips.length, step = 180 / n;
+	for (let i = 0; i < n; i++) {
+		const x = 200 - i * step, L = drips[i];
+		d += `C${(x - step * 0.1).toFixed(1)} ${129 + L} ${(x - step * 0.9).toFixed(1)} ${129 + L} ${(x - step).toFixed(1)} 129`;
+	}
+	return d + 'Z';
+}
 export default {
 	title: { ar: 'أعياد الميلاد', en: 'Birthdays' },
 	render(s) {
@@ -66,16 +77,22 @@ export default {
 			<p class="bday__hint reveal" id="bday-hint">${Y('اتمنى أمنية… وبعدين اطفي الشمع (دوس على كل شمعة)', 'اتمني أمنية… وبعدين اطفي الشمع (دوسي على كل شمعة)', 'Make a wish… then blow out the candles (tap each one)')}</p>
 			<div class="cake reveal">
 				<svg viewBox="0 0 220 210" role="img" aria-label="${L('تورتة عيد ميلاد', 'A birthday cake')}">
-					<ellipse cx="110" cy="196" rx="100" ry="10" fill="#0e6990" opacity=".12"/>
-					<path d="M20 120h180v70c0 6-40 12-90 12s-90-6-90-12z" fill="#fde3e0"/>
-					<path d="M20 120c0-7 40-13 90-13s90 6 90 13-40 13-90 13-90-6-90-13Z" fill="#fff"/>
-					<path d="M20 124c10 14 18 0 26 12s16-4 26 8 18-4 26 6 18-6 26 4 18-6 26 2 18-4 24-12v18H20z" fill="#f2726f"/>
-					<path d="M20 165h180" stroke="#f2726f" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/>
+					<!-- drawn like the journal: wobbly ink outlines, highlighter colours, a hard offset shadow -->
+					<path class="ck-ink ck-plate" d="M8 193c2-7 48-11 103-11s100 4 102 10c1 7-46 11-102 11S7 200 8 193Z"/>
+					<path class="ck-shadow" d="M27 128c1 20 0 42 1 64 30 9 140 9 170 0 1-22 0-44 1-64Z"/>
+					<path class="ck-ink ck-body" d="M21 122c1 21-1 43 1 65 31 9 145 9 176 0 2-22 0-44 1-65Z"/>
+					<path class="ck-ink ck-layer" d="M22 156c30 6 146 6 176-1" fill="none"/>
+					<path class="ck-sprinkle ck-sprinkle--a" d="M40 170l6-2M114 179l5-3M184 166l5 3M150 146l6 2"/>
+					<path class="ck-sprinkle ck-sprinkle--b" d="M62 178l5 3M140 170l6 2M52 145l6-1"/>
+					<path class="ck-sprinkle ck-sprinkle--c" d="M88 168l6 1M164 177l5-2M100 147l5 2"/>
+					<path class="ck-ink ck-frost" d="${frosting()}"/>
+					<path class="ck-ink" d="M30 121c24-7 136-7 160 0" fill="none" opacity=".35"/>
 					${xs.map((x, k) => `
 					<g class="candle" data-k="${k}" tabindex="0" role="button" aria-label="${L('شمعة', 'Candle')} ${k + 1}">
-						<rect x="${x - 4}" y="74" width="8" height="42" rx="3" fill="${['#0e6990', '#f2726f', '#e39b2d', '#5a9e6f'][k % 4]}"/>
-						<path d="M${x - 4} 84l8-5M${x - 4} 96l8-5M${x - 4} 108l8-5" stroke="#fff" stroke-width="2" opacity=".6"/>
-						<path class="flame" d="M${x} 46c7 9 8 16 0 24-8-8-7-15 0-24Z" fill="#ffc94a"/>
+						<rect class="ck-ink" x="${x - 4.5}" y="72" width="9" height="44" rx="2.5" fill="${['#8fd1ef', '#f9a3a8', '#ffd66b', '#b9e08a'][k % 4]}"/>
+						<path d="M${x - 4} 83l8-5M${x - 4} 95l8-5M${x - 4} 107l8-5" stroke="#37353f" stroke-width="1.3" opacity=".55" stroke-linecap="round"/>
+						<path d="M${x} 72v-6" stroke="#37353f" stroke-width="1.4" stroke-linecap="round"/>
+						<path class="flame" d="M${x} 44c7 9 8 16 0 24-8-8-7-15 0-24Z" fill="#ffc94a" stroke="#37353f" stroke-width="1.2" stroke-linejoin="round"/>
 						<path class="flame flame--in" d="M${x} 58c3 4 3 7 0 10-3-3-3-6 0-10Z" fill="#fff4c4"/>
 						<path class="smoke" d="M${x} 66c-4-8 4-12 0-20s4-12 0-18" fill="none" stroke="#9aa9b3" stroke-width="2" stroke-linecap="round"/>
 						<rect x="${x - 14}" y="40" width="28" height="80" fill="transparent"/>

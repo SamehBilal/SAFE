@@ -693,3 +693,28 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 :lang(ar) .ns-tip { font: 700 0.8rem/1 var(--f-body); }
 @media (max-width: 760px) { .ns-stop text { font-size: 19px; } .ns-tip { display: none; } }
 @media (prefers-reduced-motion: reduce) { .ns-read.is-in .ns-read__n, .ns-read.is-in .ns-read__l { animation: none; } }
+
+/* ---------- birthdays in the journal's shape: the cards are its boxes (ink outline, hand-drawn corners, a hard
+   highlighter shadow), and the cake is drawn in ink with highlighter colours ---------- */
+.bd-card { border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch, 22px); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); transition: transform 0.2s var(--ease-pop, ease), box-shadow 0.2s, rotate 0.3s; }
+.bd-card:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-lime, rgba(205, 220, 57, 0.55)); }
+.bd-card:nth-child(3n) { box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-yellow, rgba(253, 200, 48, 0.55)); }
+.bd-card:hover { transform: translate(calc(var(--bujo-x, 1) * -2px), -3px); box-shadow: calc(var(--bujo-x, 1) * 8px) 8px 0 0 var(--coral); }
+/* the one the cake is for: its own colour behind it, tipped a little */
+.bd-card.is-on, .bd-card.is-on:hover { border-color: var(--ink, #37353f); box-shadow: calc(var(--bujo-x, 1) * 6px) 6px 0 0 var(--c); rotate: calc(var(--bujo-x, 1) * -1.2deg); }
+/* today's: a highlighter wash */
+.bd-card.is-today { background: color-mix(in srgb, var(--hl-yellow, #fdc830) 45%, var(--card)); }
+.bd-card em { padding: 0 6px; background: linear-gradient(transparent 45%, var(--hl-yellow, rgba(253, 200, 48, 0.55)) 45% 92%, transparent 92%); }
+.bd-card .fam__pic { box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 var(--c); }
+
+.cake svg { overflow: visible; }
+.ck-ink { stroke: var(--ink, #37353f); stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round; }
+.ck-shadow { fill: rgba(252, 139, 147, 0.7); transform: translate(calc(var(--bujo-x, 1) * 7px), 4px); }
+.ck-plate { fill: var(--card, #fff); }
+.ck-body { fill: #fde3e0; }
+.ck-layer { stroke-dasharray: 3 5; opacity: 0.55; }
+.ck-frost { fill: #fffdf8; }
+.ck-sprinkle { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+.ck-sprinkle--a { stroke: #f2726f; }
+.ck-sprinkle--b { stroke: #0e6990; }
+.ck-sprinkle--c { stroke: #e39b2d; }
