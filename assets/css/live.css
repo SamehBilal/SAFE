@@ -492,3 +492,49 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 .top10__hearts { color: var(--coral); font-size: 0.78rem; letter-spacing: 1px; }
 .top10__card.has-cover .top10__hearts { color: #ff8f9a; }
 @media (prefers-reduced-motion: reduce) { .top10__card, .top10__card img { transition: none; } }
+
+/* ---------- the journal as polaroids, like the ones taped at the top of every page: cream paper with a wide bottom,
+   a slight tilt, a soft photo shadow and a strip of washi tape; the writing sits on ruled notebook paper in a frame.
+   The paper stays cream in dark mode too (the header's polaroids do), so the words inside keep paper colours. ---------- */
+.composer, .entry {
+	--card: #fffdf8; --card-2: #fbf8f1; --text: #2b2b33; --muted: #6f6a74; --line: #ddd5c6; --ink: #37353f; --paper: #f1ebe0; --blush: #ffe0e0; color-scheme: light;
+	position: relative; overflow: visible; color: var(--text); background: #fbf8f1; border: 0; border-radius: 3px;
+	box-shadow: 0 8px 22px rgba(30, 20, 10, 0.24), 0 1px 2px rgba(30, 20, 10, 0.2);
+	rotate: var(--tilt, 0deg); transition: rotate 0.35s var(--ease-out), box-shadow 0.35s;
+}
+.composer { --tilt: -0.6deg; margin: 18px 0 34px; }
+.composer[open] { --tilt: 0deg; }
+.composer summary { padding: 18px 22px 16px; font: 700 1.55rem/1.2 var(--f-hand); color: var(--text); }
+:lang(ar) .composer summary { font: 800 1.15rem/1.4 var(--f-body); }
+.composer form { padding: 2px 22px 26px; }
+.entry { --tilt: -0.7deg; padding: 22px 20px 30px; margin: 0 0 30px; border-inline-start: 0; }
+.entry:nth-of-type(even) { --tilt: 0.6deg; }
+.entry:nth-of-type(3n) { --tilt: -0.3deg; }
+.entry:hover, .entry:focus-within { --tilt: 0deg; box-shadow: 0 14px 32px rgba(30, 20, 10, 0.3), 0 1px 2px rgba(30, 20, 10, 0.2); }
+/* the tape: the same four as the header's polaroids */
+.composer::before, .entry::before {
+	content: ''; position: absolute; z-index: 2; top: -11px; left: 50%; width: min(130px, 36%); height: 24px; translate: -50% 0; rotate: -3deg;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); opacity: 0.92; pointer-events: none;
+	background-color: rgba(252, 139, 147, 0.35);
+	background-image: radial-gradient(circle, #fc8b93 20%, transparent 20%), radial-gradient(circle, #fc8b93 20%, transparent 20%);
+	background-size: 10px 10px; background-position: 0 0, 5px 5px;
+}
+.composer::before, .entry:nth-of-type(4n + 2)::before { rotate: 2deg; background: rgba(233, 228, 240, 0.75) linear-gradient(to bottom, transparent 25%, #feac5e 25% 31%, transparent 31% 52%, #c779d0 52% 57%, transparent 58% 80%, #4bc0c8 80% 85%, transparent 85%); }
+.entry:nth-of-type(4n + 3)::before { rotate: -2deg; background-color: #965784; background-image: radial-gradient(circle, #fff 20%, transparent 20%), radial-gradient(circle, #fff 20%, transparent 20%); background-size: 10px 10px; background-position: 0 0, 5px 5px; }
+.entry:nth-of-type(4n + 4)::before { rotate: 3deg; background: radial-gradient(circle at 50% 60%, #95b0f9, rgba(149, 176, 249, 0) 50%), radial-gradient(circle at 10% 10%, #72e2fd, rgba(114, 226, 253, 0) 50%), radial-gradient(circle at 77% 16%, #b896ff, rgba(184, 150, 255, 0) 50%), radial-gradient(circle at 90% 90%, #56cfd2, rgba(86, 207, 210, 0) 50%) #c7d4fb; }
+/* the caption line: the title in the hand, who and when beside it */
+.entry h3 { font: 700 1.6rem/1.15 var(--f-hand); color: var(--text); }
+:lang(ar) .entry h3 { font: 800 1.15rem/1.4 var(--f-body); }
+.entry header small b { color: var(--c); }
+/* the page itself: ruled notebook paper in a thin frame, a red margin line on the reading side */
+.entry__text {
+	--rule: 2em; min-height: calc(var(--rule) * 3 + 2px); margin-top: 4px; padding: 0 14px 0 18px; padding-inline: 18px 14px; line-height: var(--rule); font-size: 1.05rem;
+	border: 1px solid rgba(55, 53, 63, 0.18); border-radius: 2px;
+	background: linear-gradient(to var(--margin-side, right), transparent 10px, rgba(242, 114, 111, 0.55) 10px 11px, transparent 11px) no-repeat,
+		repeating-linear-gradient(transparent 0 calc(var(--rule) - 1px), rgba(75, 192, 200, 0.4) calc(var(--rule) - 1px) var(--rule)) #fffefb;
+	background-position: 0 0, 0 0;
+}
+:root[dir='rtl'] .entry__text { --margin-side: left; }
+.entry__sketch { border: 0; border-radius: 2px; padding: 8px 8px 22px; background: #fff; rotate: 1.5deg; box-shadow: 0 4px 12px rgba(30, 20, 10, 0.22); }
+.entry footer { margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .composer, .entry { transition: none; } }
