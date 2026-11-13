@@ -15,9 +15,13 @@ const kindName = (id) => { const k = KINDS.find((x) => x.id === id) || KINDS[3];
 
 function line(x) {
 	const parts = [];
-	if (x.series) parts.push(L(`${num(x.eps || 0)} حلقة`, `${x.eps || 0} episodes`));
-	else parts.push(L('فيلم', 'Film'));
-	if (x.year) parts.push(num(x.year).replace(/[٬,]/g, '')); // the year the film came out, not when we watched it
+	const yr = (y) => num(y).replace(/[٬,]/g, '');
+	if (x.series) {
+		if (x.seasons) parts.push(x.seasons === 1 ? L('موسم واحد', 'One season') : L(`${num(x.seasons)} ${x.seasons <= 10 ? 'مواسم' : 'موسم'}`, `${x.seasons} seasons`));
+		parts.push(L(`${num(x.eps || 0)} حلقة`, `${x.eps || 0} episodes`));
+	} else parts.push(L('فيلم', 'Film'));
+	// the year it came out (a series: the years it ran), not when we watched it
+	if (x.year) parts.push(x.yearTo && x.yearTo !== x.year ? `${yr(x.year)}–${yr(x.yearTo)}` : yr(x.year));
 	if (x.mins) parts.push(L(`${num(x.mins)} دقيقة`, `${x.mins} minutes`));
 	let s = parts.join(' // ');
 	if (x.days) s += x.days === 1 ? L(' في قعدة واحدة.', ' in one sitting.') : L(` في ${num(x.days)} أيام.`, ` in ${x.days} days.`);
