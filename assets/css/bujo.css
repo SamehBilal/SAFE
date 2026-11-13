@@ -264,7 +264,40 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .ns-close { border: 1.5px solid transparent; }
 .ns-close:hover { border-color: var(--ink); background: var(--hl-yellow); color: var(--text); }
 
-@media (prefers-reduced-motion: reduce) { .feed a, .coming a, .mini, .chapter-card, .tl__card, .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
+/* ---------- the header's mega menus ---------- */
+.mega { border-bottom: 1.5px solid var(--ink); box-shadow: 0 6px 0 0 var(--hl-yellow), 0 30px 60px rgba(19, 52, 71, 0.18); }
+.mg-card, .mg-band, .mg-photo, .mg-data { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
+.mg-card:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.mg-card:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.mg-band { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--ink); }
+.mg-data { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+:is(.mg-card, .mg-band, .mg-photo, .mg-data):hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--coral); }
+.mg-item, .mg-row { border: 1.5px solid transparent; border-radius: var(--sketch-sm); transition: background 0.2s, border-color 0.2s, box-shadow 0.12s; }
+.mg-item:hover, .mg-item[aria-current='page'], .mg-row:hover { background: var(--hl-yellow); border-color: var(--ink); box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+.mg-item .ic { border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; background: color-mix(in srgb, var(--hl-pink) 55%, var(--card)); }
+.mg-h { width: fit-content; padding-inline: 0.2em; background: linear-gradient(to left, color-mix(in srgb, var(--hl-yellow) 55%, transparent), var(--hl-yellow)) no-repeat 0 85% / 100% 45%; color: var(--text); }
+.mg-fig { border: 1.5px solid transparent; border-radius: var(--sketch); }
+.mg-fig:hover { background: color-mix(in srgb, var(--c) 12%, var(--card)); border-color: var(--ink); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--c); }
+.mg-fig-box { border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--c); }
+
+/* ---------- the family: cards in each person's colour ---------- */
+.fam { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--c, var(--hl-pink)); transition: transform 0.15s, box-shadow 0.15s; }
+.fam:hover { transform: translate(calc(var(--bujo-x) * -2px), -3px) rotate(-1.5deg); box-shadow: calc(var(--bujo-x) * 8px) 8px 0 0 var(--c, var(--coral)); }
+.fam:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
+.fam__pic { border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--c); }
+.member__facts p { border: 1.5px solid var(--ink); border-top: 5px solid var(--c, var(--coral)); border-radius: var(--sketch-sm); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 var(--ink); }
+.paper { border: 1.5px solid #37353f; border-radius: var(--sketch-sm); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--hl-yellow), 0 18px 40px rgba(30, 20, 10, 0.18); }
+.shot { border: 1.5px solid var(--ink); border-radius: 4px; box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); }
+.shot:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.shot:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+
+/* ---------- photo frames on a moment's and a big day's page, the moment's icon, home's birthday pill ---------- */
+.frame { border: 1.5px solid #37353f; border-radius: 3px; box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-pink), 0 14px 30px rgba(0, 0, 0, 0.14); }
+.frame:nth-child(even) { box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-lime), 0 14px 30px rgba(0, 0, 0, 0.14); }
+.moment-hero__ic { border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-yellow); }
+.hero__bday { border: 1.5px solid #37353f; border-radius: var(--sketch-sm); box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 #37353f; }
+
+@media (prefers-reduced-motion: reduce) { .fam, .mg-card, .mg-band, .mg-photo, .mg-data, .feed a, .coming a, .mini, .chapter-card, .tl__card, .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
 
 /* ---------- «أماكننا» cards: journal cards; the photo moves with the mouse only while it's over the card ---------- */
 .places .moment { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
@@ -282,3 +315,7 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .tl__card figure { grid-column: 2; grid-row: 1 / span 5; width: clamp(84px, 22vw, 130px); margin: 2px 0 0; padding: 5px 5px 0; }
 .tl__card figure img { aspect-ratio: 1; max-height: none; height: auto; }
 .tl__card figure::after { height: 12px; }
+/* the draw kinds in «ليالينا»'s menu, and the family portrait */
+.mg-kind { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--ink); transition: transform 0.15s, box-shadow 0.15s; }
+.mg-kind:hover, .mg-kind[aria-current='page'] { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--hl-yellow); }
+.portrait img { padding: 10px 10px 34px; background: #fbf8f1; border: 1.5px solid #37353f; border-radius: 3px; rotate: -1deg; box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--hl-pink), 0 18px 40px rgba(0, 0, 0, 0.16); }
