@@ -663,3 +663,16 @@ body:not(.is-locked) .hearts { opacity: 0.45; }
 @media (hover: none) { .tp.is-open .tp__info { inset-inline-start: 0; top: auto; bottom: 0; width: 100%; font-size: 0.85rem; padding: 6px 8px; } }
 @media (max-width: 559px) { .tp-bar__h { font-size: 1.6rem; } .tp-bar__name { font-size: 1.25rem; } .tp__btn { border-width: 6px; } .tp__title b { padding: 6px 8px; font-size: 0.9rem; } }
 @media (prefers-reduced-motion: reduce) { .tp__item, .tp, .tp__info { transition: none; } }
+
+/* our places' cards: small, six to a row */
+.places { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1100px) { .places { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 820px) { .places { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .places { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+.places .moment { aspect-ratio: 3 / 4; border-radius: 1.2em; }
+.places .moment img, .places .moment video { inset: -10px; width: calc(100% + 20px); height: calc(100% + 20px); translate: calc(var(--x) * -8px) calc(var(--y) * -6px); }
+.places .moment h3 { top: 7%; padding: 0 8px; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.15; translate: calc(var(--x) * 6px) calc(var(--y) * 4px); }
+.places .moment__blur { inset: 50% 0 0; }
+.places .moment__meta { padding: 0 8px 10px; gap: 1px; font-size: 0.85rem; line-height: 1.35; }
+.places .moment__meta b::before { margin-bottom: 5px; width: 4ch; }
+.places .moment__meta span { font-size: 0.75rem; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
