@@ -207,7 +207,7 @@
 .bd-card em { font-style: normal; font: 1.4rem var(--f-label); color: var(--coral-deep); }
 
 /* ---------- Songs: the record player and the shelf of sleeves ---------- */
-.deck { --lab: #c2185b; --lab-ink: #ffd1dc; display: grid; gap: 22px; align-items: center; padding: clamp(14px, 3vw, 28px); border-radius: 30px; background: var(--card); box-shadow: var(--shadow-lg); }
+.deck { --lab: #c2185b; --lab-ink: #ffd1dc; display: grid; gap: 22px; align-items: center; padding: clamp(14px, 3vw, 28px) 0; }   /* no card of its own: the player sits on the page */
 @media (min-width: 860px) { .deck { grid-template-columns: 1.35fr 1fr; } }
 .deck__svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.3)); }
 .deck__lp { transform-box: view-box; transform-origin: 400px 400px; }
@@ -244,6 +244,10 @@
 .sleeve.is-on { z-index: 2; }
 .sleeve:hover, .sleeve:focus-within, .sleeve.is-out { z-index: 3; }
 .sleeve.is-edge { --slide: -1; }
+/* at rest (and while it plays) the end CD still peeks out on its own side, a little, so it never sits on the next sleeve */
+.sleeve.is-edge .sleeve__lp, .sleeve.is-edge.is-on .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 8%)); }
+.sleeve.is-edge .sleeve__btn:hover .sleeve__lp, .sleeve.is-edge .sleeve__btn:focus-visible .sleeve__lp { transform: translateX(calc(var(--dir, 1) * -30%)) rotate(40deg); }
+.sleeve.is-edge.is-out .sleeve__lp { transform: translateX(calc(var(--dir, 1) * -70%)) rotate(120deg); }
 .sleeve__btn { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; text-align: center; color: inherit; }
 .sleeve__lp { position: absolute; inset: 5%; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1b1e 0 2px, #121214 2px 4px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 12%)); transition: transform 0.5s var(--ease-out); }
 .sleeve__lp i { position: absolute; inset: 34%; border-radius: 50%; background: var(--ink); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25); }
