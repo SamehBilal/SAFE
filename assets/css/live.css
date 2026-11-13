@@ -1150,3 +1150,9 @@ button.cal-d.is-on { box-shadow: 0 0 0 2.5px var(--card), 0 0 0 4.5px var(--k); 
 .qs-day h3 { margin: 2px 0 10px; font-size: 1.05rem; }
 .qs-day__d { margin: 0; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .gm-card, .gm-die, .qs-float, .qs-card.is-in { animation: none; } .ch-wheel { transition: none; } }
+
+/* ---------- draw options with a photo: a little picture in the list, a big polaroid when the wheel picks it ---------- */
+.pool li.has-img { padding-inline-start: 4px; }
+.pool__img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--ink, #37353f); cursor: zoom-in; }
+.pool-photos { margin: 2px 0 6px; cursor: pointer; }
+.result__img { display: block; width: min(300px, 80%); aspect-ratio: 3 / 4; object-fit: cover; margin: 0 auto 16px; padding: 8px 8px 26px; background: #fbf8f1; border-radius: 2px; rotate: -2deg; box-shadow: 0 10px 24px rgba(30, 20, 10, 0.25); cursor: zoom-in; }

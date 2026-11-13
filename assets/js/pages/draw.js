@@ -4,6 +4,7 @@ import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
 import { setupNote } from './journal.js';
 import { initOf } from '../defaults.js';
+import { shrinkPhoto } from './trips.js';
 
 const init = () => initOf('draw');
 const COLORS = ['#0e6990', '#f2726f', '#e39b2d', '#5a9e6f', '#8e5bd1', '#c2185b', '#13789f', '#f59a7b'];
@@ -50,6 +51,8 @@ export default {
 							<input name="item" dir="auto" maxlength="80" placeholder="${Y('ضيف اختيار…', 'ضيفي اختيار…', 'Add an option…')}" required>
 							<button class="btn btn--sm" type="submit">${Y('ضيف', 'ضيفي', 'Add')}</button>
 						</form>
+						<label class="btn btn--sm btn--ghost pool-photos"${live.canWrite() ? '' : ' hidden'}>${doodle('camera', 18)} ${Y('ضيف بالصور', 'ضيفي بالصور', 'Add with photos')}<input type="file" id="add-photos" accept="image/*" multiple hidden></label>
+						<p class="form-msg" id="add-msg" role="status"></p>
 					</section>
 					<section class="panel">
 						<h2>${L('عملناها قبل كده', 'We’ve done these')}</h2>
@@ -109,7 +112,8 @@ export default {
 		const pool = $('#pool', main);
 		const paintPool = () => {
 			const items = data.lists[k.id] || [];
-			pool.innerHTML = items.length ? items.map((x) => `<li><span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${Y('شيل', 'شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${Y('القايمة فاضية — ضيف اختيارات', 'القايمة فاضية — ضيفي اختيارات', 'The list is empty — add some options')}</li>`;
+			pool.innerHTML = items.length ? items.map((x) => `<li${x.img ? ' class="has-img"' : ''}>${x.img ? `<img class="pool__img zoom" data-sketch="${esc(x.img)}" alt="${esc(label(x))}">` : ''}<span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${Y('شيل', 'شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${Y('القايمة فاضية — ضيف اختيارات', 'القايمة فاضية — ضيفي اختيارات', 'The list is empty — add some options')}</li>`;
+			live.hydrateSketches(pool);
 			paintWheel();
 		};
 		pool.onclick = async (e) => {
@@ -127,6 +131,29 @@ export default {
 				e.target.reset();
 				paintPool();
 			} catch (err) { alert(live.why(err)); }
+		};
+
+		/* several photos at once: each becomes an option of its own, its picture encrypted on the phone like every photo here */
+		$('#add-photos', main).onchange = async (e) => {
+			const files = [...e.target.files];
+			if (!files.length) return;
+			const msg = $('#add-msg', main);
+			const name = $('#add', main).item.value.trim();
+			try {
+				const have = (data.lists[k.id] || []).filter((x) => x.img).length;
+				const added = [];
+				for (const [n, file] of files.entries()) {
+					msg.textContent = L(`بنحفظ ${n + 1} من ${files.length}…`, `Saving ${n + 1} of ${files.length}…`);
+					const img = await live.putSketch(await shrinkPhoto(file, 1200));
+					const text = files.length === 1 && name ? name : `${L('طقم', 'Outfit')} ${have + n + 1}`;
+					added.push({ id: live.newId(), text, img, by: live.me(), at: Date.now() });
+				}
+				data = await live.save('draw', (d) => { d.lists = d.lists || init().lists; (d.lists[k.id] = d.lists[k.id] || init().lists[k.id]).push(...added); }, init);
+				e.target.value = '';
+				$('#add', main).reset();
+				msg.textContent = L(`اتضاف ${added.length} ♥`, `Added ${added.length} ♥`);
+				paintPool();
+			} catch (err) { msg.textContent = live.why(err); }
 		};
 
 		/* the wheel: what's on it is the list, minus what we did lately (if that leaves anything) */
@@ -185,6 +212,7 @@ export default {
 			result.innerHTML = `
 				<small>${L('الليلة دي', 'Tonight it’s')}</small>
 				<b class="result__pick" dir="auto">${doodle(k.emoji, 40)} ${esc(label(x))}</b>
+				${x.img ? `<img class="result__img zoom" data-sketch="${esc(x.img)}" alt="${esc(label(x))}">` : ''}
 				<div class="result__sketch" id="res-sketch"></div>
 				${ok ? `<form id="log" class="result__log">
 					<label class="f"><span>${L('حاجة عايزين نفتكرها؟', 'Anything to remember?')}</span><input name="note" dir="auto" maxlength="200"></label>
@@ -196,6 +224,7 @@ export default {
 					<button type="button" class="btn btn--ghost" id="res-draw">${doodle('pencil', 18)} ${esc(t(k.sketch))}</button>
 					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${Y('عملناها ♥ سجّلها', 'عملناها ♥ سجّليها', 'We did it ♥ Log it')}</button>` : ''}
 				</div>`;
+			live.hydrateSketches(result);
 			result.hidden = false;
 			result.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			$('#again', result).onclick = () => $('#spin', main).click();
