@@ -18,7 +18,10 @@ export const searchLink = (x) => `https://www.youtube.com/results?search_query=$
 /* Links we can play right here; anything else opens in its own app. */
 export function player(link) {
 	const yt = /(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/.exec(link || '');
-	if (yt) return `<iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&rel=0" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+	// enablejsapi: the bar talks to the video (pause where it is, play on, jump, hear when it ends).
+	// referrerpolicy: our pages send no referrer, and YouTube now refuses to play for a site that won't say who it is
+	// (error 153), so this one frame tells it our address: just the site, never the page.
+	if (yt) return `<iframe class="is-yt" referrerpolicy="origin" src="https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 	const sp = /open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|album|playlist|episode)\/(\w+)/.exec(link || '');
 	if (sp) return `<iframe class="is-spotify" src="https://open.spotify.com/embed/${sp[1]}/${sp[2]}?autoplay=1" title="Spotify" allow="autoplay; encrypted-media; clipboard-write"></iframe>`;
 	return '';
@@ -36,14 +39,23 @@ let shuffle = saved('us.np.shuffle') === '1';
 let repeat = ['off', 'one', 'all'].includes(saved('us.np.repeat')) ? saved('us.np.repeat') : 'all';
 let listOpen = false;
 let item = null;
-let mode = '';      // 'audio' | 'embed' while a song is loaded
+let mode = '';      // 'audio' | 'yt' (a YouTube video we can steer) | 'embed' (Spotify) while a song is loaded
+const yt = { time: 0, duration: 0, at: 0, ready: false };   // what the YouTube video last told us
 let playing = false;
 let asked = 0;
 let bar = null;
 const fans = new Set();
 
 /** What's on now: { item, playing, mode, time, duration }. */
-export const state = () => ({ item, playing, mode, shuffle, repeat, queue: queue.slice(), time: song.currentTime || 0, duration: isFinite(song.duration) ? song.duration : 0 });
+export const state = () => ({ item, playing, mode, shuffle, repeat, queue: queue.slice(), ...clock() });
+function clock() {
+	if (mode === 'yt') {
+		// the video reports a few times a second; fill the gaps so the bar glides
+		const t = yt.time + (playing && yt.at ? (performance.now() - yt.at) / 1000 : 0);
+		return { time: yt.duration ? Math.min(t, yt.duration) : t, duration: yt.duration };
+	}
+	return { time: song.currentTime || 0, duration: isFinite(song.duration) ? song.duration : 0 };
+}
 /** True while the bar is up, so links should keep the music going. */
 export const active = () => !!item;
 /** Hear about every change (what: 'change' | 'meta' | 'time'). Returns the way to stop listening. */
@@ -70,15 +82,68 @@ export function play(x, list) {
 		}).catch(() => {
 			if (ask !== asked) return;
 			const link = safeLink(x.link);
-			if (player(link)) { mode = 'embed'; screen(player(link)); tell(); }
+			if (player(link)) { embed(link); tell(); }
 			else { stop(); window.open(link || searchLink(x), '_blank', 'noopener'); }
 		});
-	} else {
-		mode = 'embed';
-		screen(player(safeLink(x.link)));
-	}
+	} else embed(safeLink(x.link));
 	media();
 	tell();
+}
+
+/* a song that lives on YouTube or Spotify plays in the little screen above the bar */
+function embed(link) {
+	const html = player(link);
+	mode = html.includes('is-yt') ? 'yt' : 'embed';
+	Object.assign(yt, { time: 0, duration: 0, at: 0, ready: false });
+	ytLast = -1;
+	screen(html);
+	if (mode === 'yt') listen();
+}
+
+/* ---------- talking to the YouTube video (its iframe API, by messages: no script of theirs on our page) ---------- */
+const ytFrame = () => bar && $('.np__screen iframe.is-yt', bar);
+function ytSay(func, args = []) {
+	ytFrame()?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+}
+/* ask the video to keep us posted; it answers once it's ready, so knock a few times until it does */
+function listen() {
+	const f = ytFrame();
+	if (!f) return;
+	const knock = () => f.contentWindow?.postMessage(JSON.stringify({ event: 'listening', id: 'np', channel: 'widget' }), '*');
+	f.addEventListener('load', knock, { once: true });
+	let n = 0;
+	const again = setInterval(() => { if (yt.ready || ++n > 20 || !f.isConnected) clearInterval(again); else knock(); }, 500);
+}
+addEventListener('message', (e) => {
+	const f = ytFrame();
+	if (!f || e.source !== f.contentWindow || !/^https:\/\/www\.youtube(-nocookie)?\.com$/.test(e.origin)) return;
+	let m;
+	try { m = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch { return; }
+	if (!m || typeof m !== 'object') return;
+	if (m.event === 'onReady') yt.ready = true;
+	const info = m.info && typeof m.info === 'object' ? m.info : {};
+	if (m.event === 'infoDelivery' || m.event === 'initialDelivery') {
+		yt.ready = true;
+		const newLength = typeof info.duration === 'number' && info.duration > 0 && info.duration !== yt.duration;
+		if (newLength) yt.duration = info.duration;
+		if (typeof info.currentTime === 'number') { yt.time = info.currentTime; yt.at = performance.now(); }
+		if (typeof info.playerState === 'number') ytState(info.playerState);
+		if (newLength) tell('meta'); else paint('time');
+	}
+	if (m.event === 'onStateChange') ytState(typeof m.info === 'number' ? m.info : info.playerState);
+});
+let ytLast = -1;
+/* the video's own state: 1 playing, 2 paused, 0 ended */
+function ytState(s) {
+	if (s === ytLast || mode !== 'yt') return;
+	ytLast = s;
+	if (s === 1 && !playing) { playing = true; tell(); }
+	else if (s === 2 && playing) { playing = false; yt.at = 0; tell(); }
+	else if (s === 0) {
+		yt.time = yt.duration;
+		if (repeat === 'one') { ytSay('seekTo', [0, true]); ytSay('playVideo'); }
+		else step(1, true);
+	}
 }
 
 export function pause() {
@@ -86,13 +151,15 @@ export function pause() {
 	playing = false;
 	asked++;
 	if (mode === 'audio') song.pause();
+	else if (mode === 'yt') { yt.time = clock().time; yt.at = 0; ytSay('pauseVideo'); }
 	else screen('');
 	tell();
 }
 
 export function resume() {
 	if (!item || playing) return;
-	if (mode === 'embed') return play(item);
+	if (mode === 'embed' || (mode === 'yt' && !ytFrame())) return play(item);
+	if (mode === 'yt') { playing = true; yt.at = performance.now(); ytSay('playVideo'); tell(); return; }
 	playing = true;
 	const ask = ++asked;
 	(song.src ? song.play() : mediaURL(item.audio).then((url) => { if (ask === asked) { song.src = url; return song.play(); } })).catch(() => {});
@@ -188,6 +255,13 @@ function halt() {
 }
 
 export function seek(frac) {
+	if (mode === 'yt') {
+		if (!yt.duration) return;
+		yt.time = Math.max(0, Math.min(1, frac)) * yt.duration;
+		yt.at = playing ? performance.now() : 0;
+		ytSay('seekTo', [yt.time, true]);
+		return tell('time');
+	}
 	if (mode !== 'audio' || !isFinite(song.duration)) return;
 	song.currentTime = Math.max(0, Math.min(1, frac)) * song.duration;
 	tell('time');
@@ -196,6 +270,7 @@ export function seek(frac) {
 song.onended = () => { if (repeat === 'one') { song.currentTime = 0; song.play().catch(() => {}); } else step(1, true); };
 song.onloadedmetadata = () => tell('meta');
 song.ontimeupdate = () => paint('time');
+setInterval(() => { if (mode === 'yt' && playing) paint('time'); }, 500);   // a YouTube song's bar moves on between its reports
 song.onpause = () => { if (playing && mode === 'audio' && !song.ended && song.src) { playing = false; tell(); } };   // the phone paused it (a call, the lock screen)
 song.onplay = () => { if (!playing && item) { playing = true; tell(); } };
 
@@ -309,9 +384,10 @@ function draw() {
 	};
 	track.onkeydown = (e) => {
 		const d = { ArrowRight: 5, ArrowLeft: -5 }[e.key];
-		if (!d || mode !== 'audio') return;
+		if (!d || (mode !== 'audio' && mode !== 'yt')) return;
 		e.preventDefault();
-		song.currentTime = Math.max(0, song.currentTime + d * (document.documentElement.dir === 'rtl' ? -1 : 1));
+		const { time, duration } = clock();
+		if (duration) seek((time + d * (document.documentElement.dir === 'rtl' ? -1 : 1)) / duration);
 	};
 	screen(screenHTML);
 	paint('change');
@@ -416,7 +492,7 @@ function paint(what) {
 	const frac = duration ? time / duration : 0;
 	$('.np__bar i', bar).style.transform = `scaleX(${frac})`;
 	$('.np__bar', bar).setAttribute('aria-valuenow', String(Math.round(frac * 100)));
-	$('.np__time', bar).textContent = mode === 'audio' && duration ? `${fmt(time)} / ${fmt(duration)}` : '';
+	$('.np__time', bar).textContent = (mode === 'audio' || mode === 'yt') && duration ? `${fmt(time)} / ${fmt(duration)}` : '';
 	if (what === 'time') return;
 
 	const show = !!item;
