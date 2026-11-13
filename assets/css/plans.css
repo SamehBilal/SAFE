@@ -202,3 +202,94 @@
 .ft__add { margin: 22px auto 0; }
 
 @media (prefers-reduced-motion: reduce) { .dm__dash, .cm__pin::after, .ft__heart { animation: none; } }
+
+/* ---------- our food: a folded paper menu that opens in 3D (after the Codrops 3D Restaurant Menu) ---------- */
+.fm-places { margin-bottom: 28px; }
+.fm-places .chip.is-on { background: var(--c); border-color: var(--c); color: #fff; }
+.fm-stage { padding: 10px 0 30px; }
+.fm-mine { text-align: center; margin: 0; }
+.fm-howto { font-size: 0.82rem; color: var(--muted); margin: -6px 0 14px; }
+.fm { --gold: #d9a93c; --menu-ink: #2a323f; position: relative; width: 33%; max-width: 360px; height: 680px; margin: 0 auto; perspective: 1800px; color: var(--menu-ink); }
+.fm__wrap, .fm__wrap > div { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.6s ease-in-out, box-shadow 0.6s; }
+.fm__cover { z-index: 100; transform-origin: 0% 50%; transition-delay: 0.2s; }
+.fm__middle { z-index: 50; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+.fm__right { z-index: 60; transform-origin: 100% 50%; }
+[dir='rtl'] .fm__cover { transform-origin: 100% 50%; }
+[dir='rtl'] .fm__right { transform-origin: 0% 50%; }
+.fm__middle, .fm__right { pointer-events: none; }
+.fm__front, .fm__back, .fm__middle { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.fm__front, .fm__back { position: absolute; inset: 0; }
+.fm__back { transform: rotateY(-180deg); }
+.fm__front, .fm__back, .fm__middle {
+	background: radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.7), transparent 40%), repeating-linear-gradient(45deg, rgba(120, 100, 60, 0.025) 0 2px, transparent 2px 5px), #fbf7ee;
+	box-shadow: inset 0 0 0 14px #fbf7ee, inset 0 0 0 15px var(--gold), inset 0 0 0 17px #fbf7ee, inset 0 0 0 18px var(--gold), inset 0 0 0 20px #fbf7ee, inset 0 0 0 21px var(--gold);
+}
+.fm__in { position: absolute; inset: 0; padding: 40px 34px; overflow-y: auto; scrollbar-width: thin; text-align: center; }
+.fm__shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.05)); }
+.fm__middle .fm__shade { background: linear-gradient(to right, transparent 64%, rgba(0, 0, 0, 0.05)); }
+.fm__logo { width: 104px; height: 104px; margin: 26px auto 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--fm) 70%, #fff), var(--fm)); box-shadow: 0 0 0 3px #fbf7ee, 0 0 0 4px var(--gold), 0 0 0 6px #fbf7ee, 0 0 0 7px var(--gold), 0 0 0 9px #fbf7ee, 0 0 0 10px var(--gold); }
+.fm h2 { margin: 0; font: 2rem/1.15 var(--f-label); letter-spacing: 0.08em; text-transform: uppercase; color: var(--menu-ink); text-shadow: 1px 1px 0 #fff, 3px 3px 0 color-mix(in srgb, var(--fm) 55%, transparent); }
+:lang(ar) .fm h2 { font: 400 2.3rem/1.4 var(--f-script); letter-spacing: 0; }
+.fm h3 { margin: 30px 0; padding: 18px 24px 0; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--menu-ink); border-top: 4px double var(--menu-ink); }
+.fm__open { appearance: none; border: 0; background: none; cursor: pointer; font: 1.15rem var(--f-label); letter-spacing: 0.1em; color: var(--menu-ink); padding: 8px 14px; }
+:lang(ar) .fm__open { font: 800 1.05rem var(--f-body); letter-spacing: 0; }
+.fm__open::after { content: ' →'; }
+[dir='rtl'] .fm__open::after { content: ' ←'; }
+.fm__open:hover { color: var(--fm); }
+.fm__info { margin: 18px 0 0; font-size: 0.85rem; line-height: 1.6; color: #4a5260; }
+.fm h4 { margin: 0 0 14px; padding-bottom: 8px; font: 1.15rem var(--f-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--menu-ink); border-bottom: 4px double var(--menu-ink); text-shadow: 1px 1px 0 #fff, 2px 2px 0 color-mix(in srgb, var(--fm) 50%, transparent); background: none; }
+:lang(ar) .fm h4 { font: 800 1.05rem var(--f-body); letter-spacing: 0; }
+.fm h4:not(:first-child) { margin-top: 30px; }
+.fm .fm__close + h4 { margin-top: 0; }
+.fm dl, .fm dt { margin: 0; }
+.fm dd { margin: 0; padding: 2px 6px 12px; font-size: 0.8rem; line-height: 1.4; color: #555; }
+.fm-dish { appearance: none; border: 0; background: none; padding: 2px 0; cursor: pointer; font: inherit; color: var(--menu-ink); font-weight: 800; font-size: 0.92rem; display: inline-flex; align-items: baseline; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.fm-dish span { text-decoration: underline dotted color-mix(in srgb, var(--fm) 60%, transparent) 1.5px; text-underline-offset: 4px; }
+.fm-dish i { font-style: normal; color: var(--fm); font-size: 0.8rem; }
+.fm-dish b { font-weight: 700; font-size: 0.78rem; color: var(--fm); }
+.fm-dish:hover span, .fm-dish:focus-visible span { color: var(--fm); }
+.fm__order { margin-top: 26px; padding: 12px; background: color-mix(in srgb, var(--gold) 14%, transparent); }
+.fm__order h4 { border: 0; margin: 0 0 4px; padding: 0; }
+.fm__order p { margin: 0; font: 1.15rem/1.4 var(--f-hand); color: var(--menu-ink); }
+.fm__close { position: absolute; top: 0; right: 34px; appearance: none; border: 0; cursor: pointer; padding: 2px 8px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--gold); opacity: 0; transition: opacity 0.1s; z-index: 2; }
+[dir='rtl'] .fm__close { right: auto; left: 34px; }
+.fm__card { position: absolute; z-index: 1000; inset-inline: -10%; top: 50%; translate: 0 -50%; padding: 40px 36px 34px; text-align: center; color: var(--menu-ink); display: grid; gap: 6px; justify-items: center; background: #fbf7ee; box-shadow: inset 0 0 0 14px #fbf7ee, inset 0 0 0 15px var(--gold), inset 0 0 0 17px #fbf7ee, inset 0 0 0 18px var(--gold), 0 6px 30px rgba(0, 0, 0, 0.4); opacity: 0; pointer-events: none; transform: translateZ(1000px); transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out; }
+.fm__card h5 { margin: 0; font: 1.6rem/1.2 var(--f-label); letter-spacing: 0.06em; text-transform: uppercase; text-shadow: 1px 1px 0 #fff, 2px 2px 0 color-mix(in srgb, var(--fm) 50%, transparent); }
+:lang(ar) .fm__card h5 { font: 800 1.35rem/1.4 var(--f-body); letter-spacing: 0; }
+.fm__card p { margin: 0; line-height: 1.5; }
+.fm__card-ic { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--fm); margin-bottom: 4px; }
+.fm__card-sec { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fm); }
+.fm__card-price { font: 1.4rem var(--f-label); letter-spacing: 0.05em; color: var(--fm); }
+.fm__card-fav { font: 1.2rem var(--f-hand); color: #c2185b; }
+.fm__x { position: absolute; top: 22px; inset-inline-end: 22px; width: 26px; height: 26px; appearance: none; border: 0; cursor: pointer; color: #fff; background: var(--menu-ink); font-size: 0.8rem; }
+/* open: the cover swings over to one side and the last panel unfolds to the other */
+.fm.is-open .fm__wrap > div { box-shadow: 0 6px 8px -4px rgba(0, 0, 0, 0.5); }
+.fm.is-open .fm__cover { transform: rotateY(-180deg); transition-delay: 0s; }
+.fm.is-open .fm__right { transform: rotateY(180deg); transition-delay: 0.2s; }
+[dir='rtl'] .fm.is-open .fm__cover { transform: rotateY(180deg); }
+[dir='rtl'] .fm.is-open .fm__right { transform: rotateY(-180deg); }
+.fm.is-open .fm__middle, .fm.is-open .fm__right { pointer-events: auto; }
+.fm.is-open .fm__close { opacity: 1; transition: opacity 0.3s ease-in-out 0.8s; }
+/* a dish picked: the menu leans back and the dish's card comes forward */
+.fm.is-in .fm__cover { transform: rotateY(-150deg); }
+.fm.is-in .fm__right { transform: rotateY(150deg); }
+[dir='rtl'] .fm.is-in .fm__cover { transform: rotateY(150deg); }
+[dir='rtl'] .fm.is-in .fm__right { transform: rotateY(-150deg); }
+.fm.is-in .fm__wrap { transform: translateZ(-500px); }
+.fm.is-in .fm__cover, .fm.is-in .fm__right, .fm.no-delay .fm__right { transition-delay: 0s; }
+.fm.is-in .fm__card { transform: translateZ(0); opacity: 1; pointer-events: auto; }
+@media (max-width: 1110px) and (min-width: 961px) { .fm { height: 760px; } }
+/* phones and tablets: the panels simply stack, like reading a printed menu page by page */
+@media (max-width: 960px) {
+	.fm { width: 100%; max-width: 460px; height: auto; perspective: none; }
+	.fm__wrap, .fm__wrap > div, .fm__front, .fm__back, .fm__in { position: relative; inset: auto; transform: none !important; }
+	.fm__wrap > div { display: grid; gap: 12px; margin-bottom: 12px; }
+	.fm__cover, .fm__right { box-shadow: none !important; }
+	.fm__front, .fm__back, .fm__middle { box-shadow: inset 0 0 0 14px #fbf7ee, inset 0 0 0 15px var(--gold), inset 0 0 0 17px #fbf7ee, inset 0 0 0 18px var(--gold), inset 0 0 0 20px #fbf7ee, inset 0 0 0 21px var(--gold), 0 3px 6px rgba(0, 0, 0, 0.2); }
+	.fm__middle, .fm__right { pointer-events: auto; }
+	.fm__right > .fm__front, .fm__close, .fm__open, .fm__shade { display: none; }
+	.fm__in { overflow: visible; padding: 36px 30px; }
+	.fm__card { position: fixed; inset-inline: 7%; top: 50%; transform: none; transition: opacity 0.4s; z-index: 600; }
+	.fm.is-in .fm__card { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .fm__wrap, .fm__wrap > div, .fm__card { transition: none !important; } }

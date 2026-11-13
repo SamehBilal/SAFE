@@ -6,7 +6,7 @@ import * as live from '../live.js';
 const NAMES = {
 	journal: ['الدفتر', 'Journal'], music: ['الأغاني', 'Songs'], draw: ['القرعة', 'Draws'],
 	trips: ['الرحلات', 'Trips'], movies: ['الأفلام', 'Films'], wishes: ['الأمنيات', 'Wishes'],
-	goals: ['الأهداف', 'Goals'], where: ['أماكننا دلوقتي', 'Where we are'], spots: ['أماكن المدن', 'City spots'], books: ['الكتب', 'Books'], posts: ['البوستات', 'Posts'], tree: ['شجرة العيلة', 'Family tree']
+	goals: ['الأهداف', 'Goals'], where: ['أماكننا دلوقتي', 'Where we are'], spots: ['أماكن المدن', 'City spots'], books: ['الكتب', 'Books'], posts: ['البوستات', 'Posts'], tree: ['شجرة العيلة', 'Family tree'], food: ['المطاعم', 'Restaurants']
 };
 
 export default {

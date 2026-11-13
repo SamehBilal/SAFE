@@ -458,6 +458,7 @@ export const PAGES = [
 	{ href: 'draw.html', id: 'draw', ic: 'dice', ar: 'قرعة الليلة', en: 'Tonight’s draw', dar: 'لبس، خروجة، دليفري، أو فيلم', den: 'Outfit, dinner out, delivery or a movie', group: 'nights' },
 	{ href: 'movies.html', id: 'movies', ic: 'film', ar: 'اتفرجنا على إيه', en: 'What we’ve watched', dar: 'أفلامنا ومسلسلاتنا بالأرقام', den: 'Our films and series, in numbers', group: 'nights' },
 	{ href: 'music.html', id: 'music', ic: 'music', ar: 'أغانينا', en: 'Our songs', dar: 'الأغاني اللي بتفكرنا ببعض', den: 'The songs that remind us of each other', group: 'nights' },
+	{ href: 'food.html', id: 'food', ic: 'food', ar: 'أكلنا', en: 'Our food', dar: 'مطاعمنا والمنيو بتاع كل واحد', den: 'Our restaurants and their menus', group: 'nights' },
 	{ href: 'books.html', id: 'books', ic: 'book', ar: 'كتبنا', en: 'Our books', dar: 'اللي بنقراه، واللي خلصناه', den: 'What we’re reading, and what we’ve finished', group: 'nights' },
 	{ href: 'gallery.html', id: 'gallery', ic: 'image', ar: 'ألبوم الصور', en: 'Photo album', dar: 'إحنا بالصور، سنة بسنة', den: 'Us in pictures, year by year', group: 'memories' },
 	{ href: 'notes.html', id: 'notes', ic: 'note', ar: 'رسايل حب', en: 'Love notes', dar: 'كلام كتبناه لبعض', den: 'Little things we wrote', group: 'memories' },
@@ -502,6 +503,7 @@ const ICONS = {
 	city: '<path d="M3.5 20.5h17M5 20.5V10l4-2v12.5M9 20.5V5l6 2.5v13M15 20.5V11l4 1.5v8"/><path d="M11.5 10h1M11.5 13h1M11.5 16h1"/>',
 	route: '<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17.2c4-1.5 2.5-5 6-6.5s3-2.2 3-3"/>',
 	flag: '<path d="M5.5 21V4M5.5 4.5h11l-2.5 4 2.5 4h-11"/>',
+	food: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1.5-3 4-3 7 0 2 1 3 3 3"/>',
 	phone: '<rect x="6.5" y="3" width="11" height="18" rx="2.5"/><path d="M10.5 18h3"/><path d="M12 13.2c-2-1.3-3-2.4-3-3.6a1.5 1.5 0 0 1 3-.4 1.5 1.5 0 0 1 3 .4c0 1.2-1 2.3-3 3.6Z"/>',
 	baby: '<circle cx="12" cy="11" r="6.5"/><circle cx="9.8" cy="10.5" r=".8"/><circle cx="14.2" cy="10.5" r=".8"/><path d="M10 13.6c1.2 1 2.8 1 4 0M12 4.5c1-1 2.2-.8 2.6 0"/>'
 };
@@ -876,7 +878,7 @@ function owl() {
    another page of ours doesn't load it afresh: it swaps the page's module, redraws the header and footer and renders
    the new page into <main>, and the address and the back button work as usual. With nothing playing, links load
    pages the ordinary way. */
-const PAGE_IDS = new Set(['home', 'story', 'chapters', 'chapter', 'moment', 'places', 'trips', 'trip', 'journal', 'draw', 'movies', 'music', 'gallery', 'notes', 'letters', 'family', 'member', 'birthday', 'wishes', 'settings', 'goals', 'distances', 'cities', 'books', 'posts']);
+const PAGE_IDS = new Set(['home', 'story', 'chapters', 'chapter', 'moment', 'places', 'trips', 'trip', 'journal', 'draw', 'movies', 'music', 'gallery', 'notes', 'letters', 'family', 'member', 'birthday', 'wishes', 'settings', 'goals', 'distances', 'cities', 'books', 'posts', 'food']);
 const dirOf = (p) => p.slice(0, p.lastIndexOf('/') + 1);
 function pageOf(url) {
 	if (url.origin !== location.origin || dirOf(url.pathname) !== dirOf(location.pathname)) return '';
