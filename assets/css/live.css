@@ -350,3 +350,13 @@
 	:root:not([data-theme='light']) .binge__title, :root:not([data-theme='light']) .binge__legend, :root:not([data-theme='light']) .binge__title small span { color: #9fd6dc; }
 	:root:not([data-theme='light']) .binge__title small { color: #c7dfe3; }
 }
+
+/* posters on the watch board: the poster fills the block, the film's colour rises behind the title */
+.binge__box.has-cover { position: relative; overflow: hidden; isolation: isolate; min-height: 260px; }
+.binge__poster { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.binge__box.has-cover::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to bottom, transparent 28%, color-mix(in srgb, currentColor 0%, var(--mv-bg, #31bfda)) 72%); }
+.mv--arabic { --mv-bg: #f4f482; } .mv--foreign { --mv-bg: #31bfda; } .mv--kids { --mv-bg: #15e6cd; } .mv--other { --mv-bg: #bdf195; }
+@media (max-width: 699px) { .binge__box.has-cover { min-height: 340px; } }
+/* box art on the game cards */
+.game__cover { width: min(150px, 70%); aspect-ratio: 3 / 4; object-fit: cover; border: 1.5px solid var(--ink, #37353f); border-radius: 4px; box-shadow: 3px 3px 0 0 var(--ink, #37353f); rotate: -2deg; margin-bottom: 6px; background: var(--line); }
+.game:nth-child(even) .game__cover { rotate: 2deg; }

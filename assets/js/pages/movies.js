@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num } from '../shell.js';
+import { L, T, esc, pageHead, related, App, $, $$, num, mediaURL } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -79,7 +79,8 @@ export default {
 			$('#mv-empty', main).hidden = !!items.length;
 			$('#mv-empty', main).textContent = L('لسه مسجلناش حاجة — ضيفوا أول فيلم ♥', 'Nothing logged yet — add your first film ♥');
 			board.insertAdjacentHTML('beforeend', items.map((x, k) => `
-				<article class="binge__box mv--${esc(x.kind || 'other')}" style="--i:${k}" id="${esc(x.id)}">
+				<article class="binge__box mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" style="--i:${k}" id="${esc(x.id)}">
+					${x.cover ? `<img class="binge__poster" data-cover="${esc(x.cover)}" alt="" decoding="async">` : ''}
 					<h4 dir="auto">${esc(x.title)}</h4>
 					<p>${esc(line(x))}</p>
 					${x.hearts ? `<p class="binge__hearts" aria-label="${x.hearts}/5">${'♥'.repeat(x.hearts)}<i>${'♥'.repeat(5 - x.hearts)}</i></p>` : ''}
@@ -92,11 +93,14 @@ export default {
 			$('#mv-games', main).hidden = !games.length;
 			$('#mv-games-grid', main).innerHTML = games.map((g) => `
 				<article class="game">
-					<span class="game__pad" aria-hidden="true">🎮</span>
+					${g.cover ? `<img class="game__cover" data-cover="${esc(g.cover)}" alt="" decoding="async">` : '<span class="game__pad" aria-hidden="true">🎮</span>'}
 					<h3 dir="auto">${esc(g.title)}</h3>
 					${g.year ? `<p class="game__year">${num(g.year).replace(/[٬,]/g, '')}</p>` : ''}
 					${g.note ? `<p class="game__note" dir="auto">${esc(g.note)}</p>` : ''}
 				</article>`).join('');
+
+			// posters and box art (private/media/covers), decrypted like the photos
+			for (const im of $$('img[data-cover]', main)) mediaURL(im.dataset.cover).then((url) => { im.src = url; }).catch(() => im.closest('.has-cover')?.classList.remove('has-cover') ?? im.remove());
 
 			// our totals
 			const mins = items.reduce((a, x) => a + (+x.mins || 0), 0);
