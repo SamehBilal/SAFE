@@ -468,3 +468,27 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 }
 @media (max-width: 359px) { .np__btn:not(.np__btn--main):not(.np__btn--list) { display: none; } }
 @media (prefers-reduced-motion: reduce) { .np { animation: none; } .np__lp { animation: none; } .np__list { animation: none; } .np__eq i { animation: none; height: 70%; } }
+
+/* ---------- the Top 10 above the watch stats' headline (movies.js), after Jhey's «Top 10 (Netflix Style)» pen: a row
+   that snaps as it scrolls, each poster with a big outlined number tucked behind it on the reading side ---------- */
+.top10 { --h: clamp(168px, 24vw, 250px); --w: calc(var(--h) * 0.6875); --gap: calc(var(--h) * 0.36); width: min(1240px, 100% - 2 * var(--gutter)); margin: clamp(14px, 3vw, 30px) auto 0; text-align: start; }
+.top10[hidden] { display: none; }
+.top10__title { margin: 0 0 10px; font: 400 clamp(1.5rem, 4.5vw, 2.3rem)/1.1 var(--f-label); letter-spacing: 0.03em; color: var(--text); }
+:lang(ar) .top10__title { font: 800 clamp(1.2rem, 3.6vw, 1.7rem)/1.3 var(--f-body); letter-spacing: 0; }
+.top10__track { display: flex; height: calc(var(--h) + 14px); margin: 0; padding: 0 0 14px; list-style: none; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: 4px; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: var(--coral) transparent; }
+.top10__item { position: relative; flex: 0 0 calc(var(--w) + var(--gap)); height: var(--h); scroll-snap-align: start; }
+.top10__item.is-ten { flex-basis: calc(var(--w) + var(--gap) * 2.15); }
+/* the number: page-coloured inside, an ink outline, sitting low and half under the poster */
+.top10__item::before { content: attr(data-n); position: absolute; inset-inline-start: 0; bottom: 0; z-index: 0; font: 400 calc(var(--h) * 1.22)/0.72 'Bebas Neue', var(--f-label); letter-spacing: -0.04em; color: var(--paper); -webkit-text-stroke: calc(var(--h) * 0.014) var(--ink, #37353f); paint-order: stroke fill; text-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); pointer-events: none; }
+.top10__card { position: absolute; inset-block: 0; inset-inline-end: 0; z-index: 1; width: var(--w); display: grid; align-content: end; gap: 2px; padding: 10px; overflow: hidden; color: inherit; text-decoration: none; border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch-sm, 12px); box-shadow: calc(var(--bujo-x, 1) * 4px) 4px 0 0 var(--ink, #37353f); transition: transform 0.2s var(--ease-pop, ease), box-shadow 0.2s; }
+.top10__card:hover, .top10__card:focus-visible { transform: translate(calc(var(--bujo-x, 1) * -2px), -3px) rotate(calc(var(--bujo-x, 1) * -1.5deg)); box-shadow: calc(var(--bujo-x, 1) * 6px) 7px 0 0 var(--ink, #37353f); }
+.top10__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.6); transition: filter 0.25s; }
+.top10__card:hover img, .top10__card:focus-visible img { filter: saturate(1); }
+.top10__card.has-cover { color: #fff; }
+.top10__card.has-cover::after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }
+.top10__card > span { position: relative; z-index: 1; }
+.top10__doodle { position: absolute !important; top: 16%; left: 50%; translate: -50% 0; opacity: 0.8; }
+.top10__name { font-weight: 800; font-size: clamp(0.82rem, 1.6vw, 0.98rem); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.top10__hearts { color: var(--coral); font-size: 0.78rem; letter-spacing: 1px; }
+.top10__card.has-cover .top10__hearts { color: #ff8f9a; }
+@media (prefers-reduced-motion: reduce) { .top10__card, .top10__card img { transition: none; } }

@@ -5,7 +5,8 @@ import { setupNote } from './journal.js';
 
 /* What we've watched together, laid out like Olivia Ng's «Netflix Binge: Top Stats» (codepen.io/oliviale): one
    poster card per film or series, dropped in scattered spots that overlap a little rather than in rows, with the
-   title running up the side, a legend by kind, and our totals. */
+   title running up the side, a legend by kind, and our totals. Above the headline, a Netflix-style Top 10 row
+   (after Jhey Tompkins' pen, codepen.io/jh3y/pen/WNxBLbB) in place of the usual polaroids. */
 export const KINDS = [
 	{ id: 'arabic', ar: 'عربي', en: 'Arabic' },
 	{ id: 'foreign', ar: 'أجنبي', en: 'Foreign' },
@@ -56,7 +57,12 @@ export default {
 	render(s) {
 		const ok = live.canWrite();
 		return `
-		${pageHead(L('سهراتنا بالأرقام', 'Our watch stats'), L('كل فيلم ومسلسل اتفرجنا عليه سوا — وكام ساعة من عمرنا راحت فيه ♥', 'Every film and series we watched together — and how many hours of our lives went into it ♥'), [{ href: 'draw.html?k=movie', ar: 'سهرة فيلم', en: 'Movie night' }, { href: 'movies.html', ar: 'اتفرجنا على إيه', en: 'What we’ve watched' }])}
+		${pageHead(L('سهراتنا بالأرقام', 'Our watch stats'), L('كل فيلم ومسلسل اتفرجنا عليه سوا — وكام ساعة من عمرنا راحت فيه ♥', 'Every film and series we watched together — and how many hours of our lives went into it ♥'), [{ href: 'draw.html?k=movie', ar: 'سهرة فيلم', en: 'Movie night' }, { href: 'movies.html', ar: 'اتفرجنا على إيه', en: 'What we’ve watched' }], {
+			band: `<section class="top10" id="mv-top" hidden aria-labelledby="mv-top-t">
+				<h2 class="top10__title" id="mv-top-t">${L('أحلى ١٠ في بيتنا', 'Top 10 in our house')}</h2>
+				<ol class="top10__track" id="mv-top-list"></ol>
+			</section>`
+		})}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="counters" id="mv-totals"></div>
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
@@ -115,6 +121,19 @@ export default {
 					${x.note ? `<p class="binge__note" dir="auto">${esc(x.note)}</p>` : ''}
 					<p class="binge__by">${x.by ? `${L('اختيار', 'Picked by')} ${name(x.by)}` : ''}${x.by === live.me() && live.canWrite() ? ` · <button class="link" type="button" data-del="${esc(x.id)}">${L('مسح', 'Delete')}</button>` : ''}</p>
 				</article>`).join('');
+
+			/* the Top 10 above the headline, after Jhey's «Top 10 (Netflix Style)» pen: our hearts first, then the
+			   hours it took; a big outlined number tucked behind each poster */
+			const top = (data.items || []).slice().sort((a, b) => (b.hearts || 0) - (a.hearts || 0) || (b.mins || 0) - (a.mins || 0)).slice(0, 10);
+			$('#mv-top', main).hidden = !top.length;
+			$('#mv-top-list', main).innerHTML = top.map((x, k) => `
+				<li class="top10__item${k === 9 ? ' is-ten' : ''}" data-n="${k + 1}">
+					<a class="top10__card mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" href="${x.id ? `#${esc(x.id)}` : '#mv-board'}">
+						${x.cover ? `<img data-cover="${esc(x.cover)}" alt="" decoding="async">` : `<span class="top10__doodle" aria-hidden="true">${doodle('popcorn', 34)}</span>`}
+						<span class="top10__name" dir="auto">${esc(x.title)}</span>
+						${x.hearts ? `<span class="top10__hearts" aria-label="${x.hearts}/5">${'♥'.repeat(x.hearts)}</span>` : ''}
+					</a>
+				</li>`).join('');
 
 			// the games we played together (movies.json → games)
 			const games = (data.games || []).slice().sort((a, b) => (b.year || 0) - (a.year || 0));
