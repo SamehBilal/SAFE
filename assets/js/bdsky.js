@@ -6,13 +6,16 @@
      letter is tied to a balloon of its colour and floats away, swaying, then it all starts again.
    An Arabic letter is the whole word drawn in that letter's colour and cut down to just its own slice (the browser
    says where each letter sits in the word), so the joins stay perfect while every letter flies on its own.
-   Two canvases: the fireworks behind keep their fading trails; the letters in front are drawn clean every frame, as
-   the pen does, so the balloons glide.
+   No sky box of its own: it all sits on the page (deeper colours on the light paper). Two canvases, the fireworks
+   behind and the letters in front, both wiped clean every frame as Matei's pen does; every firework and spark draws
+   its own trail from where it has just been, so nothing is left behind and the balloons glide.
    sky(box, lines) starts it in box (lines: an array of strings) and returns stop(). */
 import { App, REDUCE } from './shell.js';
 
 const TAU = Math.PI * 2;
 const rnd = (a, b) => a + Math.random() * (b - a);
+/* no sky of its own: it sits on the page, so on the light paper the colours go deeper */
+const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; };
 export function sky(box, lines) {
 	const back = document.createElement('canvas');
 	const front = document.createElement('canvas');
@@ -23,7 +26,7 @@ export function sky(box, lines) {
 	const rtl = App.lang === 'ar';
 	const face = rtl ? 'Lalezar, Cairo, sans-serif' : '"Bebas Neue", Lalezar, sans-serif';
 	let w = 0, h = 0, size = 40, k = 1;       // k: the pens were tuned for a ~1000px-wide screen
-	let pieces = [], rockets = [], restart = 0, shown = 0;
+	let pieces = [], rockets = [], restart = 0, shown = 0, night = dark();
 
 	/* ---------- the greeting, laid out to fit, a piece per letter ---------- */
 	function layout() {
@@ -87,8 +90,7 @@ export function sky(box, lines) {
 			c.style.width = w + 'px'; c.style.height = h + 'px';
 			x.setTransform(dpr, 0, 0, dpr, 0, 0);
 		}
-		bx.fillStyle = '#090d1e';
-		bx.fillRect(0, 0, w, h);
+		bx.clearRect(0, 0, w, h);
 		layout();
 		if (REDUCE) still();
 	}
@@ -112,14 +114,15 @@ export function sky(box, lines) {
 			r.trail.shift();
 		}
 		if (!r.trail.length) { r.dead = true; return; }
-		if (r.kids) r.trail.forEach(([x, y], i) => { bx.fillStyle = `hsl(${r.hue},100%,${i * 2.5}%)`; bx.beginPath(); bx.arc(x, y, 1.2, 0, TAU); bx.fill(); });
-		else { bx.fillStyle = `hsl(${r.hue},100%,60%)`; bx.beginPath(); bx.arc(r.x, r.y, 1.3, 0, TAU); bx.fill(); }
+		if (r.kids) r.trail.forEach(([x, y], i) => { bx.fillStyle = night ? `hsl(${r.hue},100%,${i * 2.5}%)` : `hsla(${r.hue},90%,${30 + i}%,${i / 20})`; bx.beginPath(); bx.arc(x, y, 1.2, 0, TAU); bx.fill(); });
+		// a spark draws its own tail from where it has just been (no fading canvas, so nothing is left behind)
+		else r.trail.forEach(([x, y], i, all) => { bx.fillStyle = `hsla(${r.hue},100%,${night ? 60 : 48}%,${(i + 1) / all.length})`; bx.beginPath(); bx.arc(x, y, 1.3, 0, TAU); bx.fill(); });
 	}
 
 	/* ---------- Matei's letters, in front: up, bloom, wait, balloon away ---------- */
 	const col = (p, l, a = 1) => `hsla(${p.hue},80%,${l}%,${a})`;
 	function letter(p, x, y) {
-		fx.fillStyle = col(p, 70);
+		fx.fillStyle = col(p, night ? 70 : 46);
 		if (!p.cut) { fx.fillText(p.text, x, y); return; }
 		// an Arabic letter: the whole word, cut down to this letter's slice
 		const s = size / 100, c = p.cut, sw = (c.r - c.l) * s;
@@ -202,7 +205,7 @@ export function sky(box, lines) {
 				const f = (p.t - p.spawn) / p.inflate, e = 1 - (1 - f) ** 3;
 				p.alpha = e;
 				const ky = p.y - hang * e;
-				fx.strokeStyle = col(p, 80, e); fx.lineWidth = 1;
+				fx.strokeStyle = col(p, night ? 80 : 40, e); fx.lineWidth = 1;
 				fx.beginPath(); fx.moveTo(p.x, ky); fx.lineTo(p.x, p.y - size * 0.35); fx.stroke();
 				balloon(p, p.x, ky, p.bs * e);
 				letter(p, p.x, p.y);
@@ -218,7 +221,7 @@ export function sky(box, lines) {
 			const tilt = Math.cos(tt * p.swayW + p.sway) * 0.12;
 			// the letter swings a beat behind the balloon, on a soft curved string
 			const lx = p.cx + Math.sin(tt * p.swayW + p.sway - 0.6) * 9 * k, ly = p.cy;
-			fx.strokeStyle = col(p, 80); fx.lineWidth = 1;
+			fx.strokeStyle = col(p, night ? 80 : 40); fx.lineWidth = 1;
 			fx.beginPath(); fx.moveTo(kx, ky); fx.quadraticCurveTo((kx + lx) / 2 + sway * 0.6, (ky + ly) / 2, lx, ly - size * 0.35); fx.stroke();
 			balloon(p, kx, ky, p.bs, tilt);
 			letter(p, lx, ly);
@@ -232,11 +235,11 @@ export function sky(box, lines) {
 		raf = requestAnimationFrame(frame);
 		const dt = Math.min(0.05, (now - (then || now)) / 1000);
 		then = now;
-		// behind: fade a little each frame so the fireworks leave trails
+		// behind: wiped clean too; every firework carries its own trail
 		bx.globalCompositeOperation = 'source-over';
-		bx.fillStyle = `rgba(9,13,30,${Math.min(1, 9 * dt)})`;
-		bx.fillRect(0, 0, w, h);
-		bx.globalCompositeOperation = 'lighter';
+		bx.clearRect(0, 0, w, h);
+		night = dark();
+		bx.globalCompositeOperation = night ? 'lighter' : 'source-over';
 		spawnIn -= dt;
 		if (spawnIn <= 0) { rocket(rnd(0, w), rnd(h * 0.08, h * 0.45)); spawnIn = rnd(0.5, 0.9); }
 		for (const r of rockets) if (!r.dead) stepRocket(r, dt);
@@ -252,8 +255,9 @@ export function sky(box, lines) {
 	function pause() { on = false; cancelAnimationFrame(raf); }
 	/* with less motion asked for: just the greeting, still, on the night */
 	function still() {
-		bx.fillStyle = '#090d1e'; bx.fillRect(0, 0, w, h);
+		bx.clearRect(0, 0, w, h);
 		fx.clearRect(0, 0, w, h);
+		night = dark();
 		fx.font = `${size}px ${face}`; fx.textAlign = 'center'; fx.textBaseline = 'middle';
 		for (const p of pieces) letter(p, p.x, p.y);
 	}

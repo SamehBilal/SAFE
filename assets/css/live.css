@@ -297,7 +297,11 @@
 .sky__count { position: absolute; z-index: 2; bottom: 12px; left: 0; right: 0; margin: 0; text-align: center; font: 1.4rem/1.3 var(--f-hand); color: #fee3ac; text-shadow: 0 0 10px rgba(241, 196, 15, 0.6); }
 @media (prefers-reduced-motion: reduce) { .neon, .sky__stars .tw { animation: none; } }
 /* on top of the wishes page, in the polaroids' place above the title */
-.sky--band { width: min(1240px, 100% - 2 * var(--gutter)); height: auto; aspect-ratio: 100 / 34; min-height: 260px; margin: clamp(12px, 3vw, 28px) auto 0; text-align: start; }
+.sky--band { width: min(1240px, 100% - 2 * var(--gutter)); height: auto; aspect-ratio: 100 / 34; min-height: 260px; margin: clamp(12px, 3vw, 28px) auto 0; text-align: start; background: none; border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
+/* with no night behind them on the light paper, the stars turn gold and the count coral */
+:root:not([data-theme='dark']) .sky--band .sky__stars path { fill: #e3a008; }
+:root:not([data-theme='dark']) .sky--band .sky__count { color: var(--coral-deep, #d9534f); text-shadow: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .sky--band .sky__stars path { fill: #fff4c8; } :root:not([data-theme='light']) .sky--band .sky__count { color: #fee3ac; text-shadow: 0 0 10px rgba(241, 196, 15, 0.6); } }
 @media (max-width: 640px) { .sky--band { aspect-ratio: 100 / 80; } }
 
 /* the games we played together, under the films */
@@ -606,9 +610,9 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 @media (prefers-reduced-motion: reduce) { .nb__bar { animation: none; } .nn { transition: none; } }
 
 /* ---------- birthdays: the night sky above the headline (bdsky.js) ---------- */
-.bd-sky { position: relative; width: min(1240px, 100% - 2 * var(--gutter)); height: clamp(250px, 38vw, 430px); margin: clamp(12px, 3vw, 28px) auto 0; overflow: hidden; background: #090d1e; border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch, 22px); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); }
+.bd-sky { position: relative; width: min(1240px, 100% - 2 * var(--gutter)); height: clamp(250px, 38vw, 430px); margin: clamp(12px, 3vw, 28px) auto 0; overflow: visible; }   /* no box: the fireworks go off on the page itself */
 .bd-sky canvas { position: absolute; inset: 0; display: block; cursor: crosshair; touch-action: manipulation; }
-.bd-sky__tip { position: absolute; bottom: 10px; inset-inline-end: 14px; margin: 0; color: rgba(255, 255, 255, 0.55); font: 600 1.15rem/1 var(--f-hand); pointer-events: none; }
+.bd-sky__tip { position: absolute; bottom: 10px; inset-inline-end: 14px; margin: 0; color: var(--muted); font: 600 1.15rem/1 var(--f-hand); pointer-events: none; }
 :lang(ar) .bd-sky__tip { font: 700 0.85rem/1 var(--f-body); }
 
 /* ---------- each birthday card's party, after Siggy's pen: hat, confetti, balloon on a string, greeting ---------- */
