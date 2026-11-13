@@ -528,6 +528,13 @@ export const PAGES = [
 	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'أعياد الميلاد', en: 'Birthdays', dar: 'عيد ميلاد كل واحد فينا', den: 'Every one of our birthdays', group: 'you' },
 	{ href: 'numbers.html', id: 'numbers', ic: 'chart', ar: 'إحنا بالأرقام', en: 'Us in numbers', dar: 'كل يوم وكل سنة، متعدّين واحد واحد', den: 'Every day and every year, counted', group: 'you' },
 	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتنا في أمان هنا', den: 'Our wishes, kept safe', group: 'you' },
+	{ href: 'calendar.html', id: 'calendar', ic: 'calendar', ar: 'تقويمنا', en: 'Our calendar', dar: 'كل مناسباتنا في سنة واحدة', den: 'All our occasions in one year', group: 'you' },
+	{ href: 'famdays.html', id: 'famdays', ic: 'family', ar: 'مناسبات العيلة', en: 'Family occasions', dar: 'أعياد ميلاد وأعياد جواز العيلة الكبيرة', den: 'The wider family’s birthdays and anniversaries', group: 'you' },
+	{ href: 'yearly.html', id: 'yearly', ic: 'image', ar: 'صورة كل سنة', en: 'A photo every year', dar: 'نفس الصورة، سنة ورا سنة', den: 'The same photo, year after year', group: 'you' },
+	{ href: 'ramadan.html', id: 'ramadan', ic: 'moon', ar: 'رمضان والعيد', en: 'Ramadan & Eid', dar: 'العد التنازلي، وعاداتنا، والعيدية', den: 'Countdowns, our traditions, and the Eid money', group: 'you' },
+	{ href: 'firsts.html', id: 'firsts', ic: 'steps', ar: 'أول مرة', en: 'Firsts', dar: 'أول خطوة، أول كلمة، أول يوم مدرسة', den: 'First step, first word, first school day', group: 'you' },
+	{ href: 'gifts.html', id: 'gifts', ic: 'gift', ar: 'هدايانا', en: 'Our gifts', dar: 'كل هدية، ومين جابها، وفي أنهي مناسبة', den: 'Every gift, who gave it, and for what', group: 'you' },
+	{ href: 'capsule.html', id: 'capsule', ic: 'hourglass', ar: 'كبسولة زمنية للولاد', en: 'The boys’ time capsule', dar: 'جوابات بتستنى لحد ما يكبروا', den: 'Letters waiting for them to grow up', group: 'you' },
 	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين ماسك الموبايل، وإزاي الجديد يتبعت', den: 'Whose phone, and sharing what’s new', group: 'app' }
 ];
 
@@ -551,6 +558,11 @@ const ICONS = {
 	mail: '<rect x="3.5" y="6" width="17" height="12" rx="1.5"/><path d="m4 7 8 6 8-6"/>',
 	family: '<circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><circle cx="12" cy="13" r="1.8"/><path d="M3.5 20v-3.5A4 4 0 0 1 7.5 12.5h1M20.5 20v-3.5a4 4 0 0 0-4-4h-1M9 20v-1.5a3 3 0 0 1 6 0V20"/>',
 	cake: '<path d="M4 20h16v-7H4zM4 15.5c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0"/><path d="M8 13V10M12 13V10M16 13V10"/><path d="M8 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM12 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5ZM16 7.5c.6-.6.6-1.4 0-2.5-.6 1.1-.6 1.9 0 2.5Z"/>',
+	calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="M8 13.5h2M14 13.5h2M8 17h2"/>',
+	moon: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z"/><path d="m17 4 .5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5Z"/>',
+	gift: '<rect x="4" y="9.5" width="16" height="11" rx="1"/><path d="M3 9.5h18M12 9.5v11M12 9.5c-2-4.5-6.5-4.5-6.5-2S9.5 9.5 12 9.5Zm0 0c2-4.5 6.5-4.5 6.5-2S14.5 9.5 12 9.5Z"/>',
+	hourglass: '<path d="M6.5 3.5h11M6.5 20.5h11M7.5 3.5c0 5 9 6 9 8.5s-9 3.5-9 8.5M16.5 3.5c0 5-9 6-9 8.5s9 3.5 9 8.5"/>',
+	steps: '<path d="M8 4.5c1.6 0 2.5 1.8 2.5 4s-1 4-2.5 4-2.5-1.8-2.5-4 .9-4 2.5-4ZM16 9.5c1.6 0 2.5 1.8 2.5 4s-1 4-2.5 4-2.5-1.8-2.5-4 .9-4 2.5-4Z"/><path d="M7 15.5h2.5v2.5c0 .8-.6 1.5-1.3 1.5S7 18.8 7 18ZM15 20.5h2.5"/>',
 	chart: '<path d="M4 20.5h16"/><path d="M6.5 20.5v-6h3v6M10.5 20.5V9h3v11.5M14.5 20.5v-8.5h3v8.5"/><path d="M5 9.5 9 6l3.5 2L19 3.5"/>',
 	star: '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
 	map: '<path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',

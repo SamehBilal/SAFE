@@ -12,7 +12,7 @@ import { initOf } from '../assets/js/defaults.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = path.join(ROOT, 'private/live');
-const KINDS = ['journal', 'music', 'draw', 'trips', 'movies', 'wishes', 'goals', 'where', 'spots', 'books', 'posts', 'tree', 'food'];
+const KINDS = ['journal', 'music', 'draw', 'trips', 'movies', 'wishes', 'goals', 'where', 'spots', 'books', 'posts', 'tree', 'food', 'famdays', 'yearly', 'ramadan', 'firsts', 'gifts', 'capsule'];
 const files = process.argv.slice(2);
 if (!files.length) { console.error('Give the file(s) the phones sent: node tools/import.mjs us-esraa-….json'); process.exit(1); }
 
