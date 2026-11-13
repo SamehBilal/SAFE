@@ -1,4 +1,4 @@
-import { L, T, esc, img, num, pageHead, related, App, $, $$, rand, REDUCE, qs, occasions, longDate, age } from '../shell.js';
+import { L, Y, T, esc, img, num, pageHead, related, App, $, $$, rand, REDUCE, qs, occasions, longDate, age } from '../shell.js';
 import { doodle } from '../doodles.js';
 
 /* Birthdays: each of us, with how long until the next one and the age we're turning. The cake below is for
@@ -25,13 +25,13 @@ export default {
 		${pageHead(L('أعياد الميلاد', 'Birthdays'), L('عيد ميلاد كل واحد فينا، وكام يوم فاضل عليه', 'Each of our birthdays, and how long until the next'), [{ href: 'birthday.html', ar: 'أعياد الميلاد', en: 'Birthdays' }])}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="bd-row">${bdays.map(card).join('')}</div>
-			${missing.length ? `<p class="empty" style="margin-top:16px">${L(`ضيفوا تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `Add a birth date ("born") for ${missing.map((m) => App.t(m.name)).join(' and ')} in private/story.json to show them here`)}</p>` : ''}
+			${missing.length ? `<p class="empty" style="margin-top:16px">${Y(`ضيف تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `ضيفي تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `Add a birth date ("born") for ${missing.map((m) => App.t(m.name)).join(' and ')} in private/story.json to show them here`)}</p>` : ''}
 		</div></section>
 		${pick ? `
 		<section class="sec sec--top bday"><div class="wrap narrow">
 			<h2 class="sec__title reveal">${esc(pick.title)}</h2>
 			<p class="sec__sub reveal">${pick.days === 0 ? esc(pick.sub) : L(`بعد ${num(pick.days)} يوم — ${age(pick.member.born)} دلوقتي`, `in ${pick.days} days — ${age(pick.member.born)} now`)}</p>
-			<p class="bday__hint reveal" id="bday-hint">${L('اتمنوا أمنية… وبعدين اطفوا الشمع (دوسوا على كل شمعة)', 'Make a wish… then blow out the candles (tap each one)')}</p>
+			<p class="bday__hint reveal" id="bday-hint">${Y('اتمنى أمنية… وبعدين اطفي الشمع (دوس على كل شمعة)', 'اتمني أمنية… وبعدين اطفي الشمع (دوسي على كل شمعة)', 'Make a wish… then blow out the candles (tap each one)')}</p>
 			<div class="cake reveal">
 				<svg viewBox="0 0 220 210" role="img" aria-label="${L('تورتة عيد ميلاد', 'A birthday cake')}">
 					<ellipse cx="110" cy="196" rx="100" ry="10" fill="#0e6990" opacity=".12"/>
@@ -52,7 +52,7 @@ export default {
 			</div>
 			<div class="bday__msg" id="bday-msg" hidden>
 				<h2 class="sec__title">${L(`كل سنة و${App.t(pick.member.name)} ${pick.member.female ? 'طيبة' : 'طيب'}`, `Happy birthday, ${App.t(pick.member.name)}`)}</h2>
-				<p class="center"><a class="btn btn--coral" href="wishes.html">${L('اكتبوا الأمنية في البرطمان', 'Put the wish in the jar')} ${App.arrow}</a></p>
+				<p class="center"><a class="btn btn--coral" href="wishes.html">${Y('اكتب الأمنية في البرطمان', 'اكتبي الأمنية في البرطمان', 'Put the wish in the jar')} ${App.arrow}</a></p>
 			</div>
 		</div></section>` : ''}
 		${related(['wishes', 'family', 'journal'])}`;

@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num, mediaURL } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, num, mediaURL } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -61,7 +61,7 @@ export default {
 			<div class="counters" id="mv-totals"></div>
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal" style="margin-top:24px"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('popcorn', 22)}</span> ${L('ضيفوا حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
+				<summary><span>${doodle('popcorn', 22)}</span> ${Y('ضيف حاجة اتفرجنا عليها', 'ضيفي حاجة اتفرجنا عليها', 'Add something we watched')}</summary>
 				<form id="mv-form" autocomplete="off">
 					<label class="f"><span>${L('الاسم', 'Title')}</span><input name="title" dir="auto" maxlength="80" required></label>
 					<div class="f-row">
@@ -73,10 +73,10 @@ export default {
 						<label class="f"><span>${L('دقايق في المجموع', 'Minutes in all')}</span><input name="mins" type="number" min="1" max="100000" inputmode="numeric"></label>
 						<label class="f"><span>${L('في كام يوم؟', 'Over how many days?')}</span><input name="days" type="number" min="1" max="3650" inputmode="numeric"></label>
 					</div>
-					<fieldset class="rate"><legend>${L('قيّموه', 'Rate it')}</legend>${[5, 4, 3, 2, 1].map((h) => `<input type="radio" name="hearts" id="mvh${h}" value="${h}"><label for="mvh${h}">♥</label>`).join('')}</fieldset>
+					<fieldset class="rate"><legend>${Y('قيّمه', 'قيّميه', 'Rate it')}</legend>${[5, 4, 3, 2, 1].map((h) => `<input type="radio" name="hearts" id="mvh${h}" value="${h}"><label for="mvh${h}">♥</label>`).join('')}</fieldset>
 					<label class="f"><span>${L('حاجة عايزين نفتكرها؟', 'Anything to remember?')}</span><input name="note" dir="auto" maxlength="160"></label>
 					<p class="form-msg" id="mv-msg" role="status"></p>
-					<div class="f-actions"><button class="btn btn--coral" type="submit">${L('ضيفوه ♥', 'Add it ♥')}</button></div>
+					<div class="f-actions"><button class="btn btn--coral" type="submit">${Y('ضيفه ♥', 'ضيفيه ♥', 'Add it ♥')}</button></div>
 				</form>
 			</details>
 
@@ -105,7 +105,7 @@ export default {
 
 			const items = (data.items || []).slice().sort((a, b) => (b.mins || 0) - (a.mins || 0));
 			$('#mv-empty', main).hidden = !!items.length;
-			$('#mv-empty', main).textContent = L('لسه مسجلناش حاجة — ضيفوا أول فيلم ♥', 'Nothing logged yet — add your first film ♥');
+			$('#mv-empty', main).textContent = Y('لسه مسجلناش حاجة — ضيف أول فيلم ♥', 'لسه مسجلناش حاجة — ضيفي أول فيلم ♥', 'Nothing logged yet — add your first film ♥');
 			$('#mv-field', main).innerHTML = items.map((x, k) => `
 				<article class="binge__box mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" style="--i:${k};${spot(k, x.id || x.title)}" id="${esc(x.id)}">
 					${x.cover ? `<img class="binge__poster" data-cover="${esc(x.cover)}" alt="" decoding="async">` : ''}
@@ -148,7 +148,7 @@ export default {
 
 		board.onclick = async (e) => {
 			const del = e.target.closest('[data-del]');
-			if (!del || !confirm(L('تمسحوه من القايمة؟', 'Remove it from the list?'))) return;
+			if (!del || !confirm(Y('تمسحه من القايمة؟', 'تمسحيه من القايمة؟', 'Remove it from the list?'))) return;
 			try { data = await live.save('movies', (d) => { d.items = (d.items || []).filter((x) => x.id !== del.dataset.del); }); paint(); }
 			catch (err) { alert(live.why(err)); }
 		};

@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num, img, hydrate, REDUCE } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, num, img, hydrate, REDUCE } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -61,14 +61,14 @@ export default {
 				</div>
 				<p class="dm__credit">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
 			</div>
-			<p class="dm-hint">${L('دوسوا على اتنين مننا عشان تشوفوا المسافة بينهم', 'Tap two of us to see how far apart they are')}</p>
+			<p class="dm-hint">${Y('دوس على اتنين مننا عشان تشوف المسافة بينهم', 'دوسي على اتنين مننا عشان تشوفي المسافة بينهم', 'Tap two of us to see how far apart they are')}</p>
 			${ok ? `<div class="dm-tools">
 				<button class="btn btn--coral" type="button" id="dm-here">${doodle('pin', 20)} ${L('أنا هنا دلوقتي', 'I’m here now')}</button>
 				${ps.filter((p) => !p.who).map((p) => `<button class="btn btn--sm btn--ghost" type="button" data-with="${esc(p.id)}">${esc(App.t(p.name))} ${L('معايا', 'is with me')}</button>`).join('')}
 			</div>
 			<p class="form-msg dm-msg" id="dm-msg" role="status"></p>` : `<div class="narrow" style="margin:16px auto 0">${setupNote()}</div>`}
 			<ul class="dm-list" id="dm-list"></ul>
-			<p class="dm-note">${doodle('lock', 18)} ${L('مكانكم بيفضل على الموبايل ده بس، لحد ما تبعتوا الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'Your spot stays on this phone until you send what’s new from Settings — then the other phone sees it. Only the last spot is kept.')}</p>
+			<p class="dm-note">${doodle('lock', 18)} ${Y('مكانك بيفضل على الموبايل ده بس، لحد ما تبعت الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'مكانك بيفضل على الموبايل ده بس، لحد ما تبعتي الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'Your spot stays on this phone until you send what’s new from Settings — then the other phone sees it. Only the last spot is kept.')}</p>
 		</div></section>
 		${related(['family', 'trips', 'places'])}`;
 	},
@@ -134,7 +134,7 @@ export default {
 			if (!placed().length) {
 				pair.textContent = L('لسه محدش قال هو فين', 'Nobody has said where they are yet');
 				kmEl.textContent = '?';
-				fl.textContent = live.canWrite() ? L('دوسوا «أنا هنا دلوقتي» تحت', 'Tap “I’m here now” below') : '';
+				fl.textContent = live.canWrite() ? Y('دوس «أنا هنا دلوقتي» تحت', 'دوسي «أنا هنا دلوقتي» تحت', 'Tap “I’m here now” below') : '';
 			} else if (!shown) {
 				const p = placed()[0];
 				pair.textContent = `${App.t(p.name)} ${L('بس اللي على الخريطة', 'is the only one on the map')}`;
@@ -160,8 +160,8 @@ export default {
 
 		const msg = $('#dm-msg', main);
 		const put = async (ids, label) => {
-			if (!ids.length) { msg.textContent = L('اختاروا مين ماسك الموبايل من الإعدادات الأول', 'Choose whose phone this is in Settings first'); return; }
-			msg.textContent = L('بندور عليكم…', 'Finding you…');
+			if (!ids.length) { msg.textContent = Y('اختار مين ماسك الموبايل من الإعدادات الأول', 'اختاري مين ماسك الموبايل من الإعدادات الأول', 'Choose whose phone this is in Settings first'); return; }
+			msg.textContent = Y('بندور عليك…', 'بندور عليكي…', 'Finding you…');
 			try {
 				const at = await here();
 				data = await live.save('where', (d) => { d.people = d.people || {}; for (const id of ids) d.people[id] = { at: `${at.lat}, ${at.lng}`, acc: at.acc, t: Date.now(), by: live.me() }; });
@@ -169,8 +169,8 @@ export default {
 				pick = [];
 				layout();
 			} catch (err) {
-				msg.textContent = err.message === 'denied' ? L('الموبايل رفض يقول المكان — اسمحوا للموقع بالـ Location من إعدادات المتصفح', 'The phone wouldn’t share its location — allow Location for this site in the browser settings')
-					: err.code ? live.why(err) : L('معرفناش نلاقي المكان، جربوا تاني برا البيت أو مع GPS', 'Couldn’t find the spot — try again with GPS on');
+				msg.textContent = err.message === 'denied' ? Y('الموبايل رفض يقول المكان — اسمح للموقع بالـ Location من إعدادات المتصفح', 'الموبايل رفض يقول المكان — اسمحي للموقع بالـ Location من إعدادات المتصفح', 'The phone wouldn’t share its location — allow Location for this site in the browser settings')
+					: err.code ? live.why(err) : Y('معرفناش نلاقي المكان، جرّب تاني برا البيت أو مع GPS', 'معرفناش نلاقي المكان، جرّبي تاني برا البيت أو مع GPS', 'Couldn’t find the spot — try again with GPS on');
 			}
 		};
 		const meBtn = $('#dm-here', main);

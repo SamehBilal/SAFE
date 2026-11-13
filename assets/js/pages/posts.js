@@ -1,4 +1,4 @@
-import { L, T, esc, img, pageHead, related, App, $, $$, longDate, hydrate } from '../shell.js';
+import { L, Y, T, esc, img, pageHead, related, App, $, $$, longDate, hydrate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -61,7 +61,7 @@ export default {
 		<section class="sec sec--top"><div class="wrap">
 			${ok ? '' : `<div class="narrow" style="margin:0 auto 24px">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:0 auto 28px"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('phone', 22)}</span> ${L('ضيفوا بوست', 'Add a post')}</summary>
+				<summary><span>${doodle('phone', 22)}</span> ${Y('ضيف بوست', 'ضيفي بوست', 'Add a post')}</summary>
 				<form id="po-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f"><span>${L('اتنشر فين؟', 'Where was it posted?')}</span><select name="net">${NETS.map((n) => `<option value="${n.id}">${esc(L(n.ar, n.en))}</option>`).join('')}</select></label>
@@ -71,7 +71,7 @@ export default {
 					<label class="f"><span>${L('صورة أو سكرين شوت (اختياري)', 'A photo or screenshot (optional)')}</span><input name="pic" type="file" accept="image/*"></label>
 					<label class="f"><span>${L('لينك البوست (اختياري)', 'Link to the post (optional)')}</span><input name="link" type="url" dir="ltr" placeholder="https://"></label>
 					<p class="form-msg" id="po-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('احفظوه ♥', 'Keep it ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('احفظه ♥', 'احفظيه ♥', 'Keep it ♥')}</button></div>
 				</form>
 			</details>
 			<div class="chips" role="toolbar" aria-label="${L('فين', 'Where')}" id="po-chips"></div>
@@ -89,7 +89,7 @@ export default {
 		const paint = () => {
 			const l = all().filter((p) => !only || p.net === only);
 			list.innerHTML = l.length ? l.map((p, k) => post(s, p, k)).join('')
-				: `<p class="empty">${all().length ? L('مفيش بوستات من هنا', 'No posts from here') : L('لسه مفيش بوستات… ضيفوا أول بوست كتبناه لبعض ♥', 'No posts yet… add the first one we wrote for each other ♥')}</p>`;
+				: `<p class="empty">${all().length ? L('مفيش بوستات من هنا', 'No posts from here') : Y('لسه مفيش بوستات… ضيف أول بوست كتبناه لبعض ♥', 'لسه مفيش بوستات… ضيفي أول بوست كتبناه لبعض ♥', 'No posts yet… add the first one we wrote for each other ♥')}</p>`;
 			live.hydrateSketches(list);
 			hydrate(list);
 			for (const el of $$('.reveal', list)) el.classList.add('is-in');
@@ -104,7 +104,7 @@ export default {
 			const like = e.target.closest('[data-like]');
 			const del = e.target.closest('[data-del]');
 			if (like) save((d) => { const p = (d.items || []).find((x) => x.id === like.dataset.like); if (p) { p.likes = p.likes || {}; if (p.likes[live.me()]) delete p.likes[live.me()]; else p.likes[live.me()] = true; } });
-			if (del && confirm(L('تمسحوا البوست ده من هنا؟', 'Remove this post from here?'))) save((d) => { d.items = (d.items || []).filter((x) => x.id !== del.dataset.del); });
+			if (del && confirm(Y('تمسح البوست ده من هنا؟', 'تمسحي البوست ده من هنا؟', 'Remove this post from here?'))) save((d) => { d.items = (d.items || []).filter((x) => x.id !== del.dataset.del); });
 		});
 
 		const form = $('#po-form', main);
@@ -113,7 +113,7 @@ export default {
 			const msg = $('#po-msg', main);
 			const file = form.pic.files[0];
 			const text = form.text.value.trim();
-			if (!text && !file) { msg.textContent = L('اكتبوا الكلام أو حطوا صورة', 'Add the words or a picture'); return; }
+			if (!text && !file) { msg.textContent = Y('اكتب الكلام أو حط صورة', 'اكتبي الكلام أو حطي صورة', 'Add the words or a picture'); return; }
 			msg.textContent = L('بنحفظ…', 'Saving…');
 			try {
 				const pic = file ? await live.putSketch(await shrinkPhoto(file, 1400)) : undefined;

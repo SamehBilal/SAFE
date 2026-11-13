@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, App, $ } from '../shell.js';
+import { L, Y, T, esc, pageHead, App, $ } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 
@@ -14,7 +14,7 @@ export default {
 	render(s) {
 		const me = live.me();
 		return `
-		${pageHead(L('الإعدادات', 'Settings'), L('مين ماسك الموبايل، وإزاي اللي بتكتبوه يوصل للتاني وللموقع', 'Whose phone this is, and how what you write reaches the other phone and the site'), [{ href: 'settings.html', ar: 'الإعدادات', en: 'Settings' }])}
+		${pageHead(L('الإعدادات', 'Settings'), Y('مين ماسك الموبايل، وإزاي اللي بتكتبه يوصل للتاني وللموقع', 'مين ماسك الموبايل، وإزاي اللي بتكتبيه يوصل للتاني وللموقع', 'Whose phone this is, and how what you write reaches the other phone and the site'), [{ href: 'settings.html', ar: 'الإعدادات', en: 'Settings' }])}
 		<section class="sec sec--top"><div class="wrap narrow">
 			<form class="panel settings" id="st-form" autocomplete="off">
 				<fieldset class="who">
@@ -27,18 +27,18 @@ export default {
 
 			<div class="panel settings" style="margin-top:20px">
 				<h2>${L('اللي جديد على الموبايل ده', 'What’s new on this phone')}</h2>
-				<p class="muted">${L('اللي بتكتبوه بيتحفظ على الموبايل على طول ويبان هنا. عشان يوصل للتاني أو للموقع، ابعتوه في ملف — الملف متشفّر بمفتاح موقعنا، محدش يقدر يفتحه غيرنا.', 'What you write is saved on the phone straight away and shows here. To get it to the other phone or onto the site, send it as a file — it’s encrypted with our site’s key, so nobody else can open it.')}</p>
+				<p class="muted">${Y('اللي بتكتبه بيتحفظ على الموبايل على طول ويبان هنا. عشان يوصل للتاني أو للموقع، ابعته في ملف — الملف متشفّر بمفتاح موقعنا، محدش يقدر يفتحه غيرنا.', 'اللي بتكتبيه بيتحفظ على الموبايل على طول ويبان هنا. عشان يوصل للتاني أو للموقع، ابعتيه في ملف — الملف متشفّر بمفتاح موقعنا، محدش يقدر يفتحه غيرنا.', 'What you write is saved on the phone straight away and shows here. To get it to the other phone or onto the site, send it as a file — it’s encrypted with our site’s key, so nobody else can open it.')}</p>
 				<div id="st-pending" class="muted">${L('بنعد…', 'Counting…')}</div>
 				<p class="form-msg" id="st-msg" role="status"></p>
 				<div class="f-actions">
-					<label class="btn btn--ghost" for="st-file">${doodle('letter', 18)} ${L('ضيفوا ملف من التاني', 'Add a file from the other phone')}</label>
+					<label class="btn btn--ghost" for="st-file">${doodle('letter', 18)} ${Y('ضيف ملف من التاني', 'ضيفي ملف من التاني', 'Add a file from the other phone')}</label>
 					<input type="file" id="st-file" accept=".json,application/json" hidden>
-					<button type="button" class="btn btn--coral" id="st-send">${doodle('phone', 18)} ${L('ابعتوا اللي جديد', 'Send what’s new')}</button>
+					<button type="button" class="btn btn--coral" id="st-send">${doodle('phone', 18)} ${Y('ابعت اللي جديد', 'ابعتي اللي جديد', 'Send what’s new')}</button>
 				</div>
 				<details class="howto"><summary>${L('بيوصل للموقع إزاي؟', 'How does it get onto the site?')}</summary><ol>
-					<li>${L('ابعتوا الملف لنفسكم أو للتاني (واتساب، إيميل…). على الموبايل التاني: «ضيفوا ملف من التاني» وهيشوف كل حاجة على طول.', 'Send the file to yourselves or each other (WhatsApp, email…). On the other phone, “Add a file from the other phone” and it sees everything straight away.')}</li>
-					<li>${L('على كمبيوتر سامح: حطوا الملف في أي مكان وشغلوا', 'On Sameh’s PC: save the file anywhere and run')} <code dir="ltr">node tools/import.mjs us-….json</code></li>
-					<li>${L('وبعدين', 'then')} <code dir="ltr">node tools/build.mjs</code> ${L('وانشروا. لما الموقع يتحدث، الموبايلات بتمسح نسختها لوحدها.', 'and publish. Once the site has it, the phones drop their own copy by themselves.')}</li>
+					<li>${Y('ابعت الملف لنفسك أو للتاني (واتساب، إيميل…). على الموبايل التاني: «ضيف ملف من التاني» وهيشوف كل حاجة على طول.', 'ابعتي الملف لنفسك أو للتاني (واتساب، إيميل…). على الموبايل التاني: «ضيفي ملف من التاني» وهيشوف كل حاجة على طول.', 'Send the file to yourself or the other phone (WhatsApp, email…). On the other phone, “Add a file from the other phone” and it sees everything straight away.')}</li>
+					<li>${Y('على كمبيوتر سامح: حط الملف في أي مكان وشغّل', 'على كمبيوتر سامح: حطي الملف في أي مكان وشغّلي', 'On Sameh’s PC: save the file anywhere and run')} <code dir="ltr">node tools/import.mjs us-….json</code></li>
+					<li>${L('وبعدين', 'then')} <code dir="ltr">node tools/build.mjs</code> ${Y('وانشر. لما الموقع يتحدث، الموبايلات بتمسح نسختها لوحدها.', 'وانشري. لما الموقع يتحدث، الموبايلات بتمسح نسختها لوحدها.', 'and publish. Once the site has it, the phones drop their own copy by themselves.')}</li>
 				</ol></details>
 			</div>
 		</div></section>`;
@@ -50,7 +50,7 @@ export default {
 		const box = $('#st-pending', main);
 		form.onchange = () => {
 			if (form.me.value) live.setMe(form.me.value);
-			who.textContent = L('اتحفظ ✓ — تقدروا تكتبوا من الموبايل ده', 'Saved ✓ — you can write from this phone');
+			who.textContent = Y('اتحفظ ✓ — تقدر تكتب من الموبايل ده', 'اتحفظ ✓ — تقدري تكتبي من الموبايل ده', 'Saved ✓ — you can write from this phone');
 		};
 
 		const count = async () => {

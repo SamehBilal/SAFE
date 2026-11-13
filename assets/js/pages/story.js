@@ -1,4 +1,4 @@
-import { L, T, esc, img, fmtDate, yearsAgo, isToday, pageHead, related, App } from '../shell.js';
+import { L, Y, T, esc, img, fmtDate, yearsAgo, isToday, pageHead, related, App } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 
@@ -31,7 +31,7 @@ export default {
 								<h3>${T(x.title)}</h3>
 								${x.text ? `<p>${T(x.text)}</p>` : ''}
 								${x.photo ? `<figure data-media-box>${img(x.photo, App.t(x.title))}</figure>` : ''}
-								<span class="tl__more">${L('اقروا أكتر', 'Read more')} ${App.arrow}</span>
+								<span class="tl__more">${Y('اقرا أكتر', 'اقري أكتر', 'Read more')} ${App.arrow}</span>
 							</a>
 						</li>`;
 					}).join('')}

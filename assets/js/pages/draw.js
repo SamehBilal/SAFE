@@ -1,4 +1,4 @@
-import { L, T, t, esc, pageHead, related, App, $, $$, qs, longDate, DRAW_KINDS, REDUCE, parseDate, daysBetween } from '../shell.js';
+import { L, Y, T, t, esc, pageHead, related, App, $, $$, qs, longDate, DRAW_KINDS, REDUCE, parseDate, daysBetween } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
@@ -17,7 +17,7 @@ export default {
 		const crumbs = [{ href: 'draw.html', ar: 'قرعة الليلة', en: 'Tonight’s draw' }, ...(k ? [{ href: '#', ar: k.ar, en: k.en }] : [])];
 
 		if (!k) return `
-			${pageHead(L('قرعة الليلة', 'Tonight’s draw'), L('مش عارفين نعمل إيه الليلة؟ سيبوها للعجلة', 'Can’t decide what to do tonight? Let the wheel choose'), crumbs)}
+			${pageHead(L('قرعة الليلة', 'Tonight’s draw'), Y('مش عارفين نعمل إيه الليلة؟ سيبها للعجلة', 'مش عارفين نعمل إيه الليلة؟ سيبيها للعجلة', 'Can’t decide what to do tonight? Let the wheel choose'), crumbs)}
 			<section class="sec sec--top"><div class="wrap">
 				<div class="kinds">${DRAW_KINDS.map((x, n) => `
 					<a class="kind reveal" href="draw.html?k=${x.id}" style="--c:${x.color};--delay:${n * 0.07}s">
@@ -36,7 +36,7 @@ export default {
 			<section class="sec sec--top"><div class="wrap">
 				<div class="draw" style="--c:${k.color}">
 					<div class="wheel-box">
-						<div class="wheel" id="wheel"><span class="wheel__pin" aria-hidden="true"></span><div class="wheel__disc" id="wheel-disc"></div><button class="wheel__hub" type="button" id="spin">${L('لفّوا', 'Spin')}</button></div>
+						<div class="wheel" id="wheel"><span class="wheel__pin" aria-hidden="true"></span><div class="wheel__disc" id="wheel-disc"></div><button class="wheel__hub" type="button" id="spin">${Y('لف', 'لفّي', 'Spin')}</button></div>
 						<label class="check"><input type="checkbox" id="fresh" checked> ${L('من غير اللي عملناه آخر أسبوعين', 'Skip what we did in the last two weeks')}</label>
 					</div>
 					<div class="result" id="result" hidden aria-live="polite"></div>
@@ -47,8 +47,8 @@ export default {
 						<h2>${L('القايمة بتاعتنا', 'Our list')}</h2>
 						<ul class="pool" id="pool"></ul>
 						<form class="add" id="add" autocomplete="off"${live.canWrite() ? '' : ' hidden'}>
-							<input name="item" dir="auto" maxlength="80" placeholder="${L('ضيفوا اختيار…', 'Add an option…')}" required>
-							<button class="btn btn--sm" type="submit">${L('ضيفوا', 'Add')}</button>
+							<input name="item" dir="auto" maxlength="80" placeholder="${Y('ضيف اختيار…', 'ضيفي اختيار…', 'Add an option…')}" required>
+							<button class="btn btn--sm" type="submit">${Y('ضيف', 'ضيفي', 'Add')}</button>
 						</form>
 					</section>
 					<section class="panel">
@@ -75,13 +75,13 @@ export default {
 				<div><b dir="auto">${esc(h.text)}</b><small>${longDate(h.date)} · ${esc(L(kk.ar, kk.en))}${h.by ? ` · ${name(h.by)}` : ''}</small>
 				${h.hearts ? `<span class="hearts-row" aria-label="${h.hearts}/5">${'♥'.repeat(h.hearts)}<i>${'♥'.repeat(5 - h.hearts)}</i></span>` : ''}
 				${h.note ? `<p dir="auto">${esc(h.note)}</p>` : ''}</div>
-				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">${doodle('pencil', 16)} ${L('ارسموها', 'Sketch it')}</button>` : ''}
+				${h.sketch ? `<img class="zoom" data-sketch="${esc(h.sketch)}" alt="${esc(h.text)}">` : live.canWrite() ? `<button type="button" class="link" data-sketch-for="${esc(h.id)}">${doodle('pencil', 16)} ${Y('ارسمها', 'ارسميها', 'Sketch it')}</button>` : ''}
 			</article>`;
 		};
 		const paintHistory = () => {
 			const box = $('#dr-history', main);
 			const list = data.history.filter((h) => !k || h.kind === k.id).sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.at - a.at);
-			box.innerHTML = list.length ? list.map(night).join('') : `<p class="empty">${L('لسه مفيش ليالي متسجلة — لفّوا العجلة وسجلوا أول ليلة ♥', 'No nights logged yet — spin the wheel and log the first ♥')}</p>`;
+			box.innerHTML = list.length ? list.map(night).join('') : `<p class="empty">${Y('لسه مفيش ليالي متسجلة — لف العجلة وسجّل أول ليلة ♥', 'لسه مفيش ليالي متسجلة — لفّي العجلة وسجّلي أول ليلة ♥', 'No nights logged yet — spin the wheel and log the first ♥')}</p>`;
 			live.hydrateSketches(box);
 			$$('[data-count]', main).forEach((el) => { const n = data.history.filter((h) => h.kind === el.dataset.count).length; el.textContent = n ? L(`${n} ليلة`, `${n} night${n === 1 ? '' : 's'}`) : ''; });
 		};
@@ -109,7 +109,7 @@ export default {
 		const pool = $('#pool', main);
 		const paintPool = () => {
 			const items = data.lists[k.id] || [];
-			pool.innerHTML = items.length ? items.map((x) => `<li><span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${L('شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${L('القايمة فاضية — ضيفوا اختيارات', 'The list is empty — add some options')}</li>`;
+			pool.innerHTML = items.length ? items.map((x) => `<li><span dir="auto">${esc(label(x))}</span>${live.canWrite() ? `<button type="button" aria-label="${Y('شيل', 'شيلي', 'Remove')} ${esc(label(x))}" data-rm="${esc(x.id)}">✕</button>` : ''}</li>`).join('') : `<li class="empty">${Y('القايمة فاضية — ضيف اختيارات', 'القايمة فاضية — ضيفي اختيارات', 'The list is empty — add some options')}</li>`;
 			paintWheel();
 		};
 		pool.onclick = async (e) => {
@@ -188,13 +188,13 @@ export default {
 				<div class="result__sketch" id="res-sketch"></div>
 				${ok ? `<form id="log" class="result__log">
 					<label class="f"><span>${L('حاجة عايزين نفتكرها؟', 'Anything to remember?')}</span><input name="note" dir="auto" maxlength="200"></label>
-					<fieldset class="rate"><legend>${L('قيّموا الليلة', 'Rate the night')}</legend>${[5, 4, 3, 2, 1].map((h) => `<input type="radio" name="hearts" id="h${h}" value="${h}"><label for="h${h}" title="${h}">♥</label>`).join('')}</fieldset>
+					<fieldset class="rate"><legend>${Y('قيّم الليلة', 'قيّمي الليلة', 'Rate the night')}</legend>${[5, 4, 3, 2, 1].map((h) => `<input type="radio" name="hearts" id="h${h}" value="${h}"><label for="h${h}" title="${h}">♥</label>`).join('')}</fieldset>
 					<p class="form-msg" id="log-msg" role="status"></p>
 				</form>` : ''}
 				<div class="result__acts">
-					<button type="button" class="btn btn--ghost" id="again">${doodle('refresh', 18)} ${L('لفّوا تاني', 'Spin again')}</button>
+					<button type="button" class="btn btn--ghost" id="again">${doodle('refresh', 18)} ${Y('لف تاني', 'لفّي تاني', 'Spin again')}</button>
 					<button type="button" class="btn btn--ghost" id="res-draw">${doodle('pencil', 18)} ${esc(t(k.sketch))}</button>
-					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${L('عملناها ♥ سجلوها', 'We did it ♥ Log it')}</button>` : ''}
+					${ok ? `<button type="button" class="btn btn--coral" id="res-log">${Y('عملناها ♥ سجّلها', 'عملناها ♥ سجّليها', 'We did it ♥ Log it')}</button>` : ''}
 				</div>`;
 			result.hidden = false;
 			result.scrollIntoView({ behavior: 'smooth', block: 'center' });

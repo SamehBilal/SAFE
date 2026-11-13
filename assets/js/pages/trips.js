@@ -1,4 +1,4 @@
-import { L, T, t, esc, pageHead, related, App, $, $$, num, parseDate, daysBetween, longDate, REDUCE, sleep, img, hydrate } from '../shell.js';
+import { L, Y, T, t, esc, pageHead, related, App, $, $$, num, parseDate, daysBetween, longDate, REDUCE, sleep, img, hydrate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { GOVERNORATES, VIEWBOX, DOTS } from '../egypt.js';
@@ -140,7 +140,7 @@ export default {
 
 			${ok ? '' : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal" id="tr-composer" style="margin-top:28px"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('suitcase', 22)}</span> ${L('سجلوا رحلة', 'Log a trip')}</summary>
+				<summary><span>${doodle('suitcase', 22)}</span> ${Y('سجّل رحلة', 'سجّلي رحلة', 'Log a trip')}</summary>
 				<form id="tr-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f"><span>${L('سنة كام؟', 'Which year?')}</span><select name="year">${years.map((y) => `<option value="${y}"${y === (nx.days === 0 ? nx.year : nx.year - 1) ? ' selected' : ''}>${y} — ${esc(anniversary(s, y))}</option>`).join('')}</select></label>
@@ -153,7 +153,7 @@ export default {
 					<label class="f"><span>${L('اسم للرحلة', 'Name the trip')}</span><input name="title" dir="auto" maxlength="80"></label>
 					<label class="f"><span>${L('في كلمتين', 'In a few words')}</span><textarea name="note" dir="auto" rows="3" maxlength="600"></textarea></label>
 					<p class="form-msg" id="tr-msg" role="status"></p>
-					<div class="f-actions"><button class="btn btn--coral" type="submit">${L('سجلوا الرحلة ♥', 'Log the trip ♥')}</button></div>
+					<div class="f-actions"><button class="btn btn--coral" type="submit">${Y('سجّل الرحلة ♥', 'سجّلي الرحلة ♥', 'Log the trip ♥')}</button></div>
 				</form>
 			</details>
 
@@ -169,7 +169,7 @@ export default {
 		let trips = await loadTrips(s);
 		let focus = '';
 
-		const sideIdle = () => `<h2>${L('دوسوا على أي محافظة', 'Tap a governorate')}</h2>
+		const sideIdle = () => `<h2>${Y('دوس على أي محافظة', 'دوسي على أي محافظة', 'Tap a governorate')}</h2>
 			<p class="muted">${L('الملونة رحناها في عيد جوازنا، والباقي لسه مستنينا.', 'The coloured ones are where our anniversaries took us; the rest are still waiting.')}</p>
 			<button class="btn btn--coral" type="button" id="tr-draw">${doodle('dice', 18)} ${L('قرعة الرحلة الجاية', 'Draw our next trip')}</button>
 			<p class="trip-pick" id="tr-pick" aria-live="polite"></p>`;
@@ -181,7 +181,7 @@ export default {
 			side.innerHTML = `<h2>${esc(govName(id))}</h2>
 				${here.length ? here.map((x) => `<a class="trip-mini" href="trip.html?id=${esc(x.id)}"><b>${x.year}</b><span>${esc(anniversary(s, x.year))}${x.place ? ` · <span dir="auto">${esc(x.place)}</span>` : ''}</span><i aria-hidden="true">${App.arrow}</i></a>`).join('')
 					: `<p class="muted">${L('لسه مرحناهاش… يمكن تكون الجاية؟', 'We haven’t been yet… maybe it’s next?')}</p>
-					${live.canWrite() ? `<button class="btn btn--ghost btn--sm" type="button" data-log="${id}">${doodle('suitcase', 16)} ${L('سجلوا رحلة هنا', 'Log a trip here')}</button>` : ''}`}
+					${live.canWrite() ? `<button class="btn btn--ghost btn--sm" type="button" data-log="${id}">${doodle('suitcase', 16)} ${Y('سجّل رحلة هنا', 'سجّلي رحلة هنا', 'Log a trip here')}</button>` : ''}`}
 				<button class="link" type="button" id="tr-back">${L('رجوع', 'Back')}</button>`;
 			$('#tr-back', side).onclick = () => { focus = ''; paintMap(svg, trips); side.innerHTML = sideIdle(); wireDraw(); };
 			$('[data-log]', side)?.addEventListener('click', (e) => {

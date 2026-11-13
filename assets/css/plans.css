@@ -170,38 +170,66 @@
 .post__heart:disabled { cursor: default; }
 .post .link--danger { margin-inline-start: auto; }
 
-/* ---------- family tree ---------- */
+/* ---------- family tree, after tenebrius' «Family Tree» pen: arch-topped cards with a soft glow behind each face,
+   thin branch lines with rounded elbows, and a card that opens with the person's story ---------- */
 .ftree { margin: 8px 0 48px; }
 .ft__scroll { overflow-x: auto; padding: 8px 4px 16px; scrollbar-width: thin; }
-.ft { position: relative; min-width: 620px; padding: 18px 10px; background: var(--card); border: 1.5px solid var(--ink, var(--line)); border-radius: var(--sketch, var(--radius)); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-lime, var(--blush)); background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink, #999) 18%, transparent) 1px, transparent 0); background-size: 22px 22px; }
-.ft__lines { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
-.ft__lines path { fill: none; stroke: var(--ink, var(--blue-ink)); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 5 4; opacity: 0.6; }
-.ft__rows { position: relative; display: grid; gap: 46px; }
+.ft { position: relative; width: max-content; min-width: 100%; padding: 26px 14px 30px; background: var(--card); border: 1.5px solid var(--ink, var(--line)); border-radius: var(--sketch, var(--radius)); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-lime, var(--blush)); }
+.ft__lines { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 0; }
+.ft__lines path { fill: none; stroke: var(--ink, var(--blue-ink)); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45; }
+.ft__lines path.ft__wed { stroke: var(--coral); opacity: 0.9; stroke-width: 1.8; }
+.ft__rows { position: relative; z-index: 1; display: grid; gap: 54px; }
 .ft__row { display: flex; justify-content: space-around; align-items: flex-start; gap: 18px; }
-.ft__row--mid { justify-content: center; gap: 26px; }
-.ft__couple { display: flex; gap: 28px; align-items: flex-start; }
-.ft__sibs { display: flex; gap: 14px; flex: 1; align-items: flex-start; justify-content: flex-end; }
+.ft__row--mid { justify-content: center; gap: 18px; }
+.ft__couple { display: flex; gap: 14px; align-items: flex-start; }
+.ft__sibs { display: flex; gap: 8px; flex: 1; align-items: flex-start; justify-content: flex-end; }
 .ft__sibs[data-g='her-sibs'] { justify-content: flex-start; }
-.ft__ghost { padding: 14px 18px; border: 1.5px dashed var(--line); border-radius: 14px; color: var(--muted); font-size: 0.85rem; font-weight: 700; }
-.ft__node { position: relative; display: grid; justify-items: center; gap: 4px; text-align: center; width: 104px; }
-.ft__pic { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 16%, var(--card)); border: 3px solid var(--c); box-shadow: 0 0 0 4px var(--card); color: var(--c); text-decoration: none; }
-.ft__pic img { width: 100%; height: 100%; object-fit: cover; }
-.ft__init { font: 1.7rem var(--f-label); color: var(--c); }
-:lang(ar) .ft__init { font: 800 1.4rem var(--f-body); }
-.ft__node b { font-size: 0.92rem; line-height: 1.25; background: var(--card); padding-inline: 4px; border-radius: 6px; }
-.ft__node small { color: var(--muted); font-size: 0.74rem; line-height: 1.2; background: var(--card); padding-inline: 4px; border-radius: 6px; }
-.ft__node--us { width: 120px; }
-.ft__node--us .ft__pic { width: 82px; height: 82px; }
-.ft__node--sm .ft__pic { width: 52px; height: 52px; }
-.ft__node--kid .ft__pic { width: 72px; height: 72px; }
-.ft__node.is-gone .ft__pic { filter: grayscale(0.8); opacity: 0.85; }
-.ft__heart { align-self: center; margin-top: -24px; color: var(--coral); font-size: 1.6rem; animation: beat 1.4s ease-in-out infinite; }
-.ft__del { position: absolute; top: -4px; inset-inline-end: 8px; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--ink, var(--line)); background: var(--card); color: var(--muted); font-size: 0.7rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
-.ft__node:hover .ft__del, .ft__del:focus-visible { opacity: 1; }
-@media (hover: none) { .ft__del { opacity: 1; } }
+/* the card: an arch, like the pen's */
+.ft__node { position: relative; display: grid; justify-items: center; gap: 2px; width: 104px; padding: 8px 8px 10px; text-align: center; border: 1px solid color-mix(in srgb, var(--ink, #37353f) 22%, transparent); border-radius: 999em 999em 10px 10px; background: color-mix(in srgb, var(--card) 88%, var(--c)); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); cursor: pointer; transition: transform 0.3s var(--ease-pop, ease), box-shadow 0.3s; font: inherit; color: var(--text); }
+.ft__node:hover, .ft__node:focus-visible { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.16); }
+.ft__pic { position: relative; isolation: isolate; width: 92px; height: 104px; margin-bottom: 6px; display: grid; place-items: center; color: var(--c); }
+.ft__pic::before { content: ''; position: absolute; inset: 6px; z-index: -1; border-radius: 50%; background: var(--c); opacity: 0.55; filter: blur(22px); }
+.ft__pic > img, .ft__pic > .ft__face { width: 100%; height: 100%; border-radius: 999em 999em 6px 6px; border: 1px solid color-mix(in srgb, var(--ink, #37353f) 25%, transparent); object-fit: cover; }
+.ft__face { display: grid; place-items: center; background: color-mix(in srgb, var(--c) 18%, var(--card)); }
+.ft__init { font: 2rem var(--f-label); color: var(--c); }
+:lang(ar) .ft__init { font: 800 1.6rem var(--f-body); }
+.ft__node b { font-size: 0.86rem; line-height: 1.25; letter-spacing: 0.02em; }
+.ft__node small { color: var(--muted); font-size: 0.72rem; line-height: 1.2; }
+.ft__node--us { width: 124px; }
+.ft__node--us .ft__pic { width: 100px; height: 112px; }
+.ft__node--sm { width: 88px; }
+.ft__node--sm .ft__pic { width: 68px; height: 78px; }
+.ft__node--kid .ft__pic { width: 96px; height: 108px; }
+/* gone: greyed, like the pen's «incognito» */
+.ft__node.is-gone .ft__pic > img, .ft__node.is-gone .ft__face { filter: grayscale(1) brightness(0.85); }
+.ft__node.is-gone .ft__pic::before { background: #777; }
+.ft__node.is-gone b { font-style: italic; }
+/* a spot waiting for a name */
+.ft__node.is-empty { background: transparent; border-style: dashed; box-shadow: none; }
+.ft__node.is-empty .ft__face { background: transparent; border-style: dashed; }
+.ft__node.is-empty .ft__pic::before { opacity: 0.18; }
+.ft__node.is-empty .ft__init { opacity: 0.55; }
+.ft__node.is-empty b { color: var(--muted); font-weight: 700; }
+.ft__node.is-empty:disabled { cursor: default; transform: none; }
+.ft__heart { align-self: center; margin-top: -40px; color: var(--coral); font-size: 1.6rem; animation: beat 1.4s ease-in-out infinite; }
 .ft__add { margin: 22px auto 0; }
+/* the person's card */
+.ft-card { position: fixed; inset: 0; z-index: 900; display: grid; place-items: center; padding: 16px; background: rgba(10, 8, 12, 0.6); backdrop-filter: blur(5px); animation: ft-fade 0.3s; }
+.ft-card[hidden] { display: none; }
+.ft-card__box { position: relative; width: min(560px, 100%); max-height: 90svh; overflow: auto; display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: center; padding: 26px; background: var(--card); color: var(--text); border: 1.5px solid var(--ink, var(--line)); border-radius: var(--sketch, 18px); box-shadow: calc(var(--bujo-x, 1) * 6px) 6px 0 0 var(--c, var(--coral)); animation: ft-drop 0.3s; }
+.ft-card__pic { grid-row: span 4; }
+.ft-card__pic .ft__pic { width: 150px; height: 170px; margin: 0; }
+.ft-card h3 { margin: 0; font: 400 2rem/1.1 var(--f-script); color: var(--c, var(--blue)); }
+.ft-card__rel { margin: 0; font-weight: 700; color: var(--muted); }
+.ft-card__note { margin: 6px 0 0; font: 1.2rem/1.4 var(--f-hand); }
+.ft-card__acts { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 8px; }
+.ft-card__x { position: absolute; top: 10px; inset-inline-end: 12px; width: 30px; height: 30px; border: 0; background: none; font-size: 1.4rem; line-height: 1; color: var(--muted); cursor: pointer; }
+.ft-card__x:hover { color: var(--coral); }
+@media (max-width: 520px) { .ft-card__box { grid-template-columns: 1fr; justify-items: center; text-align: center; } .ft-card__pic { grid-row: auto; } .ft-card__acts { justify-content: center; } }
+@keyframes ft-fade { from { opacity: 0; } }
+@keyframes ft-drop { from { opacity: 0; transform: translateY(-40px); } }
 
-@media (prefers-reduced-motion: reduce) { .dm__dash, .cm__pin::after, .ft__heart { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .dm__dash, .cm__pin::after, .ft__heart, .ft-card, .ft-card__box { animation: none; } }
 
 /* ---------- our food: a folded paper menu that opens in 3D (after the Codrops 3D Restaurant Menu) ---------- */
 .fm-places { margin-bottom: 28px; }

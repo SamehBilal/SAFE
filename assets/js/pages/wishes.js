@@ -1,4 +1,4 @@
-import { L, T, pageHead, related, sleep, store, $, App } from '../shell.js';
+import { L, Y, T, pageHead, related, sleep, store, $, App } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -73,9 +73,9 @@ export default {
 			<form class="wish-form reveal" id="wish-form" autocomplete="off">
 				<label class="sr-only" for="wish-input">${L('نفسي…', 'I wish…')}</label>
 				<input id="wish-input" dir="auto" maxlength="140" placeholder="${L('نفسي…', 'I wish…')}" enterkeyhint="send">
-				<button type="submit" aria-label="${L('حطوا الأمنية في البرطمان', 'Put the wish in the jar')}">★</button>
+				<button type="submit" aria-label="${Y('حط الأمنية في البرطمان', 'حطي الأمنية في البرطمان', 'Put the wish in the jar')}">★</button>
 			</form>
-			<p class="wish-hint">${L('دوسوا على أي نجمة عشان تقروا الأمنية اللي جواها', 'Tap a star to read the wish inside')}</p>
+			<p class="wish-hint">${Y('دوس على أي نجمة عشان تقرا الأمنية اللي جواها', 'دوسي على أي نجمة عشان تقري الأمنية اللي جواها', 'Tap a star to read the wish inside')}</p>
 			<div class="jar" id="jar">${JAR}<div class="jar__stars" id="jar-stars"></div></div>
 			<p class="wish-toast" id="wish-toast" aria-live="polite"></p>
 		</div></section>

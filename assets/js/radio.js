@@ -3,7 +3,7 @@
    has been played and stays until it's closed. While it's up, links swap only the page itself (shell.js) so the
    music carries on. Songs with their own recording play here; a YouTube or Spotify song plays in a small screen
    above the bar; anything else opens in its own app. The music page's turntable follows whatever this is playing. */
-import { L, App, $, mediaURL } from './shell.js';
+import { L, Y, App, $, mediaURL } from './shell.js';
 
 /* every song gets its own sleeve colours, the same on both phones */
 const PALETTE = [['#c2185b', '#ffd1dc'], ['#0e6990', '#cfe9f5'], ['#e39b2d', '#fff0cf'], ['#5a9e6f', '#dcf1df'], ['#6d4bb3', '#e6dcff'], ['#d9534f', '#ffe0dc'], ['#26706b', '#d2f0ec'], ['#8a5a2b', '#f3e2cc']];
@@ -185,7 +185,7 @@ function draw() {
 				<button class="np__btn np__btn--main" type="button" data-np="toggle"></button>
 				<button class="np__btn" type="button" data-np="next" aria-label="${L('اللي بعدها', 'Next')}">${rtl ? ICON.prev : ICON.next}</button>
 			</div>
-			<button class="np__x" type="button" data-np="close" aria-label="${L('اقفلوا', 'Close')}" title="${L('اقفلوا', 'Close')}">${ICON.close}</button>
+			<button class="np__x" type="button" data-np="close" aria-label="${Y('اقفل', 'اقفلي', 'Close')}" title="${Y('اقفل', 'اقفلي', 'Close')}">${ICON.close}</button>
 		</div>`;
 	bar.onclick = (e) => {
 		const b = e.target.closest('[data-np]');
@@ -254,7 +254,7 @@ function paint(what) {
 	}
 	const main = $('[data-np="toggle"]', bar);
 	main.innerHTML = playing ? ICON.pause : ICON.play;
-	main.setAttribute('aria-label', playing ? L('وقفوا', 'Pause') : L('شغلوا', 'Play'));
+	main.setAttribute('aria-label', playing ? Y('وقّف', 'وقّفي', 'Pause') : Y('شغّل', 'شغّلي', 'Play'));
 	const many = queue.filter(playable).length > 1;
 	for (const b of bar.querySelectorAll('[data-np="prev"], [data-np="next"]')) b.disabled = !many;
 }

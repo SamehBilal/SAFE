@@ -1,4 +1,4 @@
-import { L, T, esc, img, pageHead, related, App, $, $$, REDUCE, hydrate } from '../shell.js';
+import { L, Y, T, esc, img, pageHead, related, App, $, $$, REDUCE, hydrate } from '../shell.js';
 
 /* Our photos in piles, after Codrops' «Adaptive Thumbnail Pile Effect» (Stapel, demo 3: a wide gutter, a little delay
    between photos and a random tilt). Every album, and every place on the map, is a pile of its photos with the top
@@ -27,7 +27,7 @@ export default {
 		const ps = piles(s);
 		let n = 0;
 		return `
-		${pageHead(L('ألبوم الصور', 'Photo album'), L('دوسوا على أي كومة صور عشان تتفرد', 'Tap a pile of photos to spread it out'), [{ href: 'gallery.html', ar: 'ألبوم الصور', en: 'Photo album' }])}
+		${pageHead(L('ألبوم الصور', 'Photo album'), Y('دوس على أي كومة صور عشان تتفرد', 'دوسي على أي كومة صور عشان تتفرد', 'Tap a pile of photos to spread it out'), [{ href: 'gallery.html', ar: 'ألبوم الصور', en: 'Photo album' }])}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="tp-bar">
 				<button class="tp-back" type="button" id="tp-back" hidden aria-label="${L('رجوع للكوم', 'Back to the piles')}">${App.arrow === '←' ? '→' : '←'}</button>
@@ -45,7 +45,7 @@ export default {
 					</button>
 				</li>`;
 			}).join('')).join('')}</ul>
-			${ps.length ? '' : `<p class="empty">${L('حطوا صور في private/media وضيفوها في gallery', 'Add photos to private/media and list them under gallery')}</p>`}
+			${ps.length ? '' : `<p class="empty">${Y('حط صور في private/media وضيفها في gallery', 'حطي صور في private/media وضيفيها في gallery', 'Add photos to private/media and list them under gallery')}</p>`}
 		</div></section>
 		${related(['notes', 'places', 'chapters'])}`;
 	},

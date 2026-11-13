@@ -1,6 +1,6 @@
 /* A full-screen sketch pad. openSketch({ title }) resolves to a webp Blob, or null if cancelled.
    Finger, pen or mouse; pen pressure changes the line width. */
-import { L, esc } from './shell.js';
+import { L, Y, esc } from './shell.js';
 import { doodle } from './doodles.js';
 
 const COLORS = ['#133447', '#0e6990', '#f2726f', '#c2185b', '#e39b2d', '#ffc94a', '#5a9e6f', '#8e5bd1', '#8b5a2b', '#ffffff'];
@@ -15,8 +15,8 @@ export function openSketch({ title = '', hint = '' } = {}) {
 		box.innerHTML = `
 			<header class="sketch__bar">
 				<button type="button" class="btn btn--ghost btn--sm" data-act="cancel">${L('إلغاء', 'Cancel')}</button>
-				<b class="sketch__title">${esc(title || L('ارسموا', 'Draw'))}</b>
-				<button type="button" class="btn btn--coral btn--sm" data-act="save">${L('احفظوا ♥', 'Save ♥')}</button>
+				<b class="sketch__title">${esc(title || Y('ارسم', 'ارسمي', 'Draw'))}</b>
+				<button type="button" class="btn btn--coral btn--sm" data-act="save">${Y('احفظ ♥', 'احفظي ♥', 'Save ♥')}</button>
 			</header>
 			${hint ? `<p class="sketch__hint">${esc(hint)}</p>` : ''}
 			<div class="sketch__stage"><canvas aria-label="${L('لوحة الرسم', 'Drawing canvas')}"></canvas></div>
@@ -26,7 +26,7 @@ export function openSketch({ title = '', hint = '' } = {}) {
 					${SIZES.map((s, k) => `<button type="button" class="sz${k === 1 ? ' is-on' : ''}" data-size="${s}" aria-label="${L('سُمك', 'Size')} ${s}"><i style="--s:${s}px"></i></button>`).join('')}
 					<button type="button" class="tool" data-act="eraser" aria-pressed="false" title="${L('أستيكة', 'Eraser')}">${doodle('eraser', 22)}</button>
 					<button type="button" class="tool" data-act="undo" title="${L('رجوع', 'Undo')}">↶</button>
-					<button type="button" class="tool" data-act="clear" title="${L('امسحوا الكل', 'Clear')}">${doodle('trash', 22)}</button>
+					<button type="button" class="tool" data-act="clear" title="${Y('امسح الكل', 'امسحي الكل', 'Clear')}">${doodle('trash', 22)}</button>
 				</div>
 			</footer>`;
 		document.body.append(box);
@@ -92,9 +92,9 @@ export function openSketch({ title = '', hint = '' } = {}) {
 			} else if (b.dataset.act === 'undo') {
 				strokes.pop(); redraw();
 			} else if (b.dataset.act === 'clear') {
-				if (strokes.length && confirm(L('تمسحوا الرسمة كلها؟', 'Clear the whole drawing?'))) { strokes.length = 0; redraw(); }
+				if (strokes.length && confirm(Y('تمسح الرسمة كلها؟', 'تمسحي الرسمة كلها؟', 'Clear the whole drawing?'))) { strokes.length = 0; redraw(); }
 			} else if (b.dataset.act === 'cancel') {
-				if (!strokes.length || confirm(L('تسيبوا الرسمة من غير ما تحفظيها؟', 'Leave without saving the drawing?'))) close(null);
+				if (!strokes.length || confirm(Y('تسيب الرسمة من غير ما تحفظها؟', 'تسيبي الرسمة من غير ما تحفظيها؟', 'Leave without saving the drawing?'))) close(null);
 			} else if (b.dataset.act === 'save') {
 				if (!strokes.length) return close(null);
 				close(await exportBlob(strokes, canvas.clientWidth / canvas.clientHeight));

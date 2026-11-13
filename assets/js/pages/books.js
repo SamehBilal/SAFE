@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -31,7 +31,7 @@ function reading(b) {
 			<p class="bk-now__who">${doodle('book', 16)} ${esc(whoName(b.who))}${b.started ? ` · ${L('من', 'since')} ${esc(longDate(b.started))}` : ''}</p>
 			${+b.pages ? `<div class="bk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${+b.pages}" aria-valuenow="${+b.page || 0}" aria-label="${L('وصلنا لصفحة', 'Page we’re on')}"><i></i></div>
 			<p class="bk-now__pg">${L(`صفحة ${num(+b.page || 0)} من ${num(+b.pages)}`, `Page ${+b.page || 0} of ${+b.pages}`)}</p>` : ''}
-			${ok ? `<form class="bk-now__go" data-page="${esc(b.id)}"><label class="sr-only" for="pg-${esc(b.id)}">${L('وصلتوا لصفحة كام؟', 'Which page are you on?')}</label><input id="pg-${esc(b.id)}" name="pg" type="number" inputmode="numeric" min="0" step="1" placeholder="${L('وصلنا لصفحة…', 'We’re on page…')}"><button class="btn btn--sm" type="submit">${L('حفظ', 'Save')}</button></form>
+			${ok ? `<form class="bk-now__go" data-page="${esc(b.id)}"><label class="sr-only" for="pg-${esc(b.id)}">${L('وصلنا لصفحة كام؟', 'Which page are we on?')}</label><input id="pg-${esc(b.id)}" name="pg" type="number" inputmode="numeric" min="0" step="1" placeholder="${L('وصلنا لصفحة…', 'We’re on page…')}"><button class="btn btn--sm" type="submit">${L('حفظ', 'Save')}</button></form>
 			<div class="bk-now__acts"><button class="btn btn--sm btn--coral" type="button" data-finish="${esc(b.id)}">${L('خلصناه ✓', 'Finished ✓')}</button>${b.by === live.me() ? `<button class="link link--danger" type="button" data-del="${esc(b.id)}">${L('مسح', 'Delete')}</button>` : ''}</div>` : ''}
 		</div>
 	</article>`;
@@ -50,7 +50,7 @@ function onShelf(b) {
 function details(b) {
 	const ok = live.canWrite();
 	return `<div class="bk-card" style="--bk:${spine(b)[0]}">
-		<button class="bk-card__x" type="button" data-close aria-label="${L('اقفلوا', 'Close')}">✕</button>
+		<button class="bk-card__x" type="button" data-close aria-label="${Y('اقفل', 'اقفلي', 'Close')}">✕</button>
 		<h3 dir="auto">${esc(b.title)}</h3>
 		${b.author ? `<p class="bk-card__au" dir="auto">${esc(b.author)}</p>` : ''}
 		<p class="bk-card__meta">${[whoName(b.who), +b.pages ? L(`${num(+b.pages)} صفحة`, `${+b.pages} pages`) : '', b.finished ? `${L('خلصناه', 'Finished')} ${longDate(b.finished)}` : ''].filter(Boolean).map(esc).join(' · ')}</p>
@@ -70,7 +70,7 @@ export default {
 			<div class="counters" id="bk-totals"></div>
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:24px auto 0"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('book', 22)}</span> ${L('ضيفوا كتاب', 'Add a book')}</summary>
+				<summary><span>${doodle('book', 22)}</span> ${Y('ضيف كتاب', 'ضيفي كتاب', 'Add a book')}</summary>
 				<form id="bk-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f f--grow"><span>${L('اسم الكتاب', 'Title')}</span><input name="title" dir="auto" maxlength="100" required></label>
@@ -87,7 +87,7 @@ export default {
 					</div>
 					<label class="f"><span>${L('جملة فضلت معانا (اختياري)', 'A line that stayed with us (optional)')}</span><textarea name="note" dir="auto" rows="2" maxlength="300"></textarea></label>
 					<p class="form-msg" id="bk-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('حطوه على الرف ♥', 'Put it on the shelf ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('حطه على الرف ♥', 'حطيه على الرف ♥', 'Put it on the shelf ♥')}</button></div>
 				</form>
 			</details>
 
@@ -115,7 +115,7 @@ export default {
 			const now = all().filter((b) => b.status === 'reading').sort((a, b) => (b.at || 0) - (a.at || 0));
 			const read = all().filter((b) => b.status === 'read').sort((a, b) => String(a.finished || a.at).localeCompare(String(b.finished || b.at)));
 			const want = all().filter((b) => b.status === 'want').sort((a, b) => (a.at || 0) - (b.at || 0));
-			$('#bk-reading', main).innerHTML = now.length ? now.map(reading).join('') : `<p class="empty">${L('مفيش كتاب مفتوح دلوقتي… ', 'No book open right now… ')}${want.length ? L('اختاروا واحد من اللي مستنيين تحت', 'pick one from the pile below') : L('ضيفوا اللي هتبدأوا فيه', 'add the one you’re starting')}</p>`;
+			$('#bk-reading', main).innerHTML = now.length ? now.map(reading).join('') : `<p class="empty">${L('مفيش كتاب مفتوح دلوقتي… ', 'No book open right now… ')}${want.length ? Y('اختار واحد من اللي مستنيين تحت', 'اختاري واحد من اللي مستنيين تحت', 'pick one from the pile below') : Y('ضيف اللي هتبدأ فيه', 'ضيفي اللي هتبدأي فيه', 'add the one you’re starting')}</p>`;
 			// the shelf breaks into rows of about a metre of books
 			const per = Math.max(6, Math.floor((sec.clientWidth || 900) / 52));
 			const rows = [];
@@ -155,7 +155,7 @@ export default {
 			if ('close' in t.dataset) showBook('');
 			if (t.dataset.finish) save((d) => { const b = find(d, t.dataset.finish); if (b) { b.status = 'read'; b.finished = live.today(); if (+b.pages) b.page = +b.pages; } });
 			if (t.dataset.start) { open = ''; save((d) => { const b = find(d, t.dataset.start); if (b) { b.status = 'reading'; b.started = live.today(); b.at = Date.now(); } }); }
-			if (t.dataset.del && confirm(L('تشيلوا الكتاب ده؟', 'Remove this book?'))) { open = ''; save((d) => { d.items = (d.items || []).filter((b) => b.id !== t.dataset.del); }); }
+			if (t.dataset.del && confirm(Y('تشيل الكتاب ده؟', 'تشيلي الكتاب ده؟', 'Remove this book?'))) { open = ''; save((d) => { d.items = (d.items || []).filter((b) => b.id !== t.dataset.del); }); }
 		});
 		sec.addEventListener('submit', (e) => {
 			const f = e.target;

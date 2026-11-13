@@ -9,7 +9,7 @@
      phone (Settings → "Add a file") to see each other's, or on the PC run `node tools/import.mjs <file>` and publish.
      Once the published site has a change, the phone drops its own copy of it by itself. */
 import { seal, open, toB64, fromB64 } from './core.js';
-import { App, getKey, store } from './shell.js';
+import { App, getKey, store, Y } from './shell.js';
 import { diff, apply, combine } from './merge.js';
 import { initOf } from './defaults.js';
 
@@ -211,8 +211,8 @@ export const today = () => { const d = new Date(); return `${d.getFullYear()}-${
 export function why(err) {
 	const L = App.L;
 	switch (err?.code) {
-		case 'setup': return L('اختاروا مين ماسك الموبايل ده من صفحة الإعدادات الأول', 'Choose whose phone this is on the settings page first');
-		case 'full': return L('مساحة الموبايل للموقع خلصت — ابعتوا اللي جديد للكمبيوتر وانشروه', 'This phone’s space for the site is full — send what’s new to the PC and publish it');
+		case 'setup': return Y('اختار مين ماسك الموبايل ده من صفحة الإعدادات الأول', 'اختاري مين ماسك الموبايل ده من صفحة الإعدادات الأول', 'Choose whose phone this is on the settings page first');
+		case 'full': return Y('مساحة الموبايل للموقع خلصت — ابعت اللي جديد للكمبيوتر وانشره', 'مساحة الموبايل للموقع خلصت — ابعتي اللي جديد للكمبيوتر وانشريه', 'This phone’s space for the site is full — send what’s new to the PC and publish it');
 		case 'file': return L('ده مش ملف من موقعنا (أو اتعمل بمفتاح تاني)', 'That isn’t a file from our site (or it was made with another key)');
 		default: return L('حصلت مشكلة في الحفظ', 'Something went wrong while saving') + (err?.message ? ` (${err.message})` : '');
 	}

@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -81,7 +81,7 @@ export default {
 			<div class="goal-stats" id="gl-stats"></div>
 			${ok ? '' : `<div class="narrow" style="margin:0 auto 24px">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:0 auto 28px"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('star', 22)}</span> ${L('ضيفوا هدف', 'Add a goal')}</summary>
+				<summary><span>${doodle('star', 22)}</span> ${Y('ضيف هدف', 'ضيفي هدف', 'Add a goal')}</summary>
 				<form id="gl-form" autocomplete="off">
 					<label class="f"><span>${L('عايزين نوصل لإيه؟', 'What do we want to get to?')}</span><input name="title" dir="auto" maxlength="90" required placeholder="${L('نشتري عربية', 'Buy a car')}"></label>
 					<div class="f-row">
@@ -95,7 +95,7 @@ export default {
 					<label class="f"><span>${L('الخطوات (كل خطوة في سطر)', 'Steps (one per line)')}</span><textarea name="steps" dir="auto" rows="3" maxlength="800" placeholder="${L('نطلع رخصة\nنختار الموديل\nنحوش المقدم', 'Get a licence\nPick the model\nSave the deposit')}"></textarea></label>
 					<label class="f"><span>${L('ليه عايزينه؟', 'Why do we want it?')}</span><textarea name="note" dir="auto" rows="2" maxlength="300"></textarea></label>
 					<p class="form-msg" id="gl-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('حطوه على اللوحة ♥', 'Pin it on the board ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('حطه على اللوحة ♥', 'حطيه على اللوحة ♥', 'Pin it on the board ♥')}</button></div>
 				</form>
 			</details>
 			<div class="chips" role="toolbar" aria-label="${L('النوع', 'Kind')}" id="gl-chips"></div>
@@ -117,7 +117,7 @@ export default {
 				.sort((a, b) => (a.when || '9999').localeCompare(b.when || '9999') || (b.at || 0) - (a.at || 0));
 			const fin = all().filter((g) => g.done).sort((a, b) => String(b.done).localeCompare(String(a.done)));
 			list.innerHTML = open.length ? open.map(card).join('')
-				: `<p class="empty">${all().some((g) => !g.done) ? L('مفيش أهداف من النوع ده', 'No goals of this kind') : L('اللوحة فاضية… ضيفوا أول حاجة نفسنا نوصلها ♥', 'The board is empty… add the first thing we want to get to ♥')}</p>`;
+				: `<p class="empty">${all().some((g) => !g.done) ? L('مفيش أهداف من النوع ده', 'No goals of this kind') : Y('اللوحة فاضية… ضيف أول حاجة نفسنا نوصلها ♥', 'اللوحة فاضية… ضيفي أول حاجة نفسنا نوصلها ♥', 'The board is empty… add the first thing we want to get to ♥')}</p>`;
 			done.innerHTML = fin.map(card).join('');
 			$('#gl-done-h', main).hidden = !fin.length;
 			for (const el of $$('.reveal', main)) el.classList.add('is-in');
@@ -164,7 +164,7 @@ export default {
 			if (!b) return;
 			if (b.dataset.done) save((d) => { const g = find(d, b.dataset.done); if (g) g.done = live.today(); });
 			if (b.dataset.undo) save((d) => { const g = find(d, b.dataset.undo); if (g) delete g.done; });
-			if (b.dataset.del && confirm(L('تمسحوا الهدف ده؟', 'Delete this goal?'))) save((d) => { d.items = (d.items || []).filter((g) => g.id !== b.dataset.del); });
+			if (b.dataset.del && confirm(Y('تمسح الهدف ده؟', 'تمسحي الهدف ده؟', 'Delete this goal?'))) save((d) => { d.items = (d.items || []).filter((g) => g.id !== b.dataset.del); });
 		});
 
 		const form = $('#gl-form', main);

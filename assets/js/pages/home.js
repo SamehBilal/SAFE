@@ -1,4 +1,4 @@
-import { App, L, T, t, esc, img, num, parseDate, yearsBetween, daysBetween, age, isToday, yearsAgo, fmtDate, icon, PAGES, occasions, DRAW_KINDS } from '../shell.js';
+import { App, L, Y, T, t, esc, img, num, parseDate, yearsBetween, daysBetween, age, isToday, yearsAgo, fmtDate, icon, PAGES, occasions, DRAW_KINDS } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { GOVERNORATES } from '../egypt.js';
@@ -53,12 +53,12 @@ export default {
 			${next ? `<a class="hero__bday" href="${occHref(next)}">${doodle(next.emoji, 18)} ${next.days === 0 ? `${L('النهارده', 'Today')}: ${esc(next.title)}` : `${esc(next.title)} ${L(`بعد ${num(next.days)} يوم`, `in ${next.days} days`)}`}</a>` : ''}
 			<h1 class="hero__title">${L('حكاية حبنا', 'Our Love Story')}</h1>
 			<div class="ribbon"><span>${T(s.him)}</span><span class="heart">♥</span><span>${T(s.her)}</span></div>
-			<a class="scroll-cue" href="#now" aria-label="${L('انزلوا', 'Scroll down')}">⌄</a>
+			<a class="scroll-cue" href="#now" aria-label="${Y('انزل', 'انزلي', 'Scroll down')}">⌄</a>
 		</section>
 
 		<section class="sec sec--tight" id="now"><div class="wrap">
 			${today.map((x) => `<a class="otd reveal" href="moment.html?id=${esc(x.id)}"><span class="otd__ic">${doodle(x.icon, 28)}</span><span><small>${L('النهارده', 'On this day')} · ${yearsAgo(x.date)}</small><b>${T(x.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>`).join('')}
-			<h2 class="sec__title reveal" style="margin-top:24px">${L('ضيفوا للنهارده', 'Add to today')}</h2>
+			<h2 class="sec__title reveal" style="margin-top:24px">${Y('ضيف للنهارده', 'ضيفي للنهارده', 'Add to today')}</h2>
 			<div class="quick">${quick.map(([href, e, label]) => `<a class="quick__btn reveal" href="${href}"><span aria-hidden="true">${doodle(e, 22)}</span>${esc(label)}</a>`).join('')}</div>
 		</div></section>
 
@@ -68,7 +68,7 @@ export default {
 				${feed.length ? `<ol class="feed">${feed.map((x) => `
 					<li class="reveal"><a href="${esc(x.href)}"><span class="feed__e" aria-hidden="true">${doodle(x.e, 26)}</span>
 						<span><span><b>${x.by ? name(x.by) : ''}</b> ${esc(x.what)}${x.text ? `: <q dir="auto">${esc(t(x.text).slice(0, 90))}</q>` : ''}</span><small>${ago(x.at)}</small></span></a></li>`).join('')}</ol>`
-					: `<p class="empty">${L('لسه محدش كتب حاجة — ابدأوا بصفحة في الدفتر ♥', 'Nothing added yet — start with a journal page ♥')}</p>`}
+					: `<p class="empty">${Y('لسه محدش كتب حاجة — ابدأ بصفحة في الدفتر ♥', 'لسه محدش كتب حاجة — ابدئي بصفحة في الدفتر ♥', 'Nothing added yet — start with a journal page ♥')}</p>`}
 			</div>
 			<div>
 				<h2 class="sec__title reveal">${L('جاي قريب', 'Coming up')}</h2>

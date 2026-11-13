@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, qs, longDate, img, hydrate } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, qs, longDate, img, hydrate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
@@ -40,7 +40,7 @@ export default {
 			${photos.length ? `<div class="hang-night"><h2 class="sec__title">${L('صور الرحلة', 'Trip photos')}</h2>${hangWall(photos)}</div>` : ''}
 
 			${ok ? `<details class="composer reveal" id="mem-composer" style="margin-top:28px"${photos.length || notes.length ? '' : ' open'}>
-				<summary><span>${doodle('camera', 22)}</span> ${L('ضيفوا ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
+				<summary><span>${doodle('camera', 22)}</span> ${Y('ضيف ذكرى من الرحلة', 'ضيفي ذكرى من الرحلة', 'Add a memory from the trip')}</summary>
 				<form id="mem-form" autocomplete="off">
 					<label class="f"><span>${L('فاكرين إيه؟', 'What do you remember?')}</span><textarea name="text" dir="auto" rows="3" maxlength="800"></textarea></label>
 					<div class="photo-pick" id="mem-preview"></div>
@@ -48,7 +48,7 @@ export default {
 					<div class="f-actions">
 						<label class="btn btn--ghost file-btn">${doodle('camera', 18)} ${L('صور', 'Photos')}<input type="file" name="photos" accept="image/*" multiple></label>
 						<button class="btn btn--ghost" type="button" id="mem-draw">${doodle('pencil', 18)} ${L('رسمة', 'Sketch')}</button>
-						<button class="btn btn--coral" type="submit">${L('احفظوا الذكرى ♥', 'Save the memory ♥')}</button>
+						<button class="btn btn--coral" type="submit">${Y('احفظ الذكرى ♥', 'احفظي الذكرى ♥', 'Save the memory ♥')}</button>
 					</div>
 				</form>
 			</details>` : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
@@ -78,7 +78,7 @@ export default {
 
 		main.onclick = async (e) => {
 			const del = e.target.closest('[data-del]');
-			if (!del || !confirm(L('تمسحوا الذكرى دي؟', 'Delete this memory?'))) return;
+			if (!del || !confirm(Y('تمسح الذكرى دي؟', 'تمسحي الذكرى دي؟', 'Delete this memory?'))) return;
 			try { await live.save('trips', (d) => { const t = (d.items || []).find((y) => y.id === x.id); if (t) t.memories = (t.memories || []).filter((m) => m.id !== del.dataset.del); }); location.reload(); }
 			catch (err) { alert(live.why(err)); }
 		};

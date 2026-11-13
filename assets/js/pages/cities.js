@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, num, fmtDate } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, num, fmtDate } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -6,11 +6,19 @@ import { GOV, govName, loadTrips } from './trips.js';
 import { fit, where, here, nearestGov, CAPITALS } from '../tilemap.js';
 
 /* A map for every city we've been to, like a city poster: the streets in the dark and every spot we went to lit up.
-   The spots are our places that have "at" in story.json (grouped by the governorate they're in, named by their
-   "area" when they have one), the governorates of our anniversary trips, and spots added from the phones
+   The spots are our places that have "at" in story.json (each on the map of the governorate it's in — Cairo and Giza
+   apart), the governorates of our anniversary trips, and spots added from the phones
    (the shared list content/live/spots.bin). */
 
 const coords = ({ lat, lng }) => `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'} · ${Math.abs(lng).toFixed(2)}°${lng >= 0 ? 'E' : 'W'}`;
+
+/* The governorate a spot is in. Cairo's and Giza's centres are a few km apart, so around them the Nile decides
+   (Giza is the west bank: Mohandeseen, Dokki, the Pyramids, October; Zamalek and Maadi are Cairo). */
+function govOf(at) {
+	const g = nearestGov(at);
+	if ((g === 'EG.QH' || g === 'EG.JZ') && at.lat > 29.75 && at.lat < 30.2) return at.lng < 31.213 ? 'EG.JZ' : 'EG.QH';
+	return g;
+}
 
 /** Every city with its spots: [{ id (governorate), name, spots: [{ title, at, date, note, id?, by? }], trips: [years] }] */
 function cities(s, trips, extra) {
@@ -19,24 +27,19 @@ function cities(s, trips, extra) {
 		if (!map.has(gov)) map.set(gov, { id: gov, name: govName(gov) || gov, area: '', spots: [], trips: [] });
 		return map.get(gov);
 	};
-	// places that share an "area" stay on one map, under the governorate of the first of them
-	const areaGov = new Map();
+	// every place on the map of its own governorate — Cairo and Giza are two cities, not one
 	for (const m of s.places || []) {
 		const at = where(m);
 		if (!at) continue;
-		const area = App.t(m.area);
-		if (area && !areaGov.has(area)) areaGov.set(area, nearestGov(at));
-		const c = get(area ? areaGov.get(area) : nearestGov(at));
-		if (m.area && !c.area) c.area = App.t(m.area);
-		c.spots.push({ title: App.t(m.title), at, date: m.date, note: App.t(m.where) || App.t(m.place) });
+		get(govOf(at)).spots.push({ title: App.t(m.title), at, date: m.date, note: App.t(m.where) || App.t(m.place) });
 	}
 	for (const x of extra) {
 		const at = where(x);
 		if (!at) continue;
-		get(x.gov && GOV[x.gov] ? x.gov : nearestGov(at)).spots.push({ ...x, at, live: true });
+		get(x.gov && GOV[x.gov] ? x.gov : govOf(at)).spots.push({ ...x, at, live: true });
 	}
 	for (const t of trips) if (t.gov && GOV[t.gov]) get(t.gov).trips.push(t.year);
-	return [...map.values()].map((c) => ({ ...c, label: c.area || c.name }))
+	return [...map.values()].map((c) => ({ ...c, label: c.name }))
 		.sort((a, b) => b.spots.length - a.spots.length || a.label.localeCompare(b.label));
 }
 
@@ -51,7 +54,7 @@ export default {
 				<div class="cm__map" aria-hidden="true"></div>
 				<div class="cm__pins"></div>
 				<div class="cm__title"><b id="cm-name"></b><small id="cm-sub"></small></div>
-				<p class="cm__empty" id="cm-empty" hidden>${L('لسه مفيش أماكن منورة هنا — ضيفوا اللي رحناه', 'No spots lit up here yet — add the ones we went to')}</p>
+				<p class="cm__empty" id="cm-empty" hidden>${Y('لسه مفيش أماكن منورة هنا — ضيف اللي رحناه', 'لسه مفيش أماكن منورة هنا — ضيفي اللي رحناه', 'No spots lit up here yet — add the ones we went to')}</p>
 				<div class="cm__tip" id="cm-tip" hidden></div>
 				<p class="cm__credit">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
 			</div>
@@ -61,7 +64,7 @@ export default {
 
 			${ok ? '' : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:28px auto 0"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('pin', 22)}</span> ${L('نورّوا مكان', 'Light up a spot')}</summary>
+				<summary><span>${doodle('pin', 22)}</span> ${Y('نوّر مكان', 'نوّري مكان', 'Light up a spot')}</summary>
 				<form id="cm-form" autocomplete="off">
 					<label class="f"><span>${L('اسم المكان', 'The spot')}</span><input name="title" dir="auto" maxlength="80" required placeholder="${L('قلعة قايتباي', 'Qaitbay Citadel')}"></label>
 					<div class="f-row">
@@ -69,10 +72,10 @@ export default {
 						<label class="f"><span>${L('رحناه إمتى؟', 'When?')}</span><input name="date" type="date"></label>
 					</div>
 					<label class="f"><span>${L('المكان على الخريطة', 'Where on the map')}</span><input name="at" dir="ltr" required placeholder="31.2140, 29.8856" inputmode="decimal"></label>
-					<p class="cm-howto">${L('من جوجل ماب: دوسة طويلة (أو كليك يمين) على المكان، وانسخوا أول سطر. أو:', 'From Google Maps: long-press (or right-click) the spot and copy the first line. Or:')} <button class="link" type="button" id="cm-here">${doodle('pin', 16)} ${L('أنا هناك دلوقتي', 'I’m there now')}</button></p>
+					<p class="cm-howto">${Y('من جوجل ماب: دوسة طويلة (أو كليك يمين) على المكان، وانسخ أول سطر. أو:', 'من جوجل ماب: دوسة طويلة (أو كليك يمين) على المكان، وانسخي أول سطر. أو:', 'From Google Maps: long-press (or right-click) the spot and copy the first line. Or:')} <button class="link" type="button" id="cm-here">${doodle('pin', 16)} ${L('أنا هناك دلوقتي', 'I’m there now')}</button></p>
 					<label class="f"><span>${L('كلمة عنه (اختياري)', 'A word about it (optional)')}</span><input name="note" dir="auto" maxlength="140"></label>
 					<p class="form-msg" id="cm-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('نوّروه ✦', 'Light it up ✦')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('نوّره ✦', 'نوّريه ✦', 'Light it up ✦')}</button></div>
 				</form>
 			</details>
 		</div></section>
@@ -120,7 +123,7 @@ export default {
 		$('#cm-spots', main).onclick = async (e) => {
 			const del = e.target.closest('[data-del]');
 			if (del) {
-				if (!confirm(L('تطفوا المكان ده؟', 'Remove this spot?'))) return;
+				if (!confirm(Y('تطفي المكان ده؟', 'تطفي المكان ده؟', 'Remove this spot?'))) return;
 				try { spots = await live.save('spots', (d) => { d.items = (d.items || []).filter((x) => x.id !== del.dataset.del); }); build(cur); } catch (err) { alert(live.why(err)); }
 				return;
 			}
@@ -143,7 +146,7 @@ export default {
 					<span class="cm-card__map" style="direction:ltr" aria-hidden="true"><span class="cm-card__tiles"></span><span class="cm-card__dots"></span></span>
 					<b>${esc(c.label)}</b>
 					<small>${c.spots.length ? L(`${num(c.spots.length)} ${c.spots.length === 1 ? 'مكان' : c.spots.length <= 10 ? 'أماكن' : 'مكان'} منورة`, `${c.spots.length} spot${c.spots.length === 1 ? '' : 's'} lit up`) : L('مستنية أماكنها', 'waiting for its spots')}${c.trips.length ? ` · ${doodle('suitcase', 14)}` : ''}</small>
-				</button>`).join('') : `<p class="empty">${L('لسه مفيش مدن… ضيفوا أول مكان رحناه ♥', 'No cities yet… add the first spot we went to ♥')}</p>`;
+				</button>`).join('') : `<p class="empty">${Y('لسه مفيش مدن… ضيف أول مكان رحناه ♥', 'لسه مفيش مدن… ضيفي أول مكان رحناه ♥', 'No cities yet… add the first spot we went to ♥')}</p>`;
 			// each card gets its own little night map
 			for (const card of $$('.cm-card', grid)) {
 				const c = list.find((x) => x.id === card.dataset.c);
@@ -160,9 +163,9 @@ export default {
 		if (form) {
 			const msg = $('#cm-msg', main);
 			$('#cm-here', main).onclick = async () => {
-				msg.textContent = L('بندور عليكم…', 'Finding you…');
-				try { const p = await here(); form.at.value = `${p.lat}, ${p.lng}`; form.gov.value = nearestGov(p); msg.textContent = ''; }
-				catch (err) { msg.textContent = err.message === 'denied' ? L('اسمحوا للموقع بالـ Location من إعدادات المتصفح', 'Allow Location for this site in the browser settings') : L('معرفناش نلاقي المكان', 'Couldn’t find the spot'); }
+				msg.textContent = Y('بندور عليك…', 'بندور عليكي…', 'Finding you…');
+				try { const p = await here(); form.at.value = `${p.lat}, ${p.lng}`; form.gov.value = govOf(p); msg.textContent = ''; }
+				catch (err) { msg.textContent = err.message === 'denied' ? Y('اسمح للموقع بالـ Location من إعدادات المتصفح', 'اسمحي للموقع بالـ Location من إعدادات المتصفح', 'Allow Location for this site in the browser settings') : L('معرفناش نلاقي المكان', 'Couldn’t find the spot'); }
 			};
 			form.onsubmit = async (e) => {
 				e.preventDefault();

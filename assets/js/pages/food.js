@@ -1,4 +1,4 @@
-import { L, esc, pageHead, related, App, $, $$, num, REDUCE } from '../shell.js';
+import { L, Y, esc, pageHead, related, App, $, $$, num, REDUCE } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -63,7 +63,7 @@ function menuHTML(r) {
 					<div class="fm__logo${r.img ? ' has-pic' : ''}" aria-hidden="true">${r.img ? `<img data-sketch="${esc(r.img)}" alt="">` : doodle(r.icon || 'dinner', 54)}</div>
 					<h2 dir="auto">${esc(App.t(r.name))}</h2>
 					${r.tagline ? `<h3 dir="auto">${esc(App.t(r.tagline))}</h3>` : ''}
-					<button class="fm__open" type="button">${L('افتحوا المنيو', 'Open the menu')}</button>
+					<button class="fm__open" type="button">${Y('افتح المنيو', 'افتحي المنيو', 'Open the menu')}</button>
 					<p class="fm__info">${[App.t(r.cuisine), App.t(r.area), r.phone ? `<span dir="ltr">${esc(r.phone)}</span>` : ''].filter(Boolean).map((x) => (x.startsWith('<') ? x : esc(x))).join('<br>')}</p>
 					${safeLink(r.link) ? `<a class="fm__site" href="${esc(r.link)}" target="_blank" rel="noopener noreferrer">${L('صفحتهم', 'Their page')}</a>` : ''}
 				</div></div>
@@ -73,7 +73,7 @@ function menuHTML(r) {
 			<div class="fm__right">
 				<div class="fm__front"><div class="fm__in"></div></div>
 				<div class="fm__back"><div class="fm__in">
-					<button class="fm__close" type="button">${L('اقفلوه', 'Close')}</button>
+					<button class="fm__close" type="button">${Y('اقفله', 'اقفليه', 'Close')}</button>
 					${dl(c, r)}
 					${r.order ? `<div class="fm__order"><h4>${L('طلبنا المعتاد', 'Our usual order')}</h4><p dir="auto">${esc(App.t(r.order))}</p></div>` : ''}
 				</div><div class="fm__shade"></div></div>
@@ -95,7 +95,7 @@ export default {
 
 			${ok ? '' : `<div class="narrow" style="margin:28px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:28px auto 0"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('dinner', 22)}</span> ${L('ضيفوا مطعم', 'Add a restaurant')}</summary>
+				<summary><span>${doodle('dinner', 22)}</span> ${Y('ضيف مطعم', 'ضيفي مطعم', 'Add a restaurant')}</summary>
 				<form id="fm-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f f--grow"><span>${L('اسم المطعم', 'Restaurant')}</span><input name="name" dir="auto" maxlength="50" required></label>
@@ -114,7 +114,7 @@ export default {
 						<label class="f f--grow"><span>${L('لينك صفحتهم أو الطلب (اختياري)', 'Link to their page or ordering (optional)')}</span><input name="link" type="url" dir="ltr" placeholder="https://"></label>
 					</div>
 					<p class="form-msg" id="fm-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('حطوا المنيو ♥', 'Add the menu ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('حط المنيو ♥', 'حطي المنيو ♥', 'Add the menu ♥')}</button></div>
 				</form>
 			</details>
 		</div></section>
@@ -132,7 +132,7 @@ export default {
 
 		function show(id) {
 			const r = all().find((x) => x.id === id) || all()[0];
-			if (!r) { stage.innerHTML = `<p class="empty">${L('لسه مفيش مطاعم… ضيفوا أول مطعم بنحبه ♥', 'No restaurants yet… add the first place we love ♥')}</p>`; chips.innerHTML = ''; return; }
+			if (!r) { stage.innerHTML = `<p class="empty">${Y('لسه مفيش مطاعم… ضيف أول مطعم بنحبه ♥', 'لسه مفيش مطاعم… ضيفي أول مطعم بنحبه ♥', 'No restaurants yet… add the first place we love ♥')}</p>`; chips.innerHTML = ''; return; }
 			cur = r.id;
 			stage.innerHTML = menuHTML(r);
 			fm = $('#fm', stage);
@@ -142,7 +142,7 @@ export default {
 			const mine = $('#fm-mine', main);
 			const canDel = live.canWrite() && (r.by === live.me() || !r.by);
 			mine.hidden = !canDel;
-			mine.innerHTML = canDel ? `<button class="link link--danger" type="button" data-del="${esc(r.id)}">${r.by ? L('شيلوا المطعم ده', 'Remove this restaurant') : L('شيلوا المثال ده', 'Remove this example')}</button>` : '';
+			mine.innerHTML = canDel ? `<button class="link link--danger" type="button" data-del="${esc(r.id)}">${r.by ? Y('شيل المطعم ده', 'شيلي المطعم ده', 'Remove this restaurant') : Y('شيل المثال ده', 'شيلي المثال ده', 'Remove this example')}</button>` : '';
 		}
 
 		function dish(key, btn) {
@@ -158,7 +158,7 @@ export default {
 			card.setAttribute("aria-label", App.t(d.name));
 			const link = safeLink(d.link) || safeLink(r.link);
 			const ok = live.canWrite();
-			card.innerHTML = `<button class="fm__x" type="button" aria-label="${L('اقفلوا', 'Close')}">✕</button>
+			card.innerHTML = `<button class="fm__x" type="button" aria-label="${Y('اقفل', 'اقفلي', 'Close')}">✕</button>
 				<div class="fm__card-top">
 					${d.img ? `<img class="fm__thumb zoom" data-sketch="${esc(d.img)}" alt="${esc(App.t(d.name))}">` : `<span class="fm__card-ic" aria-hidden="true">${doodle(r.icon || 'dinner', 40)}</span>`}
 					<div class="fm__card-tx">
@@ -170,9 +170,9 @@ export default {
 				${d.price ? `<p class="fm__card-price">${esc(price(d.price))}</p>` : ''}
 				${d.fav ? `<p class="fm__card-fav">♥ ${L('أكلة', 'A favourite of')} ${esc(FAV[d.fav]())}</p>` : ''}
 				<div class="fm__card-ft">
-					${ok ? `<label class="link fm__pic">${d.img ? L('غيّروا الصورة', 'Change the photo') : L('حطوا صورة للأكلة', 'Add a photo of it')}<input type="file" accept="image/*" hidden></label>` : ''}
-					${ok ? `<button class="link fm__lnk" type="button">${d.link ? L('غيّروا اللينك', 'Change the link') : L('حطوا لينك', 'Add a link')}</button>` : ''}
-					${link ? `<a class="fm__go" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${d.link ? L('شوفوها', 'See it') : L('اطلبوها', 'Order it')}</a>` : ''}
+					${ok ? `<label class="link fm__pic">${d.img ? Y('غيّر الصورة', 'غيّري الصورة', 'Change the photo') : Y('حط صورة للأكلة', 'حطي صورة للأكلة', 'Add a photo of it')}<input type="file" accept="image/*" hidden></label>` : ''}
+					${ok ? `<button class="link fm__lnk" type="button">${d.link ? Y('غيّر اللينك', 'غيّري اللينك', 'Change the link') : Y('حط لينك', 'حطي لينك', 'Add a link')}</button>` : ''}
+					${link ? `<a class="fm__go" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${d.link ? Y('شوفها', 'شوفيها', 'See it') : Y('اطلبها', 'اطلبيها', 'Order it')}</a>` : ''}
 				</div>`;
 			fm.append(card);
 			live.hydrateSketches(card);
@@ -223,7 +223,7 @@ export default {
 		chips.onclick = (e) => { const b = e.target.closest('[data-r]'); if (b) { show(b.dataset.r); history.replaceState(history.state, '', '#' + b.dataset.r); } };
 		$('#fm-mine', main).onclick = async (e) => {
 			const b = e.target.closest('[data-del]');
-			if (!b || !confirm(L('تشيلوا المطعم ده بالمنيو بتاعه؟', 'Remove this restaurant and its menu?'))) return;
+			if (!b || !confirm(Y('تشيل المطعم ده بالمنيو بتاعه؟', 'تشيلي المطعم ده بالمنيو بتاعه؟', 'Remove this restaurant and its menu?'))) return;
 			try { data = await live.save('food', (d) => { d.items = (d.items || []).filter((x) => x.id !== b.dataset.del); }); show(''); } catch (err) { alert(live.why(err)); }
 		};
 
@@ -233,7 +233,7 @@ export default {
 			const msg = $('#fm-msg', main);
 			const sections = parseMenu(form.menu.value);
 			if (!form.name.value.trim()) return;
-			if (!sections.length) { msg.textContent = L('اكتبوا أكلة واحدة على الأقل في المنيو', 'Write at least one dish in the menu'); return; }
+			if (!sections.length) { msg.textContent = Y('اكتب أكلة واحدة على الأقل في المنيو', 'اكتبي أكلة واحدة على الأقل في المنيو', 'Write at least one dish in the menu'); return; }
 			const r = {
 				id: live.newId(), name: form.name.value.trim(), tagline: form.tagline.value.trim() || undefined, cuisine: form.cuisine.value.trim() || undefined,
 				area: form.area.value.trim() || undefined, phone: form.phone.value.trim() || undefined, order: form.order.value.trim() || undefined,

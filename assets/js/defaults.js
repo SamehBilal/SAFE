@@ -19,7 +19,7 @@ const foodInit = () => ({
 		name: { ar: 'مطبخ تيتا', en: 'Teta’s Kitchen' },
 		tagline: { ar: 'أكل بيتي زي زمان', en: 'Home cooking, the way it used to be' },
 		cuisine: { ar: 'أكل مصري', en: 'Egyptian' },
-		area: { ar: 'مثال — غيّروه أو امسحوه', en: 'An example — change it or remove it' },
+		area: { ar: 'مثال — ممكن يتغيّر أو يتمسح', en: 'An example — change it or remove it' },
 		order: { ar: 'ملوخية بالفراخ وطاجن بامية ومحشي مشكل، وأم علي في الآخر', en: 'Molokhia with chicken, an okra tagine, mixed mahshi, and Om Ali to finish' },
 		sections: [
 			{ id: 's1', title: { ar: 'مقبلات', en: 'Starters' }, dishes: [

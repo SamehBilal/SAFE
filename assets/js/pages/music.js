@@ -1,4 +1,4 @@
-import { L, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE, mediaURL } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE, mediaURL } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -64,28 +64,28 @@ export default {
 	render() {
 		const ok = live.canWrite();
 		return `
-		${pageHead(L('أغانينا', 'Our songs'), L('حطوا أي أسطوانة على الجرامافون — كل أغنية هنا ليها حكاية معانا', 'Put any record on the player — every song here has a story with us'), [{ href: 'music.html', ar: 'أغانينا', en: 'Our songs' }])}
+		${pageHead(L('أغانينا', 'Our songs'), Y('حط أي أسطوانة على الجرامافون — كل أغنية هنا ليها حكاية معانا', 'حطي أي أسطوانة على الجرامافون — كل أغنية هنا ليها حكاية معانا', 'Put any record on the player — every song here has a story with us'), [{ href: 'music.html', ar: 'أغانينا', en: 'Our songs' }])}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="deck reveal" id="deck">
 				<div class="deck__stage">${deckSVG()}</div>
 				<div class="deck__side">
 					<p class="deck__eyebrow" id="dk-eyebrow"></p>
-					<h2 class="deck__title" id="dk-title" dir="auto">${L('اختاروا أسطوانة', 'Pick a record')}</h2>
+					<h2 class="deck__title" id="dk-title" dir="auto">${Y('اختار أسطوانة', 'اختاري أسطوانة', 'Pick a record')}</h2>
 					<p class="deck__artist" id="dk-artist" dir="auto"></p>
 					<p class="deck__note" id="dk-note" dir="auto"></p>
 					<div class="deck__ctrls">
 						<button class="deck__btn" type="button" id="dk-prev" aria-label="${L('اللي قبلها', 'Previous')}">${doodle(App.lang === 'ar' ? 'forward' : 'back', 22)}</button>
-						<button class="deck__btn deck__btn--main" type="button" id="dk-play" aria-label="${L('شغلوا', 'Play')}"><span class="dk-ic-play">▶</span><span class="dk-ic-stop">■</span></button>
+						<button class="deck__btn deck__btn--main" type="button" id="dk-play" aria-label="${Y('شغّل', 'شغّلي', 'Play')}"><span class="dk-ic-play">▶</span><span class="dk-ic-stop">■</span></button>
 						<button class="deck__btn" type="button" id="dk-next" aria-label="${L('اللي بعدها', 'Next')}">${doodle(App.lang === 'ar' ? 'back' : 'forward', 22)}</button>
 					</div>
 					<label class="check deck__crackle"><input type="checkbox" id="dk-crackle"> ${L('صوت الإبرة على الأسطوانة', 'Needle crackle')}</label>
-					<a class="btn btn--ghost btn--sm" id="dk-open" target="_blank" rel="noopener noreferrer" hidden>↗ ${L('اسمعوها على يوتيوب', 'Listen on YouTube')}</a>
+					<a class="btn btn--ghost btn--sm" id="dk-open" target="_blank" rel="noopener noreferrer" hidden>↗ ${Y('اسمعها على يوتيوب', 'اسمعيها على يوتيوب', 'Listen on YouTube')}</a>
 				</div>
 			</div>
 
 			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
 			<details class="composer reveal narrow" style="margin:24px auto 0"${ok ? '' : ' hidden'}>
-				<summary><span>${doodle('music', 22)}</span> ${L('ضيفوا أسطوانة', 'Add a record')}</summary>
+				<summary><span>${doodle('music', 22)}</span> ${Y('ضيف أسطوانة', 'ضيفي أسطوانة', 'Add a record')}</summary>
 				<form id="mu-form" autocomplete="off">
 					<div class="f-row">
 						<label class="f f--grow"><span>${L('اسم الأغنية', 'Song')}</span><input name="song" dir="auto" required maxlength="120"></label>
@@ -95,7 +95,7 @@ export default {
 					<label class="f"><span>${L('بتفكرنا بإيه؟', 'Why is it ours?')}</span><textarea name="note" dir="auto" rows="3" maxlength="400"></textarea></label>
 					<label class="f"><span>${L('من إمتى بنسمعها؟ (اختياري)', 'Since when? (optional)')}</span><input name="date" type="date"></label>
 					<p class="form-msg" id="mu-msg" role="status"></p>
-					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('حطوها على الرف ♥', 'Put it on the shelf ♥')}</button></div>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${Y('حطها على الرف ♥', 'حطيها على الرف ♥', 'Put it on the shelf ♥')}</button></div>
 				</form>
 			</details>
 
@@ -190,7 +190,7 @@ export default {
 			if (on === playing) return;
 			playing = on;
 			deck.classList.toggle('is-playing', on);
-			$('#dk-play', main).setAttribute('aria-label', on ? L('وقفوا', 'Pause') : L('شغلوا', 'Play'));
+			$('#dk-play', main).setAttribute('aria-label', on ? Y('وقّف', 'وقّفي', 'Pause') : Y('شغّل', 'شغّلي', 'Play'));
 			if (on) creep(true);
 			else { clearTimeout(armTimer); setArm(ARM_REST, 1.1); }
 			crackleOn();
@@ -210,7 +210,7 @@ export default {
 			const [ink, paper] = colours(x);
 			const mine = x.by === live.me() && live.canWrite();
 			return `<li class="sleeve reveal" data-id="${esc(x.id)}" style="--ink:${ink};--paper:${paper};--delay:${(n % 4) * 0.05}s">
-				<button class="sleeve__btn" type="button" data-play="${esc(x.id)}" aria-label="${L('شغلوا', 'Play')} ${esc(x.title)}">
+				<button class="sleeve__btn" type="button" data-play="${esc(x.id)}" aria-label="${Y('شغّل', 'شغّلي', 'Play')} ${esc(x.title)}">
 					<span class="sleeve__lp" aria-hidden="true"><i></i></span>
 					<span class="sleeve__cover${x.cover ? ' has-art' : ''}">
 						${x.cover ? `<img class="sleeve__img" data-cover="${esc(x.cover)}" alt="" decoding="async">` : ''}
@@ -227,7 +227,7 @@ export default {
 		const paint = () => {
 			const l = shown();
 			list.innerHTML = l.length ? l.map((x, k) => sleeve(x, l.length - k)).join('')
-				: `<li class="empty">${(data.items || []).length ? L('مفيش أسطوانات هنا لسه', 'No records here yet') : L('الرف فاضي… ضيفوا أول أسطوانة بتاعتكم ♥', 'The shelf is empty… add your first record ♥')}</li>`;
+				: `<li class="empty">${(data.items || []).length ? L('مفيش أسطوانات هنا لسه', 'No records here yet') : Y('الرف فاضي… ضيف أول أسطوانة بتاعتنا ♥', 'الرف فاضي… ضيفي أول أسطوانة بتاعتنا ♥', 'The shelf is empty… add our first record ♥')}</li>`;
 			list.querySelectorAll('.reveal').forEach((e) => e.classList.add('is-in'));
 			for (const im of $$('img[data-cover]', list)) mediaURL(im.dataset.cover).then((url) => { im.src = url; }).catch(() => im.remove());
 			if (current) $$('.sleeve', list).forEach((el) => el.classList.toggle('is-on', el.dataset.id === current.id));
@@ -247,7 +247,7 @@ export default {
 				deck.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'start' });
 			}
 			if (del) {
-				if (!confirm(L('تشيلوا الأسطوانة دي من الرف؟', 'Remove this record from the shelf?'))) return;
+				if (!confirm(Y('تشيل الأسطوانة دي من الرف؟', 'تشيلي الأسطوانة دي من الرف؟', 'Remove this record from the shelf?'))) return;
 				try { data = await live.save('music', (d) => { d.items = (d.items || []).filter((i) => i.id !== del.dataset.del); }); if (radio.state().item?.id === del.dataset.del) radio.stop(); paint(); }
 				catch (err) { alert(live.why(err)); }
 			}

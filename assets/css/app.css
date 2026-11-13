@@ -183,6 +183,12 @@ body:not(.is-locked) .hearts { opacity: 0.45; }
 @keyframes beat { 50% { transform: scale(1.15); } }
 .gate__title { font: 400 clamp(2.2rem, 9vw, 2.8rem)/1.25 var(--f-script); color: var(--blue); margin: 0; }
 .gate__intro { margin: 8px 0 18px; color: var(--muted); }
+/* who's here: picked once on the questions screen, then the whole site speaks to them */
+.gate__who { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 10px; margin: -6px 0 18px; }
+.gate__who-q { width: 100%; font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.gate__who button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px 6px 10px; border: 1.5px solid var(--ink, #37353f); border-radius: 999px; background: var(--card); color: var(--text); font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+.gate__who button:hover { transform: translateY(-2px); }
+.gate__who button[aria-checked="true"] { background: var(--coral); border-color: var(--coral); color: #fff; box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 var(--ink, #37353f); }
 .gate__steps { display: flex; gap: 8px; justify-content: center; list-style: none; margin: 0 0 18px; padding: 0; }
 .gate__steps li { width: 10px; height: 10px; border-radius: 50%; background: var(--line); transition: background 0.3s, width 0.3s; }
 .gate__steps li.is-done { background: var(--coral); }

@@ -3,7 +3,7 @@
    drops or comes back; "Save for offline", which keeps every photo and video (still encrypted) on the phone; and, after a
    few minutes of reading, a card offering whichever of those is still to do. The browser bar follows our theme, and the
    installed app gets a back button, since it has no browser bar of its own. */
-import { App, L, $, store, esc } from './shell.js';
+import { App, L, Y, $, store, esc } from './shell.js';
 
 const html = document.documentElement;
 export let standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
@@ -29,7 +29,7 @@ export function notify(msg, { title = '', type = '', ttl = 5000, html: asHTML = 
 	const el = document.createElement('div');
 	el.className = 'ns' + (type ? ' ns--' + type : '');
 	el.innerHTML = `${title ? `<b class="ns-title">${esc(title)}</b>` : ''}<p>${asHTML ? msg : esc(msg)}</p>
-		<button type="button" class="ns-close" aria-label="${L('اقفلوا', 'Close')}">✕</button>`;
+		<button type="button" class="ns-close" aria-label="${Y('اقفل', 'اقفلي', 'Close')}">✕</button>`;
 	let timer = 0;
 	const dismiss = () => { clearTimeout(timer); el.classList.add('is-out'); setTimeout(() => el.remove(), 300); };
 	el.querySelector('.ns-close').addEventListener('click', dismiss);
@@ -53,8 +53,8 @@ function install() {
 		deferred.userChoice.then(() => { deferred = null; place(); });
 		return;
 	}
-	if (ios) notify(L('في سفاري: دوسوا على <b>مشاركة</b> ⎋ وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'In Safari, tap <b>Share</b> ⎋, then <b>Add to Home Screen</b> ♥'),
-		{ title: L('حطوا حكايتنا على الشاشة', 'Put our story on your home screen'), html: true, ttl: 10000 });
+	if (ios) notify(Y('في سفاري: دوس على <b>مشاركة</b> ⎋ وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'في سفاري: دوسي على <b>مشاركة</b> ⎋ وبعدين <b>إضافة إلى الشاشة الرئيسية</b> ♥', 'In Safari, tap <b>Share</b> ⎋, then <b>Add to Home Screen</b> ♥'),
+		{ title: Y('حط حكايتنا على الشاشة', 'حطي حكايتنا على الشاشة', 'Put our story on your home screen'), html: true, ttl: 10000 });
 }
 /* Chrome on a phone sends appinstalled as soon as the install is accepted, while it is still adding the icon, and often
    again once it is there: the first says it's on its way, the second (or ten seconds later) that it's there — once. */
@@ -92,7 +92,7 @@ async function saveOffline() {
 	await Promise.all([next(), next(), next(), next()]);
 	saving = false; n.dismiss();
 	if (!failed) store.set('us.offline', String(Date.now()));
-	notify(failed ? L(`اتحفظ أغلبها؛ ${failed} معرفناش نحفظهم — جربوا تاني لما النت يبقى أحسن.`, `Mostly saved; ${failed} couldn’t be — try again on a better connection.`)
+	notify(failed ? Y(`اتحفظ أغلبها؛ ${failed} معرفناش نحفظهم — جرّب تاني لما النت يبقى أحسن.`, `اتحفظ أغلبها؛ ${failed} معرفناش نحفظهم — جرّبي تاني لما النت يبقى أحسن.`, `Mostly saved; ${failed} couldn’t be — try again on a better connection.`)
 		: L('كل صورنا وفيديوهاتنا بقت على الموبايل ده ♥', 'Every photo and video of ours is on this device now ♥'), { type: failed ? 'warn' : 'ok' });
 	place();
 }
@@ -104,7 +104,7 @@ function place() {
 		let b = $('.install-app', tools);
 		if (!canInstall()) b?.remove();
 		else if (!b) {
-			b = Object.assign(document.createElement('button'), { type: 'button', className: 'icon-btn install-app', title: L('حطوها كتطبيق', 'Install as an app'), innerHTML: ICON_INSTALL });
+			b = Object.assign(document.createElement('button'), { type: 'button', className: 'icon-btn install-app', title: Y('حطها كتطبيق', 'حطيها كتطبيق', 'Install as an app'), innerHTML: ICON_INSTALL });
 			b.setAttribute('aria-label', b.title);
 			b.onclick = install;
 			tools.prepend(b);
@@ -137,11 +137,11 @@ function invite() {
 	if (!i && !s) return;
 	invited = true;
 	const n = notify(
-		(i && s ? L('حطوها على الشاشة تفتح بدوسة زي أي تطبيق، واحفظوا صورنا عليه عشان تفتح من غير نت.', 'Put it on your home screen to open in one tap like an app, and keep our photos on it so it opens without the internet.')
-			: i ? L('حطوها على الشاشة تفتح بدوسة زي أي تطبيق — واللي فتحتوه قبل كده بيفتح من غير نت.', 'Put it on your home screen to open in one tap like an app — what you’ve opened before works offline.')
-			: L('احفظوا صورنا وفيديوهاتنا على الموبايل عشان حكايتنا تفتح من غير نت.', 'Keep our photos and videos on this device so our story opens without the internet.')) +
-		`<span class="ns-actions">${i ? `<button type="button" class="ns-action" data-do="install">${L('حطوها كتطبيق', 'Install')}</button>` : ''}${s ? `<button type="button" class="ns-action" data-do="save">${L('احفظوها من غير نت', 'Save for offline')}</button>` : ''}<button type="button" class="ns-action ns-later" data-do="later">${L('بعدين', 'Later')}</button></span>`,
-		{ title: L('حكايتنا معاكم في كل حتة', 'Take our story everywhere'), html: true, ttl: 0 });
+		(i && s ? Y('حطها على الشاشة تفتح بدوسة زي أي تطبيق، واحفظ صورنا عليه عشان تفتح من غير نت.', 'حطيها على الشاشة تفتح بدوسة زي أي تطبيق، واحفظي صورنا عليه عشان تفتح من غير نت.', 'Put it on your home screen to open in one tap like an app, and keep our photos on it so it opens without the internet.')
+			: i ? Y('حطها على الشاشة تفتح بدوسة زي أي تطبيق — واللي فتحته قبل كده بيفتح من غير نت.', 'حطيها على الشاشة تفتح بدوسة زي أي تطبيق — واللي فتحتيه قبل كده بيفتح من غير نت.', 'Put it on your home screen to open in one tap like an app — what you’ve opened before works offline.')
+			: Y('احفظ صورنا وفيديوهاتنا على الموبايل عشان حكايتنا تفتح من غير نت.', 'احفظي صورنا وفيديوهاتنا على الموبايل عشان حكايتنا تفتح من غير نت.', 'Keep our photos and videos on this device so our story opens without the internet.')) +
+		`<span class="ns-actions">${i ? `<button type="button" class="ns-action" data-do="install">${Y('حطها كتطبيق', 'حطيها كتطبيق', 'Install')}</button>` : ''}${s ? `<button type="button" class="ns-action" data-do="save">${Y('احفظها من غير نت', 'احفظيها من غير نت', 'Save for offline')}</button>` : ''}<button type="button" class="ns-action ns-later" data-do="later">${L('بعدين', 'Later')}</button></span>`,
+		{ title: Y('حكايتنا معاك في كل حتة', 'حكايتنا معاكي في كل حتة', 'Take our story everywhere'), html: true, ttl: 0 });
 	n.el.addEventListener('click', (ev) => {
 		if (ev.target.closest('.ns-close')) return store.set('us.invite-off', String(Date.now())); // closing it counts as «later»
 		const what = ev.target.closest('[data-do]')?.dataset.do;
@@ -174,7 +174,7 @@ export function pwaChrome() {
 let updateCard = null;
 function offerUpdate(worker) {
 	updateCard?.dismiss(); // one card, for the newest version
-	const n = updateCard = notify(L('فيه نسخة أجدد من حكايتنا. <button type="button" class="ns-action">حدّثوا دلوقتي</button>', 'A newer version of our story is ready. <button type="button" class="ns-action">Update now</button>'),
+	const n = updateCard = notify(Y('فيه نسخة أجدد من حكايتنا. <button type="button" class="ns-action">حدّث دلوقتي</button>', 'فيه نسخة أجدد من حكايتنا. <button type="button" class="ns-action">حدّثي دلوقتي</button>', 'A newer version of our story is ready. <button type="button" class="ns-action">Update now</button>'),
 		{ title: L('جديد ♥', 'New ♥'), html: true, ttl: 0 });
 	$('.ns-action', n.el).onclick = () => { reloading = true; worker.postMessage('skipWaiting'); n.dismiss(); };
 }
@@ -198,7 +198,7 @@ export function initPWA() {
 		installing = notify(L('بنحطها على الشاشة دلوقتي… لحظة.', 'Adding it to your home screen… a moment.'), { ttl: 10000 });
 		wait = setTimeout(installed, 10000);
 	});
-	addEventListener('offline', () => notify(L('النت فصل. الصفحات اللي فتحتوها قبل كده لسه شغالة ♥', 'You’re offline. Pages you’ve opened before still work ♥'), { type: 'warn', ttl: 6000 }));
+	addEventListener('offline', () => notify(Y('النت فصل. الصفحات اللي فتحتها قبل كده لسه شغالة ♥', 'النت فصل. الصفحات اللي فتحتيها قبل كده لسه شغالة ♥', 'You’re offline. Pages you’ve opened before still work ♥'), { type: 'warn', ttl: 6000 }));
 	addEventListener('online', () => notify(L('النت رجع.', 'Back online.'), { type: 'ok', ttl: 2500 }));
 
 	if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
