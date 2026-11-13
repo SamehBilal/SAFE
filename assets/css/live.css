@@ -604,3 +604,48 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 .nn__when { margin: 6px 0 0; padding: 0 6px; font: 600 1.3rem/1.3 var(--f-hand); background: linear-gradient(transparent 40%, rgba(253, 200, 48, 0.7) 40% 92%, transparent 92%); }
 :lang(ar) .nn__when { font: 700 0.95rem/1.5 var(--f-body); }
 @media (prefers-reduced-motion: reduce) { .nb__bar { animation: none; } .nn { transition: none; } }
+
+/* ---------- birthdays: the night sky above the headline (bdsky.js) ---------- */
+.bd-sky { position: relative; width: min(1240px, 100% - 2 * var(--gutter)); height: clamp(250px, 38vw, 430px); margin: clamp(12px, 3vw, 28px) auto 0; overflow: hidden; background: #090d1e; border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch, 22px); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); }
+.bd-sky canvas { position: absolute; inset: 0; display: block; cursor: crosshair; touch-action: manipulation; }
+.bd-sky__tip { position: absolute; bottom: 10px; inset-inline-end: 14px; margin: 0; color: rgba(255, 255, 255, 0.55); font: 600 1.15rem/1 var(--f-hand); pointer-events: none; }
+:lang(ar) .bd-sky__tip { font: 700 0.85rem/1 var(--f-body); }
+
+/* ---------- each birthday card's party, after Siggy's pen: hat, confetti, balloon on a string, greeting ---------- */
+.bd-row { padding-top: 34px; gap: 40px 18px; }
+.bd-card { position: relative; overflow: visible; }
+.bd-pic { position: relative; display: grid; place-items: center; }
+.bd-fx { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+.bd-string { fill: none; stroke: #37353f; stroke-width: 1.5; stroke-linecap: round; opacity: 0; stroke-dasharray: 1200; stroke-dashoffset: 1200; }
+:root[data-theme='dark'] .bd-string { stroke: rgba(226, 234, 240, 0.7); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .bd-string { stroke: rgba(226, 234, 240, 0.7); } }
+.bd-balloon { pointer-events: auto; cursor: grab; touch-action: none; }
+.bd-card.is-drag .bd-balloon { cursor: grabbing; }
+.bd-balloon__in { transform-box: fill-box; transform-origin: 50% 100%; transform: scale(0); opacity: 0; }
+.bd-bits circle { opacity: 0; transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i) * 0.02s), opacity 0.6s; }
+/* the hat sits on the photo, tipped a little, and pops on with a wobble */
+.bd-hat { position: absolute; z-index: 3; width: 46px; top: -34px; left: 50%; translate: -50% 0; rotate: -16deg; transform-origin: 50% 90%; transform: scale(0); opacity: 0; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15)); }
+:root[dir='rtl'] .bd-hat { rotate: 16deg; }
+.bd-pop { position: absolute; z-index: 3; top: -24px; left: 50%; width: 0; height: 0; pointer-events: none; }
+.bd-pop i { position: absolute; width: 7px; height: 7px; border-radius: 50%; opacity: 0; }
+.bd-pop i:nth-child(3n) { width: 5px; height: 9px; border-radius: 2px; }
+.bd-hi { font: 400 1.35rem/1 var(--f-label); letter-spacing: 0.03em; color: var(--c); opacity: 0; translate: 0 6px; }
+:lang(ar) .bd-hi { font: 800 1rem/1.3 var(--f-body); }
+.bd-hi b { color: var(--coral-deep, #d9534f); font-weight: inherit; }
+/* the party, once the card comes into view */
+.bd-card.is-party .bd-hat { animation: bd-hat 0.7s cubic-bezier(0.34, 1.8, 0.5, 1) forwards; }
+.bd-card.is-party .bd-pop i { animation: bd-pop 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards; }
+.bd-card.is-party .bd-string { animation: bd-string 0.45s linear 0.8s forwards; }
+.bd-card.is-party .bd-balloon__in { animation: bd-blow 1s cubic-bezier(0.34, 1.7, 0.5, 1) 1.05s forwards; }
+.bd-card.is-party .bd-bits circle { opacity: 0.9; transition-delay: calc(1.4s + var(--i) * 0.03s), calc(1.4s + var(--i) * 0.03s); }
+.bd-card.is-party.is-drag .bd-bits circle { transition-delay: calc(var(--i) * 0.02s), 0s; }
+.bd-card.is-party .bd-hi { animation: bd-hi 0.9s ease-out 1.9s forwards; }
+@keyframes bd-hat { from { transform: scale(0.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes bd-pop { 0% { opacity: 1; transform: rotate(var(--a)) translateX(4px) scale(0.2); } 30% { opacity: 1; transform: rotate(var(--a)) translateX(var(--d)) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(calc(var(--d) * 1.7)) translateY(18px) scale(0.8); } }
+@keyframes bd-string { to { stroke-dashoffset: 0; opacity: 0.75; } }
+@keyframes bd-blow { from { transform: scale(0.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes bd-hi { to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+	.bd-card.is-party :is(.bd-hat, .bd-balloon__in, .bd-string, .bd-hi) { animation-duration: 0.01s; animation-delay: 0s; }
+	.bd-card.is-party .bd-pop i { animation: none; }
+}

@@ -1,8 +1,20 @@
 import { L, Y, T, esc, img, num, pageHead, related, App, $, $$, rand, REDUCE, qs, occasions, longDate, age } from '../shell.js';
 import { doodle } from '../doodles.js';
+import { sky } from '../bdsky.js';
 
 /* Birthdays: each of us, with how long until the next one and the age we're turning. The cake below is for
-   whoever is next (or whose day it is today, or whoever you tap): blow out the candles, get confetti. */
+   whoever is next (or whose day it is today, or whoever you tap): blow out the candles, get confetti.
+   Above the headline, a night sky of fireworks spelling out the greeting for whoever is next (bdsky.js). Each
+   card throws its own little party, after Siggy's «Happy Birthday, Go!» pen (codepen.io/siggy/pen/bVOaQe): a party
+   hat pops onto the photo with confetti, a balloon blows up on a string you can drag around, and the greeting comes. */
+const ord = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : { 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
+const HAT = `<svg class="bd-hat" viewBox="0 0 60 72" aria-hidden="true">
+	<path d="M30 8 54 62c-8 6-40 6-48 0Z" fill="#f2726f" stroke="#37353f" stroke-width="1.6" stroke-linejoin="round"/>
+	<path d="M23 24c4 2 10 2 14 0M17 38c7 3 19 3 26 0M11 52c10 4 28 4 38 0" fill="none" stroke="#ffc94a" stroke-width="4" stroke-linecap="round"/>
+	<ellipse cx="30" cy="63" rx="25" ry="5" fill="#fde3e0" stroke="#37353f" stroke-width="1.6"/>
+	<circle cx="30" cy="7" r="6" fill="#ffc94a" stroke="#37353f" stroke-width="1.6"/>
+</svg>`;
+const BIT = ['#0e6990', '#f2726f', '#ffc94a', '#5a9e6f', '#c2185b'];
 export default {
 	title: { ar: 'أعياد الميلاد', en: 'Birthdays' },
 	render(s) {
@@ -13,7 +25,23 @@ export default {
 		this.pick = pick;
 		const card = (o) => `
 			<a class="bd-card reveal${o === pick ? ' is-on' : ''}${o.days === 0 ? ' is-today' : ''}" href="birthday.html?id=${esc(o.id)}" style="--c:${esc(o.member.color || '#0e6990')}">
-				<span class="fam__pic">${o.member.photo ? `<span data-media-box>${img(o.member.photo, App.t(o.member.name))}</span>` : `<span class="fam__emoji">${doodle(o.member.emoji, 52)}</span>`}</span>
+				<svg class="bd-fx" aria-hidden="true">
+					<path class="bd-string" d="M0 0"/>
+					<g class="bd-bits">${Array.from({ length: 12 }, (_, i) => `<circle r="${[5, 3.5, 2.5, 4, 2][i % 5]}" fill="${BIT[i % BIT.length]}" style="--i:${i}"/>`).join('')}</g>
+					<g class="bd-balloon" role="presentation">
+						<g class="bd-balloon__in">
+							<path d="M0 0C-15-4-21-22-21-35-21-51-11-60 0-60 11-60 21-51 21-35 21-22 15-4 0 0Z" fill="var(--c)" stroke="#37353f" stroke-width="1.5"/>
+							<path d="M10-44c3 3 5 7 4 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+							<path d="M-4 5 0 0 4 5Z" fill="var(--c)" stroke="#37353f" stroke-width="1.2" stroke-linejoin="round"/>
+						</g>
+					</g>
+				</svg>
+				<span class="bd-pic">
+					<span class="fam__pic">${o.member.photo ? `<span data-media-box>${img(o.member.photo, App.t(o.member.name))}</span>` : `<span class="fam__emoji">${doodle(o.member.emoji, 52)}</span>`}</span>
+					${HAT}
+					<span class="bd-pop" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<i style="--a:${(i * 30) + 15}deg;--d:${28 + (i % 3) * 12}px;background:${BIT[i % BIT.length]}"></i>`).join('')}</span>
+				</span>
+				<span class="bd-hi" aria-hidden="true">${L(`هابي <b>${num(o.years)}</b>!!!`, `Happy <b>${ord(o.years)}</b>!!!`)}</span>
 				<b>${T(o.member.name)}</b>
 				<small>${longDate(o.member.born).replace(/\s*\d{4}$|[\s،,]*[٠-٩]{4}$/, '')}</small>
 				<em>${o.days === 0 ? L('النهارده!', 'Today!') : L(`بعد ${num(o.days)} يوم`, `in ${o.days} days`)}</em>
@@ -22,7 +50,11 @@ export default {
 		const n = pick ? Math.min(Math.max(pick.years, 1), 9) : 5;
 		const xs = Array.from({ length: n }, (_, k) => 40 + (k * 140) / Math.max(n - 1, 1));
 		return `
-		${pageHead(L('أعياد الميلاد', 'Birthdays'), L('عيد ميلاد كل واحد فينا، وكام يوم فاضل عليه', 'Each of our birthdays, and how long until the next'), [{ href: 'birthday.html', ar: 'أعياد الميلاد', en: 'Birthdays' }])}
+		${pageHead(L('أعياد الميلاد', 'Birthdays'), L('عيد ميلاد كل واحد فينا، وكام يوم فاضل عليه', 'Each of our birthdays, and how long until the next'), [{ href: 'birthday.html', ar: 'أعياد الميلاد', en: 'Birthdays' }], {
+			band: `<div class="bd-sky" id="bd-sky" role="img" aria-label="${esc(pick ? L(`ألعاب نارية: كل سنة و${App.t(pick.member.name)} ${pick.member.female ? 'طيبة' : 'طيب'}`, `Fireworks: happy birthday, ${App.t(pick.member.name)}`) : L('ألعاب نارية', 'Fireworks'))}">
+				<p class="bd-sky__tip">${Y('دوس في أي حتة ✦', 'دوسي في أي حتة ✦', 'Tap anywhere ✦')}</p>
+			</div>`
+		})}
 		<section class="sec sec--top"><div class="wrap">
 			<div class="bd-row">${bdays.map(card).join('')}</div>
 			${missing.length ? `<p class="empty" style="margin-top:16px">${Y(`ضيف تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `ضيفي تاريخ ميلاد ${missing.map((m) => App.t(m.name)).join(' و')} (born) في private/story.json عشان يظهر هنا`, `Add a birth date ("born") for ${missing.map((m) => App.t(m.name)).join(' and ')} in private/story.json to show them here`)}</p>` : ''}
@@ -58,6 +90,72 @@ export default {
 		${related(['wishes', 'family', 'journal'])}`;
 	},
 	after(main) {
+		/* the sky: the greeting for whoever is next */
+		const p = this.pick, name = p ? App.t(p.member.name) : '';
+		const lines = App.lang === 'ar'
+			? (p ? [['كل', 'سنة'], [`و${name}`, p.member.female ? 'طيبة' : 'طيب']] : [['كل', 'سنة'], ['وإحنا', 'مع', 'بعض']])
+			: [[...'HAPPY'], [...'BIRTHDAY'], ...(p ? [[...name.toUpperCase().replace(/\s+/g, '')]] : [])];
+		const box = $('#bd-sky', main);
+		const stopSky = box ? sky(box, lines) : () => {};
+
+		/* each card's party: the hat pops on, then the balloon, then the greeting (as the pen's timeline goes) */
+		const cards = $$('.bd-card', main);
+		const rtl = () => document.documentElement.dir === 'rtl';
+		const place = (card) => {
+			const fx = $('.bd-fx', card), pic = $('.fam__pic', card);
+			const W = card.clientWidth, H = card.clientHeight;
+			fx.setAttribute('viewBox', `0 0 ${W} ${H}`);
+			const cr = card.getBoundingClientRect(), pr = pic.getBoundingClientRect();
+			// the string is tied at the side of the photo, the balloon floats up in the top corner
+			card._tie = { x: (rtl() ? pr.left : pr.right) - cr.left, y: pr.top - cr.top + pr.height * 0.62 };
+			card._rest = { x: rtl() ? 30 : W - 30, y: 70 };
+			if (!card._at) card._at = { ...card._rest };
+			draw(card);
+		};
+		const draw = (card) => {
+			const { _tie: t, _at: b } = card;
+			$('.bd-balloon', card).setAttribute('transform', `translate(${b.x} ${b.y})`);
+			// a loose curve, like the pen's string
+			const cx = t.x + (b.x - t.x) * 0.15 + (rtl() ? -1 : 1) * 18, cy = Math.min(t.y, b.y) + Math.abs(t.y - b.y) * 0.85;
+			$('.bd-string', card).setAttribute('d', `M${t.x} ${t.y}Q${cx} ${cy} ${b.x} ${b.y + 6}`);
+			for (const [i, c] of $$('.bd-bits circle', card).entries()) {
+				const a = (i / 12) * Math.PI * 2, r = 30 + (i % 3) * 9;
+				c.style.transform = `translate(${b.x + Math.cos(a) * r}px, ${b.y - 30 + Math.sin(a) * r * 0.8}px)`;
+			}
+		};
+		const ro = new ResizeObserver(() => cards.forEach(place));
+		ro.observe($('.bd-row', main));
+		cards.forEach(place);
+		const party = (card, k) => setTimeout(() => card.classList.add('is-party'), REDUCE ? 0 : 250 + k * 280);
+		const io = new IntersectionObserver((list) => list.forEach((en) => { if (en.isIntersecting) { party(en.target, cards.indexOf(en.target)); io.unobserve(en.target); } }), { threshold: 0.4 });
+		cards.forEach((c) => io.observe(c));
+
+		/* drag the balloon: the string follows, the confetti chases it */
+		for (const card of cards) {
+			const bal = $('.bd-balloon', card);
+			let moved = false;
+			bal.addEventListener('pointerdown', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				moved = false;
+				try { bal.setPointerCapture(e.pointerId); } catch { /* not a live pointer */ }
+				card.classList.add('is-drag');
+				const r = card.getBoundingClientRect();
+				const move = (m) => {
+					moved = true;
+					card._at = { x: Math.max(-20, Math.min(card.clientWidth + 20, m.clientX - r.left)), y: Math.max(-40, Math.min(card.clientHeight - 10, m.clientY - r.top + 30)) };
+					draw(card);
+				};
+				const up = () => { bal.removeEventListener('pointermove', move); card.classList.remove('is-drag'); };
+				bal.addEventListener('pointermove', move);
+				bal.addEventListener('pointerup', up, { once: true });
+				bal.addEventListener('pointercancel', up, { once: true });
+			});
+			// a drag isn't a tap on the card
+			card.addEventListener('click', (e) => { if (moved) { e.preventDefault(); moved = false; } }, true);
+		}
+		this.leave = () => { stopSky(); ro.disconnect(); io.disconnect(); };
+
 		const candles = $$('.candle', main);
 		const blow = (c) => {
 			if (c.classList.contains('is-out')) return;
