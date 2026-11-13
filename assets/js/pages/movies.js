@@ -3,14 +3,37 @@ import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
 
-/* What we've watched together, laid out like the stats.html template: one coloured block per film or
-   series, staggered on a grid, with a legend by kind and our totals. */
+/* What we've watched together, laid out like Olivia Ng's «Netflix Binge: Top Stats» (codepen.io/oliviale): one
+   poster card per film or series, dropped in scattered spots that overlap a little rather than in rows, with the
+   title running up the side, a legend by kind, and our totals. */
 export const KINDS = [
 	{ id: 'arabic', ar: 'عربي', en: 'Arabic' },
 	{ id: 'foreign', ar: 'أجنبي', en: 'Foreign' },
 	{ id: 'kids', ar: 'مع الولاد', en: 'With the boys' },
 	{ id: 'other', ar: 'تركي، كوري، وغيره', en: 'Turkish, Korean & more' }
 ];
+/* The spots, after the pen's six boxes: [first column, columns wide, first row, nudge sideways %]. Rows are half a
+   column tall, so a card 3 columns wide is 9 rows high — a poster's 2:3. Every other group of six is mirrored so
+   the pattern never shows; tablets and phones get a zigzag. */
+const SPOTS = {
+	d: { cols: 12, every: 25, at: [[6, 3, 0, 0], [2, 4, 2, 0], [10, 3, 4, 0], [6, 3, 11, -12], [3, 3, 16, 6], [9, 3, 15, -10]] },
+	t: { cols: 6, every: 16, at: [[1, 3, 0, 0], [5, 2, 2, -6], [3, 2, 9, 8], [5, 2, 10, 4]] },
+	p: { cols: 2, every: 6, at: [[1, 1, 0, 0], [2, 1, 3, 0]], tall: 6 }
+};
+const hash = (t) => [...String(t)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+function spot(k, id) {
+	const out = [];
+	const j = hash(id);
+	for (const [m, S] of Object.entries(SPOTS)) {
+		const g = Math.floor(k / S.at.length);
+		let [c, w, r, dx] = S.at[k % S.at.length];
+		if (g % 2 && m !== 'p') { c = S.cols + 2 - c - w; dx = -dx; }
+		const h = S.tall || w * 3;
+		const dy = m === 'p' ? 0 : (j % 7) - 3; // a little up or down, the same every time for the same film
+		out.push(`--${m}c:${c} / span ${w};--${m}r:${1 + g * S.every + r} / span ${h};--${m}x:${dx + ((j >> 3) % 5) - 2}%;--${m}y:${dy}%`);
+	}
+	return out.join(';');
+}
 const kindName = (id) => { const k = KINDS.find((x) => x.id === id) || KINDS[3]; return L(k.ar, k.en); };
 
 function line(x) {
@@ -61,6 +84,7 @@ export default {
 				<h2 class="binge__title">${L('سهراتنا:', 'Binge:')} <br><span>${L('أحلى الأرقام', 'Top stats')}</span><small>${L('لما حد فينا يقول «حلقة كمان وننام»، ', 'When one of us says “one more episode”, ')}<span>${L('ماحدش بيصدق.', 'nobody believes it.')}</span></small></h2>
 				<div class="binge__legend">${KINDS.map((k) => `<span><i class="mv--${k.id}"></i>${esc(L(k.ar, k.en))}</span>`).join('')}</div>
 				<p class="empty" id="mv-empty">${L('بنجيب السهرات…', 'Fetching our evenings…')}</p>
+				<div class="binge__field" id="mv-field"></div>
 			</div>
 
 			<div class="games" id="mv-games" hidden>
@@ -78,19 +102,19 @@ export default {
 		const name = (w) => T(w === 'him' ? s.him : s.her);
 
 		const paint = () => {
-			$$('.binge__box', board).forEach((b) => b.remove());
+
 			const items = (data.items || []).slice().sort((a, b) => (b.mins || 0) - (a.mins || 0));
 			$('#mv-empty', main).hidden = !!items.length;
 			$('#mv-empty', main).textContent = L('لسه مسجلناش حاجة — ضيفوا أول فيلم ♥', 'Nothing logged yet — add your first film ♥');
-			board.insertAdjacentHTML('beforeend', items.map((x, k) => `
-				<article class="binge__box mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" style="--i:${k}" id="${esc(x.id)}">
+			$('#mv-field', main).innerHTML = items.map((x, k) => `
+				<article class="binge__box mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" style="--i:${k};${spot(k, x.id || x.title)}" id="${esc(x.id)}">
 					${x.cover ? `<img class="binge__poster" data-cover="${esc(x.cover)}" alt="" decoding="async">` : ''}
 					<h4 dir="auto">${esc(x.title)}</h4>
 					<p>${esc(line(x))}</p>
 					${x.hearts ? `<p class="binge__hearts" aria-label="${x.hearts}/5">${'♥'.repeat(x.hearts)}<i>${'♥'.repeat(5 - x.hearts)}</i></p>` : ''}
 					${x.note ? `<p class="binge__note" dir="auto">${esc(x.note)}</p>` : ''}
 					<p class="binge__by">${x.by ? `${L('اختيار', 'Picked by')} ${name(x.by)}` : ''}${x.by === live.me() && live.canWrite() ? ` · <button class="link" type="button" data-del="${esc(x.id)}">${L('مسح', 'Delete')}</button>` : ''}</p>
-				</article>`).join(''));
+				</article>`).join('');
 
 			// the games we played together (movies.json → games)
 			const games = (data.games || []).slice().sort((a, b) => (b.year || 0) - (a.year || 0));
