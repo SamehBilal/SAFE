@@ -249,3 +249,10 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .places .moment:hover img, .places .moment:hover video { scale: 1.06; transition-duration: 0.12s, 0.45s, 0.3s; filter: saturate(1.35) brightness(0.95); }
 .places .moment:hover h3 { transition-duration: 0.12s; }
 .places .moment__blur { inset: 40% 0 0; mask: linear-gradient(transparent, #000 70%); -webkit-mask: linear-gradient(transparent, #000 70%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+
+/* the timeline's photo: a small polaroid beside the words, not a big picture under them */
+.tl__card:has(figure) { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: start; }
+.tl__card:has(figure) > :not(figure) { grid-column: 1; }
+.tl__card figure { grid-column: 2; grid-row: 1 / span 5; width: clamp(84px, 22vw, 130px); margin: 2px 0 0; padding: 5px 5px 0; }
+.tl__card figure img { aspect-ratio: 1; max-height: none; height: auto; }
+.tl__card figure::after { height: 12px; }
