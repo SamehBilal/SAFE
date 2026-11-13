@@ -17,6 +17,7 @@ function line(x) {
 	const parts = [];
 	if (x.series) parts.push(L(`${num(x.eps || 0)} حلقة`, `${x.eps || 0} episodes`));
 	else parts.push(L('فيلم', 'Film'));
+	if (x.year) parts.push(num(x.year).replace(/[٬,]/g, '')); // the year the film came out, not when we watched it
 	if (x.mins) parts.push(L(`${num(x.mins)} دقيقة`, `${x.mins} minutes`));
 	let s = parts.join(' // ');
 	if (x.days) s += x.days === 1 ? L(' في قعدة واحدة.', ' in one sitting.') : L(` في ${num(x.days)} أيام.`, ` in ${x.days} days.`);
@@ -57,6 +58,12 @@ export default {
 				<div class="binge__legend">${KINDS.map((k) => `<span><i class="mv--${k.id}"></i>${esc(L(k.ar, k.en))}</span>`).join('')}</div>
 				<p class="empty" id="mv-empty">${L('بنجيب السهرات…', 'Fetching our evenings…')}</p>
 			</div>
+
+			<div class="games" id="mv-games" hidden>
+				<h2 class="sec__title">${L('لعبنا سوا', 'Games we played together')}</h2>
+				<p class="sec__sub">${L('مش كل السهرات أفلام — ساعات كانت دراع في إيد كل واحد فينا', 'Not every night was a film — sometimes it was a controller each')}</p>
+				<div class="games__grid" id="mv-games-grid"></div>
+			</div>
 		</div></section>
 		${related(['draw', 'music', 'journal'])}`;
 	},
@@ -79,6 +86,17 @@ export default {
 					${x.note ? `<p class="binge__note" dir="auto">${esc(x.note)}</p>` : ''}
 					<p class="binge__by">${x.by ? `${L('اختيار', 'Picked by')} ${name(x.by)}` : ''}${x.by === live.me() && live.canWrite() ? ` · <button class="link" type="button" data-del="${esc(x.id)}">${L('مسح', 'Delete')}</button>` : ''}</p>
 				</article>`).join(''));
+
+			// the games we played together (movies.json → games)
+			const games = (data.games || []).slice().sort((a, b) => (b.year || 0) - (a.year || 0));
+			$('#mv-games', main).hidden = !games.length;
+			$('#mv-games-grid', main).innerHTML = games.map((g) => `
+				<article class="game">
+					<span class="game__pad" aria-hidden="true">🎮</span>
+					<h3 dir="auto">${esc(g.title)}</h3>
+					${g.year ? `<p class="game__year">${num(g.year).replace(/[٬,]/g, '')}</p>` : ''}
+					${g.note ? `<p class="game__note" dir="auto">${esc(g.note)}</p>` : ''}
+				</article>`).join('');
 
 			// our totals
 			const mins = items.reduce((a, x) => a + (+x.mins || 0), 0);
