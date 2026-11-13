@@ -29,6 +29,7 @@ export default {
 			${chapter ? `<a class="otd reveal" href="chapter.html?id=${esc(chapter.id)}"><span class="otd__ic">${doodle(chapter.icon, 28)}</span><span><small>${L('حكاية اليوم ده', 'The story of that day')}</small><b>${T(chapter.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>` : ''}
 			${days.filter((d) => !chapter || d.chapter !== chapter.id).map((d) => `<a class="otd reveal" href="moment.html?id=${esc(d.id)}"><span class="otd__ic">${doodle(d.icon, 28)}</span><span><small>${fmtDate(d.date)}</small><b>${T(d.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>`).join('')}
 		</div>
+		${m.growth && m.born ? growth(m) : ''}
 		${photos.length ? `<div class="wrap"><div class="gallery">${photos.map((p) => `<figure class="shot" data-media-box>${img(p.photo, App.t(p.caption), 'zoom')}${p.caption ? `<figcaption>${T(p.caption)}</figcaption>` : ''}</figure>`).join('')}</div></div>` : ''}
 		</section>
 		<section class="sec"><div class="wrap"><div class="fam-row fam-row--sm">${members.filter((x) => x !== m).map((x) => `
@@ -37,6 +38,41 @@ export default {
 		${related(['family', 'gallery', 'chapters'])}`;
 	}
 };
+
+/* One photo a month or one a year, from the folders images/family/<id>/months|years/<n>.jpg:
+   a photo shows as a polaroid, a month or year still to fill as an empty frame with its date. */
+function growth(m) {
+	const b = parseDate(m.born);
+	const now = new Date();
+	const monthly = m.growth.every === 'month';
+	const at = (n) => (monthly ? new Date(b.getFullYear(), b.getMonth() + n, b.getDate()) : new Date(b.getFullYear() + n, b.getMonth(), b.getDate()));
+	let done = 0;
+	while (at(done + 1) <= now) done++;
+	const pics = m.growth.photos || {};
+	const last = Math.max(done + 1, monthly ? 12 : 1, ...Object.keys(pics).map(Number));
+	const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+	const born = m.female ? L('يوم ما اتولدت', 'The day she was born') : L('يوم ما اتولد', 'The day he was born');
+	const label = (n) => (n === 0 ? born : monthly
+		? L(n === 1 ? 'الشهر الأول' : `شهر ${num(n)}`, n === 1 ? 'One month' : `${n} months`)
+		: L(n === 1 ? 'سنة' : n === 2 ? 'سنتين' : `${num(n)} ${n <= 10 ? 'سنين' : 'سنة'}`, n === 1 ? 'One year old' : `${n} years old`));
+	const tiles = [];
+	for (let n = monthly && !pics[0] ? 1 : 0; n <= last; n++) {
+		const d = at(n), p = pics[n], soon = n > done;
+		tiles.push(`<figure class="grow__tile${p ? '' : ' grow__tile--empty'}${soon ? ' grow__tile--soon' : ''}"${p ? ' data-media-box' : ''}>
+			${p ? img(p, label(n), 'zoom') : `<span class="grow__blank" aria-hidden="true">${doodle(soon ? 'sparkle' : 'camera', 34)}</span>`}
+			<figcaption><b>${label(n)}</b><small>${fmtDate(iso(d))}</small></figcaption>
+		</figure>`);
+	}
+	const name = T(m.name);
+	const title = monthly ? L(`${name} شهر بشهر`, `${name}, month by month`) : L(`${name} سنة بسنة`, `${name}, year by year`);
+	const sub = monthly
+		? L('صورة كل شهر — بنشوفه بيكبر قدام عينينا', 'A photo every month — watching him grow before our eyes')
+		: L('صورة في كل عيد ميلاد — من أول يوم لحد النهارده', 'A photo every birthday — from day one to today');
+	return `<div class="wrap"><div class="grow reveal" style="--c:${esc(m.color || '#0e6990')}">
+		<h2 class="sec__title">${title}</h2><p class="sec__sub">${sub}</p>
+		<div class="grow__grid">${tiles.join('')}</div>
+	</div></div>`;
+}
 
 function nextBirthday(iso) {
 	const b = parseDate(iso);

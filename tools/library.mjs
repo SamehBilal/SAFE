@@ -60,8 +60,9 @@ async function list(dir) {
 	};
 }
 
+const GROW = /^(months|years)$/i;
 export async function library(mediaDir) {
-	const out = { gallery: [], placePhotos: new Map(), newPlaces: [], songs: [], gifts: [], timeline: [], count: 0 };
+	const out = { gallery: [], growth: {}, placePhotos: new Map(), newPlaces: [], songs: [], gifts: [], timeline: [], count: 0 };
 	if (!existsSync(mediaDir)) return out;
 
 	// images/ and videos/: albums (places/ is handled on its own below)
@@ -79,11 +80,25 @@ export async function library(mediaDir) {
 			out.gallery.push(item);
 			out.count++;
 		}
-		for (const d of dirs) await album(kind, path.join(dir, d), [...segs, d], test);
+		for (const d of dirs) if (!(segs[0] === 'family' && GROW.test(d))) await album(kind, path.join(dir, d), [...segs, d], test);
 	}
 	for (const [kind, test] of [['images', IMG], ['videos', VID]]) {
 		const { dirs } = await list(path.join(mediaDir, kind));
 		for (const d of dirs) if (d !== 'places' && d !== 'timeline') await album(kind, path.join(mediaDir, kind, d), [d], new RegExp(`${IMG.source}|${VID.source}`, 'i'));
+	}
+
+	// images/family/<person>/months/<n>.jpg (and years/<n>.jpg): one photo a month or a year, for the strip on their page
+	const fam = path.join(mediaDir, 'images', 'family');
+	for (const who of (await list(fam)).dirs) {
+		for (const every of (await list(path.join(fam, who))).dirs.filter((d) => GROW.test(d))) {
+			const dir = path.join(fam, who, every);
+			const photos = {};
+			for (const f of (await list(dir)).files.filter((f) => IMG.test(f))) {
+				const n = (f.match(/^\d+/) || [])[0];
+				if (n !== undefined && !photos[+n]) { photos[+n] = rel(path.relative(mediaDir, path.join(dir, f))); out.count++; }
+			}
+			if (Object.keys(photos).length) out.growth[who.toLowerCase()] = { every: every.toLowerCase().startsWith('m') ? 'month' : 'year', photos };
+		}
 	}
 
 	// images/timeline/<YYYY-MM-DD>[-anything]/ → that date on «حكايتنا»
@@ -166,6 +181,10 @@ export function intoStory(story, lib) {
 		} else if (photos.length) {
 			story.gallery.push(...photos.map((photo) => ({ photo, album: name(id) })));
 		}
+	}
+	for (const m of story.family?.members || []) {
+		const g = lib.growth[m.id];
+		if (g) m.growth = { every: g.every, photos: { ...(m.growth?.photos || {}), ...g.photos } };
 	}
 	if (lib.gifts.length) story.gifts = [...(story.gifts || []), ...lib.gifts];
 	// the big days («أيام فارقة») show their album's photos too
