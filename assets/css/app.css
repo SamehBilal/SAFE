@@ -246,7 +246,6 @@ body:not(.is-locked) .hearts { opacity: 0.45; }
 @keyframes pop-x { to { scale: 1 0.06; } }
 @keyframes pop-y { to { scale: 1 1; } }
 .intro__final .sub { font-family: var(--f-hand); font-size: clamp(1.6rem, 6vw, 2.4rem); margin: 0; opacity: 0; animation: word-in 0.8s 3s forwards; }
-.intro__final .btn { margin-top: 16px; opacity: 0; animation: word-in 0.8s 3.4s forwards; }
 
 /* ---------- Sections & page heads ---------- */
 .sec { padding: clamp(48px, 9vw, 96px) 0; position: relative; }

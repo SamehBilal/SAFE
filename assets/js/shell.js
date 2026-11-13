@@ -344,9 +344,10 @@ async function enter({ key, story }, { intro, loader }) {
 	App.story = story;
 
 	if (loader) {
-		const label = L('بنفتح حكايتنا', 'Opening our story');
+		const label = L('ثواني… وحكايتنا تبدأ', 'A few seconds… and our story begins');
+		// the lobes and their outline reach a little above y=0, so the box starts higher to keep them whole
 		const el = stage(`
-			<svg class="loader__heart" viewBox="0 0 100 92" aria-hidden="true">
+			<svg class="loader__heart" viewBox="-4 -6 108 102" aria-hidden="true">
 				<defs><clipPath id="heart-clip"><path d="M50 90C20 70 2 52 2 30A24 24 0 0 1 50 18a24 24 0 0 1 48 12c0 22-18 40-48 60Z"/></clipPath></defs>
 				<path d="M50 90C20 70 2 52 2 30A24 24 0 0 1 50 18a24 24 0 0 1 48 12c0 22-18 40-48 60Z" fill="#fde3e0"/>
 				<g clip-path="url(#heart-clip)"><g id="loader-fill"><path class="loader__wave" d="M-100 92 Q-75 86 -50 92 T0 92 T50 92 T100 92 T150 92 T200 92 V200 H-100Z" fill="#F2726F"/></g></g>
@@ -439,9 +440,13 @@ async function runIntro(story) {
 			<div class="names"><span class="n1">${T(story.him)}</span><span class="heart heart--stars" aria-label="♥">${starHeart()}</span><span class="n2">${T(story.her)}</span></div>
 			<h1 class="pop"><span>${esc(first)}</span>${rest.length ? `<span class="pop__word"><span>${esc(rest.join(' '))}</span></span>` : ''}</h1>
 			<p class="sub">${today ? esc(today.sub) : T(story.closing)}</p>
-			<button class="btn btn--light" type="button" id="intro-go">${L('ادخلوا ♥', 'Come in ♥')}</button>
 		</div>`;
-	await new Promise((r) => ($('#intro-go', el).onclick = r));
+	// no button: once the names and the title have had their moment (their animations end near 3.4s), the site
+	// opens by itself; a tap anywhere goes in sooner
+	await new Promise((r) => {
+		setTimeout(r, skipped ? 3500 : 5500);
+		el.addEventListener('click', r, { once: true });
+	});
 }
 
 /* ------------------------------------------------------------------ pages, menus */
