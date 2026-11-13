@@ -199,4 +199,19 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 	.ft-end { font-size: 1.4rem; padding-top: 18px; }
 }
 
-@media (prefers-reduced-motion: reduce) { .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
+/* ---------- «كملوا الحكاية» (Keep exploring) at the foot of every page: journal cards too ---------- */
+.related__h { width: fit-content; margin-inline: auto; padding-inline: 0.3em; background: linear-gradient(to left, color-mix(in srgb, var(--hl-pink) 55%, transparent), var(--hl-pink)) no-repeat 0 82% / 100% 42%; border-radius: 10px 0 / 100px 20px; }
+[dir='ltr'] .related__h { background-image: linear-gradient(to right, color-mix(in srgb, var(--hl-pink) 55%, transparent), var(--hl-pink)); }
+.related__card { padding: 16px 18px 16px; border: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.12s, box-shadow 0.12s, background 0.2s; }
+.related__card:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.related__card:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.related__card .ic { width: 40px; height: 40px; margin-bottom: 6px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--hl-pink) 55%, var(--card)); color: var(--coral-deep); }
+.related__card:nth-child(3n + 2) .ic { background: color-mix(in srgb, var(--hl-lime) 55%, var(--card)); color: var(--text); }
+.related__card:nth-child(3n) .ic { background: color-mix(in srgb, var(--hl-yellow) 55%, var(--card)); color: var(--text); }
+.related__card b { font-size: 1.08rem; }
+.related__card > span:last-child { top: 16px; inset-inline-end: 16px; width: 34px; height: 34px; display: grid; place-items: center; font-size: 1.05rem; color: var(--text); background: var(--card); border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }
+.related__card:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); border-color: var(--ink); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--coral); }
+.related__card:hover > span:last-child { background: var(--hl-yellow); translate: calc(var(--bujo-x) * 3px) 0; }
+.related__card:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) { .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
