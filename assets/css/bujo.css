@@ -238,7 +238,33 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .tl__card figure::after { content: ''; display: block; height: 14px; }
 .tl__card--journal { border-style: dashed; }
 
-@media (prefers-reduced-motion: reduce) { .chapter-card, .tl__card, .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
+/* ---------- home: «آخر أخبارنا» (what's new), «جاي قريب» (coming up), «آخر حكايتنا» (latest), «النهارده» ---------- */
+.feed a, .coming a, .mini { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
+.feed li:nth-child(3n + 2) a, .coming li:nth-child(3n + 2) a, .mini:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.feed li:nth-child(3n) a, .coming li:nth-child(3n) a, .mini:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.feed a:hover, .coming a:hover, .mini:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--coral); }
+.feed a:active, .coming a:active, .mini:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
+.feed__e { border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; background: color-mix(in srgb, var(--hl-pink) 55%, var(--card)); color: var(--coral-deep); }
+.feed li:nth-child(3n + 2) .feed__e, .coming li:nth-child(3n + 2) .feed__e { background: color-mix(in srgb, var(--hl-lime) 55%, var(--card)); color: var(--text); }
+.feed li:nth-child(3n) .feed__e, .coming li:nth-child(3n) .feed__e { background: color-mix(in srgb, var(--hl-yellow) 55%, var(--card)); color: var(--text); }
+.coming em { padding: 0 8px; background: var(--hl-yellow); color: var(--blue-ink); border-radius: var(--sketch-sm); }
+.mini__ic { width: 46px; height: 46px; margin-bottom: 4px; border: 1.5px solid var(--ink); border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; background: color-mix(in srgb, var(--hl-pink) 55%, var(--card)); }
+.mini:nth-child(3n + 2) .mini__ic { background: color-mix(in srgb, var(--hl-lime) 55%, var(--card)); color: var(--text); }
+.mini:nth-child(3n) .mini__ic { background: color-mix(in srgb, var(--hl-yellow) 55%, var(--card)); color: var(--text); }
+.mini time { width: fit-content; padding: 0 8px; font-size: 1.15rem; color: var(--blue-ink); background: var(--hl-yellow); border-radius: var(--sketch-sm); }
+.otd { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--ink); }
+.otd__ic { display: grid; place-items: center; width: 46px; height: 46px; background: #fff; color: var(--coral-deep); border: 1.5px solid #37353f; border-radius: 48% 52% 50% 46% / 52% 46% 54% 48%; }
+
+/* ---------- the app's notifications (install, saved offline, update): a journal note with a strip of tape ---------- */
+.ns { border: 1.5px solid var(--ink); border-inline-start: 6px solid var(--blue); border-radius: var(--sketch-sm); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.ns--ok { border-inline-start-color: #2e9e6a; box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.ns--warn { border-inline-start-color: var(--coral); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); }
+.ns::before { content: ''; position: absolute; top: -10px; left: 50%; width: 76px; height: 20px; translate: -50% 0; rotate: -3deg; opacity: 0.9; background: repeating-linear-gradient(45deg, var(--hl-pink) 0 6px, transparent 6px 12px), color-mix(in srgb, var(--hl-yellow) 70%, #fff); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.ns-title { width: fit-content; padding-inline: 0.2em; background: linear-gradient(to left, color-mix(in srgb, var(--hl-yellow) 55%, transparent), var(--hl-yellow)) no-repeat 0 85% / 100% 42%; }
+.ns-close { border: 1.5px solid transparent; }
+.ns-close:hover { border-color: var(--ink); background: var(--hl-yellow); color: var(--text); }
+
+@media (prefers-reduced-motion: reduce) { .feed a, .coming a, .mini, .chapter-card, .tl__card, .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
 
 /* ---------- «أماكننا» cards: journal cards; the photo moves with the mouse only while it's over the card ---------- */
 .places .moment { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
