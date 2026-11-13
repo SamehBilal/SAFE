@@ -1,6 +1,7 @@
 import { App, L, Y, T, esc, num, pageHead, related, $, parseDate, yearsBetween, daysBetween, age, fmtDate, occasions } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
+import { numSlider } from '../numslide.js';
 
 /* Us in numbers: a clock running since the first hello, everything we've collected counted on journal cards, a
    hand-drawn bar for every year of us (how many moments each one holds, the big days pinned on it), and the next
@@ -29,7 +30,7 @@ export default {
 	render(s) {
 		const met = parseDate(s.met || '2009-06-10');
 		return `
-		${pageHead(L('إحنا بالأرقام', 'Us in numbers'), L('كل يوم، وكل سنة، وكل حاجة جمعناها سوا — متعدّة واحدة واحدة ♥', 'Every day, every year, everything we’ve gathered together — counted one by one ♥'), [{ href: 'numbers.html', ar: 'إحنا بالأرقام', en: 'Us in numbers' }], { icons: [['calendar', 'من أول يوم', 'Since day one'], ['heart', 'بنعد', 'Counting'], ['star', 'ولسه', 'And more']] })}
+		${pageHead(L('إحنا بالأرقام', 'Us in numbers'), L('كل يوم، وكل سنة، وكل حاجة جمعناها سوا — متعدّة واحدة واحدة ♥', 'Every day, every year, everything we’ve gathered together — counted one by one ♥'), [{ href: 'numbers.html', ar: 'إحنا بالأرقام', en: 'Us in numbers' }], { band: '<div class="ns-band" id="ns-band"></div>' })}
 		<section class="sec sec--top"><div class="wrap">
 
 			<article class="nums-clock reveal" aria-labelledby="nc-t">
@@ -73,12 +74,12 @@ export default {
 		};
 		tick();
 		const clock = setInterval(tick, 1000);
-		this.leave = () => clearInterval(clock);
+		this.leave = () => { clearInterval(clock); stopBand?.(); };
 
 		/* the story's own numbers */
 		const photos = (s.gallery || []).length;
 		const card = ([n, l, icon]) => `<div class="counter reveal is-in">${icon ? `<i aria-hidden="true">${doodle(icon, 26)}</i>` : ''}<b>${n}</b><span>${esc(l)}</span></div>`;
-		$('#nums-story', main).innerHTML = [
+		const storyNums = [
 			[num(daysBetween(met)), L('يوم من أول سلام', 'days since hello'), 'heart'],
 			[num(yearsBetween(met)), L('سنة مع بعض', 'years of us'), 'calendar'],
 			married && [num(daysBetween(married)), L('يوم جواز', 'days married'), 'ring'],
@@ -92,7 +93,10 @@ export default {
 			photos && [num(photos), L('صورة في الألبوم', 'photos in the album'), 'camera'],
 			(s.notes || []).length && [num(s.notes.length), L('رسالة حب', 'love notes'), 'chat'],
 			(s.letters || []).length && [num(s.letters.length), L('جواب', 'letters'), 'letter']
-		].filter(Boolean).map(card).join('');
+		].filter(Boolean);
+		$('#nums-story', main).innerHTML = storyNums.map(card).join('');
+		/* the band above the headline: the test tube slides from number to number (numslide.js) */
+		const stopBand = numSlider($('#ns-band', main), storyNums.map(([n, label]) => ({ n: String(n), label })));
 
 		/* a bar for every year since we met: its moments, and the big days pinned on top */
 		const first = met.getFullYear(), now = new Date().getFullYear();

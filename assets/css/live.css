@@ -653,3 +653,43 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 	.bd-card.is-party :is(.bd-hat, .bd-balloon__in, .bd-string, .bd-hi) { animation-duration: 0.01s; animation-delay: 0s; }
 	.bd-card.is-party .bd-pop i { animation: none; }
 }
+
+/* ---------- the numbers page's band (numslide.js), after Chris Gannon's «Science Slider»: no background, the journal's
+   ink for the line and the glass, coral for the liquid, highlighters for the bubbles ---------- */
+.ns-band { position: relative; width: min(1000px, 100% - 2 * var(--gutter)); margin: clamp(12px, 3vw, 28px) auto 0; padding-top: clamp(92px, 13vw, 130px); }
+.ns-svg { display: block; width: 100%; height: auto; max-height: 340px; overflow: visible; }
+.ns-read { position: absolute; top: 0; left: 0; right: 0; display: grid; justify-items: center; gap: 2px; text-align: center; pointer-events: none; }
+.ns-read__n { font: 400 clamp(2.8rem, 9vw, 5rem)/1 var(--f-label); color: var(--blue); letter-spacing: 0.02em; text-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); }
+.ns-read__l { padding: 0 8px; font-weight: 800; font-size: clamp(0.95rem, 2.4vw, 1.15rem); color: var(--text); background: linear-gradient(transparent 45%, var(--hl-yellow, rgba(253, 200, 48, 0.55)) 45% 92%, transparent 92%); }
+.ns-read.is-in .ns-read__n { animation: ns-in 0.6s cubic-bezier(0.34, 1.6, 0.5, 1); }
+.ns-read.is-in .ns-read__l { animation: ns-fade 0.5s 0.1s ease-out both; }
+@keyframes ns-in { from { opacity: 0; transform: translateY(18px) scale(0.6); } }
+@keyframes ns-fade { from { opacity: 0; transform: translateY(6px); } }
+.ns-track { fill: none; stroke: var(--ink, #37353f); stroke-width: 2.5; stroke-linecap: round; }
+.ns-stop { cursor: pointer; outline: none; }
+.ns-stop circle:first-child { fill: var(--paper, #faf8f5); stroke: var(--ink, #37353f); stroke-width: 2; transition: fill 0.25s, r 0.25s; }
+.ns-stop.is-on circle:first-child { fill: var(--coral); r: 9; }
+.ns-stop:hover circle:first-child, .ns-stop:focus-visible circle:first-child { fill: var(--hl-yellow, #fdc830); }
+.ns-stop__hit { fill: transparent; }
+.ns-stop text { font: 400 15px var(--f-label); fill: var(--muted); text-anchor: middle; }
+.ns-stop.is-on text { fill: var(--coral-deep, #d9534f); }
+.ns-tube { cursor: grab; touch-action: none; }
+.ns-tube:active { cursor: grabbing; }
+.ns-glass { fill: color-mix(in srgb, var(--paper, #faf8f5) 40%, transparent); stroke: var(--ink, #37353f); stroke-width: 3; stroke-linejoin: round; }
+.ns-liquid { fill: var(--coral); opacity: 0.85; }
+.ns-scale line { stroke: var(--ink, #37353f); stroke-width: 2.5; stroke-linecap: round; }
+.ns-scale .ns-shine { stroke: #fff; stroke-width: 3; opacity: 0.5; stroke-dasharray: 20 8; stroke-dashoffset: 17; }
+.ns-fizz { stroke: var(--ink, #37353f); stroke-width: 1; }
+.ns-fizz--0 { fill: rgba(252, 139, 147, 0.8); }
+.ns-fizz--1 { fill: rgba(205, 220, 57, 0.85); }
+.ns-fizz--2 { fill: rgba(253, 200, 48, 0.85); }
+.ns-carry__b { fill: var(--coral); stroke: var(--ink, #37353f); stroke-width: 2; }
+.ns-carry__shine { fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; opacity: 0.6; }
+.ns-carry__t { fill: #fff; font-family: var(--f-label); text-anchor: middle; dominant-baseline: middle; }
+:lang(ar) .ns-carry__t { font-family: var(--f-body); font-weight: 800; }
+.ns-pop line { stroke: var(--coral-deep, #d9534f); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 20; stroke-dashoffset: 20; animation: ns-pop 0.6s ease-out forwards; }
+@keyframes ns-pop { 40% { stroke-dashoffset: 0; } to { stroke-dashoffset: -20; opacity: 0; } }
+.ns-tip { position: absolute; bottom: -4px; inset-inline-end: 0; margin: 0; color: var(--muted); font: 600 1.1rem/1 var(--f-hand); }
+:lang(ar) .ns-tip { font: 700 0.8rem/1 var(--f-body); }
+@media (max-width: 600px) { .ns-stop text { font-size: 19px; } .ns-tip { display: none; } }
+@media (prefers-reduced-motion: reduce) { .ns-read.is-in .ns-read__n, .ns-read.is-in .ns-read__l { animation: none; } }
