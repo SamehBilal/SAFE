@@ -262,6 +262,22 @@
 .fm__card-price { font: 1.4rem var(--f-label); letter-spacing: 0.05em; color: var(--fm); }
 .fm__card-fav { font: 1.2rem var(--f-hand); color: #c2185b; }
 .fm__x { position: absolute; top: 22px; inset-inline-end: 22px; width: 26px; height: 26px; appearance: none; border: 0; cursor: pointer; color: #fff; background: var(--menu-ink); font-size: 0.8rem; }
+/* a dish with a photo or a link carries the little eye, like the original's "view details" */
+.fm-eye { flex: none; align-self: center; color: var(--fm); opacity: 0.75; }
+.fm__logo.has-pic { overflow: hidden; background: var(--menu-ink); }
+.fm__logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.fm__site { display: inline-block; margin-top: 10px; font-weight: 800; font-size: 0.85rem; color: var(--fm); }
+.fm__site::after, .fm__go::after { content: ' →'; }
+[dir='rtl'] .fm__site::after, [dir='rtl'] .fm__go::after { content: ' ←'; }
+.fm__card-top { display: grid; gap: 6px; justify-items: center; width: 100%; }
+.fm__card-tx { display: grid; gap: 6px; }
+.fm__card-top:has(.fm__thumb) { grid-template-columns: 110px 1fr; gap: 18px; align-items: center; justify-items: start; text-align: start; padding-inline-end: 24px; }
+.fm__thumb { width: 110px; height: 110px; object-fit: cover; cursor: zoom-in; box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 3px #fff, 0 0 0 4px var(--gold); }
+.fm__card-ft { display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: center; align-items: center; margin-top: 6px; font-size: 0.82rem; }
+.fm__card-ft .link { font-size: 0.82rem; cursor: pointer; }
+.fm__go { font-weight: 800; color: var(--fm); }
+.fm__go:hover { color: var(--menu-ink); }
+@media (max-width: 480px) { .fm__card-top:has(.fm__thumb) { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 0; } }
 /* open: the cover swings over to one side and the last panel unfolds to the other */
 .fm.is-open .fm__wrap > div { box-shadow: 0 6px 8px -4px rgba(0, 0, 0, 0.5); }
 .fm.is-open .fm__cover { transform: rotateY(-180deg); transition-delay: 0s; }
@@ -279,17 +295,27 @@
 .fm.is-in .fm__cover, .fm.is-in .fm__right, .fm.no-delay .fm__right { transition-delay: 0s; }
 .fm.is-in .fm__card { transform: translateZ(0); opacity: 1; pointer-events: auto; }
 @media (max-width: 1110px) and (min-width: 961px) { .fm { height: 760px; } }
-/* phones and tablets: the panels simply stack, like reading a printed menu page by page */
+/* phones and tablets: no room to open sideways, so the same flyer folds up and down — the cover lifts over the top
+   on its top edge, the last panel drops down on its bottom edge, and the page makes room above and below */
 @media (max-width: 960px) {
-	.fm { width: 100%; max-width: 460px; height: auto; perspective: none; }
-	.fm__wrap, .fm__wrap > div, .fm__front, .fm__back, .fm__in { position: relative; inset: auto; transform: none !important; }
-	.fm__wrap > div { display: grid; gap: 12px; margin-bottom: 12px; }
-	.fm__cover, .fm__right { box-shadow: none !important; }
-	.fm__front, .fm__back, .fm__middle { box-shadow: inset 0 0 0 14px #fbf7ee, inset 0 0 0 15px var(--gold), inset 0 0 0 17px #fbf7ee, inset 0 0 0 18px var(--gold), inset 0 0 0 20px #fbf7ee, inset 0 0 0 21px var(--gold), 0 3px 6px rgba(0, 0, 0, 0.2); }
-	.fm__middle, .fm__right { pointer-events: auto; }
-	.fm__right > .fm__front, .fm__close, .fm__open, .fm__shade { display: none; }
-	.fm__in { overflow: visible; padding: 36px 30px; }
-	.fm__card { position: fixed; inset-inline: 7%; top: 50%; transform: none; transition: opacity 0.4s; z-index: 600; }
-	.fm.is-in .fm__card { transform: none; }
+	.fm { --h: clamp(520px, 80svh, 700px); width: 100%; max-width: 440px; height: var(--h); perspective: 2200px; transition: margin 0.6s ease-in-out; }
+	.fm.is-open { margin-block: var(--h); transition-delay: 0s; }
+	.fm__cover, [dir='rtl'] .fm__cover { transform-origin: 50% 0%; }
+	.fm__right, [dir='rtl'] .fm__right { transform-origin: 50% 100%; }
+	.fm__back { transform: rotateX(180deg); }
+	.fm__shade { background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.05)); }
+	.fm__middle .fm__shade { background: linear-gradient(to bottom, transparent 64%, rgba(0, 0, 0, 0.05)); }
+	.fm__in { padding: 38px 30px; }
+	.fm.is-open .fm__cover, [dir='rtl'] .fm.is-open .fm__cover { transform: rotateX(180deg); }
+	.fm.is-open .fm__right, [dir='rtl'] .fm.is-open .fm__right { transform: rotateX(-180deg); }
+	.fm.is-in .fm__cover, [dir='rtl'] .fm.is-in .fm__cover { transform: rotateX(150deg); }
+	.fm.is-in .fm__right, [dir='rtl'] .fm.is-in .fm__right { transform: rotateX(-150deg); }
+	.fm.is-in .fm__wrap { transform: translateZ(-260px); }
+	.fm__close { right: 30px; }
+	[dir='rtl'] .fm__close { left: 30px; }
+	.fm__card { inset-inline: 2%; }
+	.fm-stage { overflow-x: clip; }
 }
+@media (max-width: 960px) and (prefers-reduced-motion: reduce) { .fm { transition: none; } }
+.fm.no-anim, .fm.no-anim * { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .fm__wrap, .fm__wrap > div, .fm__card { transition: none !important; } }
