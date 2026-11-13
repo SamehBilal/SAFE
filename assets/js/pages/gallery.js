@@ -146,7 +146,7 @@ export default {
 			spread(+li.dataset.pile);
 		}, true);
 		back.onclick = gather;
-		main.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open >= 0 && !document.querySelector('.lightbox')) gather(); });
+		main.onkeydown = ((e) => { if (e.key === 'Escape' && open >= 0 && !document.querySelector('.lightbox')) gather(); });
 		let w = grid.clientWidth;
 		new ResizeObserver(() => { if (Math.abs(grid.clientWidth - w) > 2) { w = grid.clientWidth; place(false); } }).observe(grid);
 		place(false);

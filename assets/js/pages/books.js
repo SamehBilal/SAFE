@@ -1,0 +1,191 @@
+import { L, T, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
+import { doodle } from '../doodles.js';
+import * as live from '../live.js';
+import { setupNote } from './journal.js';
+
+/* Our books: what we're reading now (with the page we're on), a wooden shelf with a spine for every book we've
+   finished (a thicker spine for a longer book), and a pile of the ones we want to read next. Both phones add and move
+   books; the list is shared in content/live/books.bin like the films. */
+
+const SPINES = [['#0e6990', '#fdf6e3'], ['#c2185b', '#fff0f4'], ['#26706b', '#effaf7'], ['#e39b2d', '#2d2a26'], ['#6d4bb3', '#f4efff'], ['#d9534f', '#fff3f1'], ['#37353f', '#fdc830'], ['#5a9e6f', '#f4fbf4'], ['#8a5a2b', '#fbefe0'], ['#1f3b57', '#cfe9f5']];
+const hash = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+const spine = (b) => SPINES[hash(b.id || b.title) % SPINES.length];
+const WHO = [
+	{ id: 'both', ar: 'إحنا الاتنين', en: 'Both of us' },
+	{ id: 'him', ar: '', en: '' },
+	{ id: 'her', ar: '', en: '' }
+];
+const whoName = (w) => (w === 'him' ? App.t(App.story.him) : w === 'her' ? App.t(App.story.her) : L('إحنا الاتنين', 'Both of us'));
+const hearts = (n) => (n ? '♥'.repeat(n) + '♡'.repeat(5 - n) : '');
+const yr = (d) => (d ? +String(d).slice(0, 4) : 0);
+
+function reading(b) {
+	const [ink, paper] = spine(b);
+	const p = +b.pages ? Math.min(1, (+b.page || 0) / +b.pages) : 0;
+	const ok = live.canWrite();
+	return `<article class="bk-now reveal" id="${esc(b.id)}" style="--bk:${ink};--bk-p:${paper};--p:${p.toFixed(3)}">
+		<span class="bk-now__cover" aria-hidden="true"><b dir="auto">${esc(b.title)}</b>${b.author ? `<small dir="auto">${esc(b.author)}</small>` : ''}</span>
+		<div class="bk-now__tx">
+			<h3 dir="auto">${esc(b.title)}</h3>
+			${b.author ? `<p class="bk-now__au" dir="auto">${esc(b.author)}</p>` : ''}
+			<p class="bk-now__who">${doodle('book', 16)} ${esc(whoName(b.who))}${b.started ? ` · ${L('من', 'since')} ${esc(longDate(b.started))}` : ''}</p>
+			${+b.pages ? `<div class="bk-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${+b.pages}" aria-valuenow="${+b.page || 0}" aria-label="${L('وصلنا لصفحة', 'Page we’re on')}"><i></i></div>
+			<p class="bk-now__pg">${L(`صفحة ${num(+b.page || 0)} من ${num(+b.pages)}`, `Page ${+b.page || 0} of ${+b.pages}`)}</p>` : ''}
+			${ok ? `<form class="bk-now__go" data-page="${esc(b.id)}"><label class="sr-only" for="pg-${esc(b.id)}">${L('وصلتوا لصفحة كام؟', 'Which page are you on?')}</label><input id="pg-${esc(b.id)}" name="pg" type="number" inputmode="numeric" min="0" step="1" placeholder="${L('وصلنا لصفحة…', 'We’re on page…')}"><button class="btn btn--sm" type="submit">${L('حفظ', 'Save')}</button></form>
+			<div class="bk-now__acts"><button class="btn btn--sm btn--coral" type="button" data-finish="${esc(b.id)}">${L('خلصناه ✓', 'Finished ✓')}</button>${b.by === live.me() ? `<button class="link link--danger" type="button" data-del="${esc(b.id)}">${L('مسح', 'Delete')}</button>` : ''}</div>` : ''}
+		</div>
+	</article>`;
+}
+
+function onShelf(b) {
+	const [ink, paper] = spine(b);
+	const pages = +b.pages || 250;
+	const w = Math.round(Math.max(30, Math.min(64, 24 + pages / 18)));
+	const h = 150 + (hash(b.title) % 5) * 9;
+	return `<button class="bk-spine" type="button" data-book="${esc(b.id)}" style="--bk:${ink};--bk-p:${paper};--w:${w}px;--h:${h}px" aria-label="${esc(b.title)}${b.author ? ' — ' + esc(b.author) : ''}">
+		<b dir="auto">${esc(b.title)}</b>${b.hearts ? `<i aria-hidden="true">${'♥'.repeat(Math.min(3, b.hearts))}</i>` : ''}
+	</button>`;
+}
+
+function details(b) {
+	const ok = live.canWrite();
+	return `<div class="bk-card" style="--bk:${spine(b)[0]}">
+		<button class="bk-card__x" type="button" data-close aria-label="${L('اقفلوا', 'Close')}">✕</button>
+		<h3 dir="auto">${esc(b.title)}</h3>
+		${b.author ? `<p class="bk-card__au" dir="auto">${esc(b.author)}</p>` : ''}
+		<p class="bk-card__meta">${[whoName(b.who), +b.pages ? L(`${num(+b.pages)} صفحة`, `${+b.pages} pages`) : '', b.finished ? `${L('خلصناه', 'Finished')} ${longDate(b.finished)}` : ''].filter(Boolean).map(esc).join(' · ')}</p>
+		${b.hearts ? `<p class="bk-card__hearts" aria-label="${L(`${b.hearts} من ٥`, `${b.hearts} of 5`)}">${hearts(b.hearts)}</p>` : ''}
+		${b.note ? `<p class="bk-card__note" dir="auto">«${esc(b.note)}»</p>` : ''}
+		${ok ? `<div class="bk-card__acts">${b.status === 'want' ? `<button class="btn btn--sm btn--coral" type="button" data-start="${esc(b.id)}">${L('هنبدأ فيه', 'Start reading')}</button>` : ''}${b.by === live.me() ? `<button class="link link--danger" type="button" data-del="${esc(b.id)}">${L('مسح', 'Delete')}</button>` : ''}</div>` : ''}
+	</div>`;
+}
+
+export default {
+	title: { ar: 'كتبنا', en: 'Our books' },
+	render() {
+		const ok = live.canWrite();
+		return `
+		${pageHead(L('كتبنا', 'Our books'), L('اللي بنقراه، واللي خلصناه، واللي مستنينا على الرف', 'What we’re reading, what we’ve finished, and what’s waiting on the shelf'), [{ href: 'books.html', ar: 'كتبنا', en: 'Our books' }], [['book', 'صفحة كمان', 'One more page'], ['coffee', 'مع القهوة', 'With coffee'], ['moon', 'قبل النوم', 'Before bed'], ['heart', 'حبيناه', 'Loved it']])}
+		<section class="sec sec--top"><div class="wrap">
+			<div class="counters" id="bk-totals"></div>
+			${ok ? '' : `<div class="narrow" style="margin:24px auto 0">${setupNote()}</div>`}
+			<details class="composer reveal narrow" style="margin:24px auto 0"${ok ? '' : ' hidden'}>
+				<summary><span>${doodle('book', 22)}</span> ${L('ضيفوا كتاب', 'Add a book')}</summary>
+				<form id="bk-form" autocomplete="off">
+					<div class="f-row">
+						<label class="f f--grow"><span>${L('اسم الكتاب', 'Title')}</span><input name="title" dir="auto" maxlength="100" required></label>
+						<label class="f f--grow"><span>${L('الكاتب', 'Author')}</span><input name="author" dir="auto" maxlength="80"></label>
+					</div>
+					<div class="f-row">
+						<label class="f"><span>${L('فين؟', 'Where is it?')}</span><select name="status"><option value="reading">${L('بنقراه دلوقتي', 'Reading now')}</option><option value="read">${L('خلصناه', 'Finished')}</option><option value="want">${L('نفسنا نقراه', 'Want to read')}</option></select></label>
+						<label class="f"><span>${L('مين بيقراه؟', 'Who’s reading?')}</span><select name="who">${WHO.map((w) => `<option value="${w.id}">${esc(whoName(w.id))}</option>`).join('')}</select></label>
+						<label class="f"><span>${L('عدد الصفحات', 'Pages')}</span><input name="pages" type="number" inputmode="numeric" min="1" step="1"></label>
+					</div>
+					<div class="f-row">
+						<label class="f"><span>${L('عجبنا قد إيه؟', 'How much did we love it?')}</span><select name="hearts"><option value="">—</option>${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${hearts(n)}</option>`).join('')}</select></label>
+						<label class="f"><span>${L('خلصناه إمتى؟', 'Finished on')}</span><input name="finished" type="date"></label>
+					</div>
+					<label class="f"><span>${L('جملة فضلت معانا (اختياري)', 'A line that stayed with us (optional)')}</span><textarea name="note" dir="auto" rows="2" maxlength="300"></textarea></label>
+					<p class="form-msg" id="bk-msg" role="status"></p>
+					<div class="f-actions"><button type="submit" class="btn btn--coral">${L('حطوه على الرف ♥', 'Put it on the shelf ♥')}</button></div>
+				</form>
+			</details>
+
+			<h2 class="sec__title">${L('بنقرا دلوقتي', 'Reading now')}</h2>
+			<div class="bk-reading" id="bk-reading"></div>
+
+			<h2 class="sec__title">${L('على الرف', 'On the shelf')}</h2>
+			<div class="bk-shelf" id="bk-shelf"></div>
+			<div class="bk-detail" id="bk-detail" hidden></div>
+
+			<h2 class="sec__title">${L('مستنيين دورهم', 'Up next')}</h2>
+			<ul class="bk-pile" id="bk-pile"></ul>
+		</div></section>
+		${related(['movies', 'journal', 'goals'])}`;
+	},
+
+	async after(main) {
+		const sec = $('.sec', main), detail = $('#bk-detail', main);
+		let data = { items: [] };
+		const all = () => (data.items || []).slice();
+		const find = (d, id) => (d.items || []).find((b) => b.id === id);
+		let open = '';
+
+		const paint = () => {
+			const now = all().filter((b) => b.status === 'reading').sort((a, b) => (b.at || 0) - (a.at || 0));
+			const read = all().filter((b) => b.status === 'read').sort((a, b) => String(a.finished || a.at).localeCompare(String(b.finished || b.at)));
+			const want = all().filter((b) => b.status === 'want').sort((a, b) => (a.at || 0) - (b.at || 0));
+			$('#bk-reading', main).innerHTML = now.length ? now.map(reading).join('') : `<p class="empty">${L('مفيش كتاب مفتوح دلوقتي… ', 'No book open right now… ')}${want.length ? L('اختاروا واحد من اللي مستنيين تحت', 'pick one from the pile below') : L('ضيفوا اللي هتبدأوا فيه', 'add the one you’re starting')}</p>`;
+			// the shelf breaks into rows of about a metre of books
+			const per = Math.max(6, Math.floor((sec.clientWidth || 900) / 52));
+			const rows = [];
+			for (let i = 0; i < read.length; i += per) rows.push(read.slice(i, i + per));
+			$('#bk-shelf', main).innerHTML = read.length ? rows.map((r) => `<div class="bk-row">${r.map(onShelf).join('')}</div>`).join('') : `<p class="empty">${L('الرف لسه فاضي — أول كتاب نخلصه هيتحط هنا', 'The shelf is still empty — the first book we finish goes here')}</p>`;
+			$('#bk-pile', main).innerHTML = want.length ? want.map((b) => { const [ink, paper] = spine(b); return `<li><button class="bk-pile__b" type="button" data-book="${esc(b.id)}" style="--bk:${ink};--bk-p:${paper}"><b dir="auto">${esc(b.title)}</b>${b.author ? `<small dir="auto">${esc(b.author)}</small>` : ''}</button></li>`; }).join('') : `<li class="empty">${L('مفيش حاجة في الطابور', 'Nothing in the queue')}</li>`;
+			for (const el of $$('.reveal', main)) el.classList.add('is-in');
+			const year = new Date().getFullYear();
+			const pages = read.reduce((a, b) => a + (+b.pages || 0), 0) + now.reduce((a, b) => a + (+b.page || 0), 0);
+			$('#bk-totals', main).innerHTML = [
+				[num(read.length), L('كتاب خلصناه', read.length === 1 ? 'book finished' : 'books finished')],
+				[num(read.filter((b) => yr(b.finished) === year).length), L(`السنة دي`, 'this year')],
+				[num(pages), L('صفحة قريناها', 'pages read')],
+				[num(want.length), L('مستنيين', 'waiting')]
+			].map(([b, s]) => `<div class="counter"><b>${b}</b><span>${s}</span></div>`).join('');
+			if (open) showBook(open);
+		};
+
+		const showBook = (id) => {
+			const b = all().find((x) => x.id === id);
+			open = b ? id : '';
+			detail.hidden = !b;
+			if (!b) return;
+			detail.innerHTML = details(b);
+			for (const el of $$('[data-book]', main)) el.classList.toggle('is-on', el.dataset.book === id);
+		};
+
+		const save = async (fn) => {
+			try { data = await live.save('books', fn); paint(); }
+			catch (err) { alert(live.why(err)); }
+		};
+
+		sec.addEventListener('click', (e) => {
+			const t = e.target.closest('[data-book], [data-close], [data-finish], [data-start], [data-del]');
+			if (!t) return;
+			if (t.dataset.book) { showBook(open === t.dataset.book ? '' : t.dataset.book); if (open) detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+			if ('close' in t.dataset) showBook('');
+			if (t.dataset.finish) save((d) => { const b = find(d, t.dataset.finish); if (b) { b.status = 'read'; b.finished = live.today(); if (+b.pages) b.page = +b.pages; } });
+			if (t.dataset.start) { open = ''; save((d) => { const b = find(d, t.dataset.start); if (b) { b.status = 'reading'; b.started = live.today(); b.at = Date.now(); } }); }
+			if (t.dataset.del && confirm(L('تشيلوا الكتاب ده؟', 'Remove this book?'))) { open = ''; save((d) => { d.items = (d.items || []).filter((b) => b.id !== t.dataset.del); }); }
+		});
+		sec.addEventListener('submit', (e) => {
+			const f = e.target;
+			if (!f.dataset.page) return;
+			e.preventDefault();
+			const pg = Math.max(0, Math.round(+f.pg.value));
+			if (f.pg.value !== '') save((d) => { const b = find(d, f.dataset.page); if (b) b.page = +b.pages ? Math.min(pg, +b.pages) : pg; });
+		});
+
+		const form = $('#bk-form', main);
+		form.onsubmit = async (e) => {
+			e.preventDefault();
+			const msg = $('#bk-msg', main);
+			const st = form.status.value;
+			const b = {
+				id: live.newId(), title: form.title.value.trim(), author: form.author.value.trim() || undefined, status: st, who: form.who.value,
+				pages: Math.round(+form.pages.value) || undefined, hearts: +form.hearts.value || undefined, note: form.note.value.trim() || undefined,
+				finished: st === 'read' ? form.finished.value || live.today() : undefined, started: st === 'reading' ? live.today() : undefined,
+				by: live.me(), at: Date.now()
+			};
+			if (!b.title) return;
+			try {
+				data = await live.save('books', (d) => { (d.items = d.items || []).push(b); });
+				form.reset();
+				msg.textContent = L('اتحط ♥', 'Shelved ♥');
+				paint();
+			} catch (err) { msg.textContent = live.why(err); }
+		};
+
+		data = await live.load('books');
+		paint();
+	}
+};

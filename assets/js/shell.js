@@ -8,6 +8,7 @@ import { sky, dust } from './stardust.js';
 import { nightScene } from './scene.js';
 import { doodle, doodleDefs } from './doodles.js';
 import { initPWA, pwaChrome } from './pwa.js';
+import * as radio from './radio.js';
 
 const KEY = 'us.key';
 const LANG = 'us.lang';
@@ -178,6 +179,7 @@ function setLang(l) {
 	if (App.story) {
 		renderChrome();
 		renderPage();
+		radio.redraw();
 	} else if (gateRedraw) {
 		gateRedraw();
 	}
@@ -377,8 +379,8 @@ async function enter({ key, story }, { intro, loader }) {
 	renderChrome();
 	renderPage();
 	if (qs('intro') !== null) history.replaceState(null, '', location.pathname + location.hash);
+	wireLinks();
 }
-
 /* A heart made of stars, in the colour of the intro's star dust: dots along the outline and scattered inside,
    each twinkling on its own. Points inside satisfy (x² + y² − 1)³ − x²y³ ≤ 0, the classic heart curve. */
 function starHeart() {
@@ -451,14 +453,19 @@ export const PAGES = [
 	{ href: 'chapters.html', id: 'chapters', ic: 'ring', ar: 'أيام فارقة', en: 'Big days', dar: 'الخطوبة، كتب الكتاب، الفرح', den: 'Engagement, wedding and more', group: 'story' },
 	{ href: 'places.html', id: 'places', ic: 'pin', ar: 'أماكننا', en: 'Our places', dar: 'أماكن فيها حتة مننا', den: 'Places that hold a piece of us', group: 'story' },
 	{ href: 'trips.html', id: 'trips', ic: 'map', ar: 'رحلات عيد جوازنا', en: 'Anniversary trips', dar: 'كل سنة محافظة جديدة على الخريطة', den: 'A new governorate every year, on the map', group: 'story' },
+	{ href: 'cities.html', id: 'cities', ic: 'city', ar: 'خرايط مدننا', en: 'Our city maps', dar: 'كل مدينة رحناها، وأماكننا منورة فيها', den: 'Every city we’ve been to, our spots lit up', group: 'story' },
 	{ href: 'journal.html', id: 'journal', ic: 'pen', ar: 'دفترنا', en: 'Our journal', dar: 'بنكتب حكايتنا سوا، يوم بيوم', den: 'We write our story together, day by day', group: 'story' },
 	{ href: 'draw.html', id: 'draw', ic: 'dice', ar: 'قرعة الليلة', en: 'Tonight’s draw', dar: 'لبس، خروجة، دليفري، أو فيلم', den: 'Outfit, dinner out, delivery or a movie', group: 'nights' },
 	{ href: 'movies.html', id: 'movies', ic: 'film', ar: 'اتفرجنا على إيه', en: 'What we’ve watched', dar: 'أفلامنا ومسلسلاتنا بالأرقام', den: 'Our films and series, in numbers', group: 'nights' },
 	{ href: 'music.html', id: 'music', ic: 'music', ar: 'أغانينا', en: 'Our songs', dar: 'الأغاني اللي بتفكرنا ببعض', den: 'The songs that remind us of each other', group: 'nights' },
+	{ href: 'books.html', id: 'books', ic: 'book', ar: 'كتبنا', en: 'Our books', dar: 'اللي بنقراه، واللي خلصناه', den: 'What we’re reading, and what we’ve finished', group: 'nights' },
 	{ href: 'gallery.html', id: 'gallery', ic: 'image', ar: 'ألبوم الصور', en: 'Photo album', dar: 'إحنا بالصور، سنة بسنة', den: 'Us in pictures, year by year', group: 'memories' },
 	{ href: 'notes.html', id: 'notes', ic: 'note', ar: 'رسايل حب', en: 'Love notes', dar: 'كلام كتبناه لبعض', den: 'Little things we wrote', group: 'memories' },
 	{ href: 'letters.html', id: 'letters', ic: 'mail', ar: 'جوابات', en: 'Letters', dar: 'جوابات لبعض، افتحوها', den: 'Letters for you — open them', group: 'memories' },
+	{ href: 'posts.html', id: 'posts', ic: 'phone', ar: 'بوستاتنا', en: 'Our posts', dar: 'اللي كتبناه لبعض على السوشيال ميديا', den: 'What we posted about each other', group: 'memories' },
 	{ href: 'family.html', id: 'family', ic: 'family', ar: 'عيلتنا', en: 'Our family', dar: 'فهد وعبد الرحمن وإحنا', den: 'Fahd, Abdulrahman and us', group: 'family' },
+	{ href: 'distances.html', id: 'distances', ic: 'route', ar: 'المسافات', en: 'Miles apart', dar: 'إحنا الأربعة بعاد عن بعض قد إيه', den: 'How far apart the four of us are', group: 'family' },
+	{ href: 'goals.html', id: 'goals', ic: 'flag', ar: 'أهدافنا', en: 'Our goals', dar: 'عربية، بيت، سفر… خطوة خطوة', den: 'A car, a home, a trip… step by step', group: 'family' },
 	{ href: 'birthday.html', id: 'birthday', ic: 'cake', ar: 'أعياد الميلاد', en: 'Birthdays', dar: 'عيد ميلاد كل واحد فينا', den: 'Every one of our birthdays', group: 'you' },
 	{ href: 'wishes.html', id: 'wishes', ic: 'star', ar: 'برطمان الأمنيات', en: 'Wish jar', dar: 'أمنياتنا في أمان هنا', den: 'Our wishes, kept safe', group: 'you' },
 	{ href: 'settings.html', id: 'settings', ic: 'gear', ar: 'الإعدادات', en: 'Settings', dar: 'مين ماسك الموبايل، وابعتوا الجديد', den: 'Whose phone, and sharing what’s new', group: 'app' }
@@ -492,6 +499,10 @@ const ICONS = {
 	dice: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>',
 	gear: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>',
 	heart: '<path d="M12 20C6 16 3.5 12.7 3.5 9.5A4.5 4.5 0 0 1 12 7.2a4.5 4.5 0 0 1 8.5 2.3C20.5 12.7 18 16 12 20Z"/>',
+	city: '<path d="M3.5 20.5h17M5 20.5V10l4-2v12.5M9 20.5V5l6 2.5v13M15 20.5V11l4 1.5v8"/><path d="M11.5 10h1M11.5 13h1M11.5 16h1"/>',
+	route: '<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17.2c4-1.5 2.5-5 6-6.5s3-2.2 3-3"/>',
+	flag: '<path d="M5.5 21V4M5.5 4.5h11l-2.5 4 2.5 4h-11"/>',
+	phone: '<rect x="6.5" y="3" width="11" height="18" rx="2.5"/><path d="M10.5 18h3"/><path d="M12 13.2c-2-1.3-3-2.4-3-3.6a1.5 1.5 0 0 1 3-.4 1.5 1.5 0 0 1 3 .4c0 1.2-1 2.3-3 3.6Z"/>',
 	baby: '<circle cx="12" cy="11" r="6.5"/><circle cx="9.8" cy="10.5" r=".8"/><circle cx="14.2" cy="10.5" r=".8"/><path d="M10 13.6c1.2 1 2.8 1 4 0M12 4.5c1-1 2.2-.8 2.6 0"/>'
 };
 export const icon = (k, size = 18) => `<span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[k] || ICONS.heart}</svg></span>`;
@@ -537,7 +548,7 @@ function megaHTML(s) {
 				<span class="mg-fig-box">${m.photo ? img(m.photo, '', 'mg-fig-img') : `<span class="mg-fig-emoji">${doodle(m.emoji, 40)}</span>`}</span>
 				<span class="mg-fig-t"><b>${T(m.name)}</b><small>${m.born && m.kid ? age(m.born) : T(m.role)}</small></span>
 			</a>`).join('')}</div>
-		<div class="mg-more"><p class="mg-h">${L('البيت', 'Home')}</p>${row(PAGES.find((p) => p.id === 'family'))}</div>`);
+		<div class="mg-more"><p class="mg-h">${L('البيت', 'Home')}</p>${pages('family').map(row).join('')}</div>`);
 
 	// لِكِ — birthday, wishes, and us in numbers.
 	const met = parseDate(s.met || '2009-06-10');
@@ -859,11 +870,73 @@ function owl() {
 	}, 380);
 }
 
+/* ------------------------------------------------------------------ moving between pages without stopping the song
+
+   Every page is the same shell with a different <body data-page>, so while a song is playing (radio.js) a link to
+   another page of ours doesn't load it afresh: it swaps the page's module, redraws the header and footer and renders
+   the new page into <main>, and the address and the back button work as usual. With nothing playing, links load
+   pages the ordinary way. */
+const PAGE_IDS = new Set(['home', 'story', 'chapters', 'chapter', 'moment', 'places', 'trips', 'trip', 'journal', 'draw', 'movies', 'music', 'gallery', 'notes', 'letters', 'family', 'member', 'birthday', 'wishes', 'settings', 'goals', 'distances', 'cities', 'books', 'posts']);
+const dirOf = (p) => p.slice(0, p.lastIndexOf('/') + 1);
+function pageOf(url) {
+	if (url.origin !== location.origin || dirOf(url.pathname) !== dirOf(location.pathname)) return '';
+	const file = url.pathname.slice(dirOf(url.pathname).length) || 'index.html';
+	const id = file === 'index.html' ? 'home' : file.replace(/\.html$/, '');
+	return file.endsWith('.html') || file === 'index.html' ? (PAGE_IDS.has(id) ? id : '') : '';
+}
+
+let softCount = 0;
+let going = 0;
+async function go(url, { push = true } = {}) {
+	const id = pageOf(url);
+	if (!id) { location.href = url.href; return; }
+	const ask = ++going;
+	let mod;
+	try { mod = (await import(`./pages/${id}.js`)).default; } catch { location.href = url.href; return; }
+	if (ask !== going) return;
+	if (push) history.pushState({ soft: ++softCount }, '', url.href);
+	document.body.dataset.page = id;
+	document.body.classList.remove('menu-lock');
+	$$('.lightbox').forEach((b) => b.remove());
+	page = mod;
+	renderChrome();
+	await renderPage();
+	if (ask !== going) return;
+	if (!url.hash) scrollTo({ top: 0, behavior: 'instant' });
+	$('#main')?.focus({ preventScroll: true });
+}
+
+function wireLinks() {
+	if (wireLinks.done) return;
+	wireLinks.done = true;
+	history.replaceState({ ...(history.state || {}), soft: 0 }, '', location.href);
+	document.addEventListener('click', (e) => {
+		if (!radio.active() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+		const a = e.target.closest('a[href]');
+		if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+		const url = new URL(a.href, location.href);
+		if (!pageOf(url)) return;
+		// the same page, only a different spot on it: let the browser scroll
+		if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+		e.preventDefault();
+		go(url);
+	});
+	addEventListener('popstate', (e) => {
+		if (e.state && 'soft' in e.state) go(new URL(location.href), { push: false });
+	});
+}
+
 /* ------------------------------------------------------------------ the page itself */
 
+let shownPage = null;
 async function renderPage() {
 	const main = $('#main');
 	const s = App.story;
+	// the page on screen tidies up first (stops its own sounds, timers and listeners): a new page, or this one in the other language
+	try { shownPage?.leave?.(); } catch { /* the old page's own trouble */ }
+	shownPage = page;
+	// <main> stays between pages, so handlers a page put on it go with it
+	main.onclick = main.onkeydown = main.oninput = main.onchange = main.onsubmit = null;
 	// a page may fetch what it shows first (e.g. the journal entries the timeline includes)
 	if (page.load) { try { await page.load(s); } catch { /* render without it */ } }
 	main.innerHTML = page.render(s) || '';

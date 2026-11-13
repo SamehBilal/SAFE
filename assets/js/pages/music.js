@@ -2,6 +2,8 @@ import { L, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE, medi
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
+import * as radio from '../radio.js';
+import { colours, player, safeLink, searchLink } from '../radio.js';
 
 /* Our songs on a record player, after Codrops' "Interactive Record Player" (tympanus.net/Development/RecordPlayer):
    the songs are sleeves on a shelf; tap one and its vinyl slides out onto the turntable, the tonearm swings onto
@@ -9,21 +11,8 @@ import { setupNote } from './journal.js';
    (Vinyl Noise SFX by Chia, free to use). Sound comes from the song's own recording when it has one ("audio": a file in
    private/media, encrypted by the build like the photos), else from its YouTube or Spotify link. */
 
-/* Links we can play right here; anything else opens in its own app. */
-export function player(link) {
-	const yt = /(?:youtu\.be\/|[?&]v=|shorts\/|embed\/)([\w-]{11})/.exec(link || '');
-	if (yt) return `<iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&rel=0" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`;
-	const sp = /open\.spotify\.com\/(?:intl-[\w-]+\/)?(track|album|playlist|episode)\/(\w+)/.exec(link || '');
-	if (sp) return `<iframe class="is-spotify" src="https://open.spotify.com/embed/${sp[1]}/${sp[2]}?autoplay=1" title="Spotify" allow="autoplay; encrypted-media; clipboard-write" loading="lazy"></iframe>`;
-	return '';
-}
-const safeLink = (u) => (/^https?:\/\//i.test(u || '') ? u : '');
-const searchLink = (x) => `https://www.youtube.com/results?search_query=${encodeURIComponent(`${x.title} ${x.artist || ''}`.trim())}`;
-
-/* every song gets its own sleeve colours, the same on both phones */
-const PALETTE = [['#c2185b', '#ffd1dc'], ['#0e6990', '#cfe9f5'], ['#e39b2d', '#fff0cf'], ['#5a9e6f', '#dcf1df'], ['#6d4bb3', '#e6dcff'], ['#d9534f', '#ffe0dc'], ['#26706b', '#d2f0ec'], ['#8a5a2b', '#f3e2cc']];
-const hash = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
-const colours = (x) => PALETTE[hash(x.id || x.title) % PALETTE.length];
+/* The sound itself lives in radio.js, so a song keeps playing on other pages; the turntable here follows it. */
+export { player };
 
 const ARM_REST = 0;
 const ARM_START = 21;
@@ -90,7 +79,6 @@ export default {
 						<button class="deck__btn" type="button" id="dk-next" aria-label="${L('اللي بعدها', 'Next')}">${doodle(App.lang === 'ar' ? 'back' : 'forward', 22)}</button>
 					</div>
 					<label class="check deck__crackle"><input type="checkbox" id="dk-crackle"> ${L('صوت الإبرة على الأسطوانة', 'Needle crackle')}</label>
-					<div class="deck__screen" id="dk-screen" hidden></div>
 					<a class="btn btn--ghost btn--sm" id="dk-open" target="_blank" rel="noopener noreferrer" hidden>↗ ${L('اسمعوها على يوتيوب', 'Listen on YouTube')}</a>
 				</div>
 			</div>
@@ -128,7 +116,6 @@ export default {
 		const list = $('#mu-list', main);
 		const deck = $('#deck', main);
 		const arm = $('.deck__arm', deck);
-		const screen = $('#dk-screen', main);
 		const open = $('#dk-open', main);
 		const name = (w) => T(w === 'him' ? s.him : s.her);
 		let data = { items: [] };
@@ -137,23 +124,17 @@ export default {
 		let playing = false;
 		let armTimer = 0;
 
-		/* the needle crackle (on unless turned off) */
+		/* the needle crackle (on unless turned off): only here, only while the record turns */
 		const crackle = new Audio('assets/audio/crackle.mp3');
 		crackle.loop = true;
 		crackle.volume = 0.18;
-		/* a song's own recording, decrypted on the phone; the arm crosses the record in the song's own time */
-		const song = new Audio();
-		song.preload = 'none';
-		let asked = 0;
-		song.onloadedmetadata = () => { if (playing && isFinite(song.duration)) { clearTimeout(armTimer); armTimer = setTimeout(() => setArm(ARM_END, Math.max(1, song.duration - song.currentTime), 'linear'), REDUCE ? 0 : 950); } };
-		song.onended = () => step(1);
 		const crackleBox = $('#dk-crackle', main);
 		crackleBox.checked = store.get(CRACKLE) !== 'off';
-		crackleBox.onchange = () => {
-			store.set(CRACKLE, crackleBox.checked ? 'on' : 'off');
-			if (playing && crackleBox.checked) crackle.play().catch(() => {});
+		const crackleOn = () => {
+			if (playing && crackleBox.checked) { crackle.volume = radio.state().mode === 'audio' ? 0.07 : 0.18; crackle.play().catch(() => {}); }
 			else crackle.pause();
 		};
+		crackleBox.onchange = () => { store.set(CRACKLE, crackleBox.checked ? 'on' : 'off'); crackleOn(); };
 
 		const items = () => (data.items || []).slice().sort((a, b) => (b.at || 0) - (a.at || 0));
 		const shown = () => items().filter((x) => !by || x.by === by);
@@ -163,8 +144,10 @@ export default {
 			arm.style.transform = `rotate(${deg}deg)`;
 		};
 
+		/* show a record on the deck (no sound: radio.js plays) */
 		function load(x, { autoplay = false } = {}) {
-			stop();
+			if (autoplay) return radio.play(x, shown());
+			if (current?.id === x.id) return;
 			current = x;
 			const [ink, paper] = colours(x);
 			deck.style.setProperty('--lab', ink);
@@ -185,52 +168,42 @@ export default {
 			$$('.sleeve', list).forEach((el) => el.classList.toggle('is-on', el.dataset.id === x.id));
 			// the new record drops onto the platter
 			deck.classList.remove('is-swapping'); void deck.offsetWidth; deck.classList.add('is-swapping');
-			if (autoplay) setTimeout(play, REDUCE ? 0 : 450);
 		}
 
-		function play() {
-			if (!current) return;
-			const embed = player(safeLink(current.link));
-			playing = true;
-			deck.classList.add('is-playing');
-			$('#dk-play', main).setAttribute('aria-label', L('وقفوا', 'Stop'));
-			// the arm swings onto the outer groove, then creeps inward as the song plays
-			setArm(ARM_START);
+		/* the arm: onto the outer groove, then creeping inward in the song's own time (4 minutes until it's known) */
+		const creep = (swing) => {
+			const { time, duration } = radio.state();
+			const total = duration || 240;
+			const at = Math.min(1, time / total);
 			clearTimeout(armTimer);
-			armTimer = setTimeout(() => setArm(ARM_END, 240, 'linear'), REDUCE ? 0 : 950);
-			if (crackleBox.checked) { crackle.currentTime = 0; crackle.play().catch(() => {}); }
-			if (current.audio) {
-				const ask = ++asked, x = current;
-				if (crackleBox.checked) crackle.volume = 0.07;
-				mediaURL(x.audio).then((url) => {
-					if (ask !== asked || !playing) return;
-					if (song.src !== url) song.src = url;
-					return song.play();
-				}).catch(() => { if (ask === asked) { stop(); window.open(safeLink(x.link) || searchLink(x), '_blank', 'noopener'); } });
-			}
-			else if (embed) { screen.innerHTML = embed; screen.hidden = false; }
-			else window.open(safeLink(current.link) || searchLink(current), '_blank', 'noopener');
-		}
+			if (swing) setArm(ARM_START + at * (ARM_END - ARM_START));
+			else setArm(ARM_START + at * (ARM_END - ARM_START), 0);
+			armTimer = setTimeout(() => setArm(ARM_END, Math.max(1, total - time), 'linear'), swing && !REDUCE ? 950 : 30);
+		};
 
-		function stop() {
-			playing = false;
-			deck.classList.remove('is-playing');
-			$('#dk-play', main).setAttribute('aria-label', L('شغلوا', 'Play'));
-			clearTimeout(armTimer);
-			setArm(ARM_REST, 1.1);
-			crackle.pause();
-			crackle.volume = 0.18;
-			asked++;
-			song.pause();
-			screen.innerHTML = '';
-			screen.hidden = true;
-		}
+		/* whatever radio.js is doing, the deck shows */
+		const sync = (what, r = radio.state()) => {
+			if (what === 'time') return;
+			if (r.item && (r.item.id !== current?.id)) load(data.items.find((i) => i.id === r.item.id) || r.item);
+			const on = !!(r.playing && r.item && r.item.id === current?.id);
+			if (what === 'meta') { if (on) creep(false); return; }
+			if (on === playing) return;
+			playing = on;
+			deck.classList.toggle('is-playing', on);
+			$('#dk-play', main).setAttribute('aria-label', on ? L('وقفوا', 'Pause') : L('شغلوا', 'Play'));
+			if (on) creep(true);
+			else { clearTimeout(armTimer); setArm(ARM_REST, 1.1); }
+			crackleOn();
+		};
+		const quiet = radio.on(sync);
+		this.leave = () => { quiet(); clearTimeout(armTimer); crackle.pause(); crackle.src = ''; };
 
 		const step = (dir) => {
+			if (radio.state().item) return radio.step(dir);
 			const l = shown();
 			if (!l.length) return;
 			const i = Math.max(0, l.findIndex((x) => x.id === current?.id));
-			load(l[(i + dir + l.length) % l.length], { autoplay: playing });
+			load(l[(i + dir + l.length) % l.length]);
 		};
 
 		const sleeve = (x, n) => {
@@ -275,11 +248,15 @@ export default {
 			}
 			if (del) {
 				if (!confirm(L('تشيلوا الأسطوانة دي من الرف؟', 'Remove this record from the shelf?'))) return;
-				try { data = await live.save('music', (d) => { d.items = (d.items || []).filter((i) => i.id !== del.dataset.del); }); if (current?.id === del.dataset.del) stop(); paint(); }
+				try { data = await live.save('music', (d) => { d.items = (d.items || []).filter((i) => i.id !== del.dataset.del); }); if (radio.state().item?.id === del.dataset.del) radio.stop(); paint(); }
 				catch (err) { alert(live.why(err)); }
 			}
 		};
-		$('#dk-play', main).onclick = () => (playing ? stop() : play());
+		$('#dk-play', main).onclick = () => {
+			if (!current) return;
+			if (radio.state().item?.id === current.id) radio.toggle();
+			else radio.play(current, shown());
+		};
 		$('#dk-prev', main).onclick = () => step(-1);
 		$('#dk-next', main).onclick = () => step(1);
 		$$('.chip', main).forEach((c) => (c.onclick = () => { by = c.dataset.by; $$('.chip', main).forEach((x) => x.classList.toggle('is-on', x === c)); paint(); }));
@@ -288,14 +265,19 @@ export default {
 			if (l.length) load(l[Math.floor(Math.random() * l.length)], { autoplay: true });
 		};
 		// leaving the page stops the music and the crackle
-		addEventListener('pagehide', () => { crackle.pause(); song.pause(); }, { once: true });
+		// leaving the site stops the crackle (the song itself keeps going between our pages)
+		addEventListener('pagehide', () => crackle.pause(), { once: true });
 
 		data = await live.load('music');
 		paint();
-		// today's record waits on the platter (the same one on both phones), unless a song is in the address
+		// a song already playing stays on the platter; else today's record waits there (the same one on both phones),
+		// unless a song is in the address
 		const all = items();
-		const wanted = all.find((x) => x.id === location.hash.slice(1));
-		if (all.length) {
+		const wanted = all.find((x) => x.id === decodeURIComponent(location.hash.slice(1)));
+		if (radio.state().item) {
+			current = null;
+			sync('change');
+		} else if (all.length) {
 			const d = new Date();
 			load(wanted || all[(d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate()) % all.length]);
 			$('#dk-eyebrow', main).textContent = (wanted ? '' : L('أسطوانة النهارده · ', 'Today’s record · ')) + $('#dk-eyebrow', main).textContent;

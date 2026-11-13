@@ -13,7 +13,7 @@ import { App, getKey, store } from './shell.js';
 import { diff, apply, combine } from './merge.js';
 import { initOf } from './defaults.js';
 
-export const KINDS = ['journal', 'music', 'draw', 'trips', 'movies', 'wishes'];
+export const KINDS = ['journal', 'music', 'draw', 'trips', 'movies', 'wishes', 'goals', 'where', 'spots', 'books', 'posts', 'tree'];
 const ME = 'us.me';
 store.del('us.gh'); // the GitHub token phones used to keep is no longer needed
 const enc = new TextEncoder();

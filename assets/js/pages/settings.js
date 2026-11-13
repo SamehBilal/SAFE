@@ -5,7 +5,8 @@ import * as live from '../live.js';
 /* Whose phone this is, and passing what each of you added to the other phone and to the site, as a file. No accounts, no tokens. */
 const NAMES = {
 	journal: ['الدفتر', 'Journal'], music: ['الأغاني', 'Songs'], draw: ['القرعة', 'Draws'],
-	trips: ['الرحلات', 'Trips'], movies: ['الأفلام', 'Films'], wishes: ['الأمنيات', 'Wishes']
+	trips: ['الرحلات', 'Trips'], movies: ['الأفلام', 'Films'], wishes: ['الأمنيات', 'Wishes'],
+	goals: ['الأهداف', 'Goals'], where: ['أماكننا دلوقتي', 'Where we are'], spots: ['أماكن المدن', 'City spots'], books: ['الكتب', 'Books'], posts: ['البوستات', 'Posts'], tree: ['شجرة العيلة', 'Family tree']
 };
 
 export default {

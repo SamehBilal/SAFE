@@ -1,5 +1,6 @@
 import { L, T, esc, img, num, age, longDate, parseDate, yearsBetween, pageHead, related, App } from '../shell.js';
 import { doodle } from '../doodles.js';
+import { treeHTML, wireTree } from '../tree.js';
 
 export default {
 	title: { ar: 'عيلتنا', en: 'Our family' },
@@ -17,6 +18,8 @@ export default {
 					<small>${m.kid && m.born ? `${age(m.born)} · ${T(m.role)}` : T(m.role)}</small>
 				</a>`).join('')}
 			</div>
+
+			${treeHTML(s)}
 
 			${f.portrait ? `<figure class="portrait reveal" data-media-box>
 				${img(f.portrait.photo, App.t(f.portrait.caption), 'zoom')}
@@ -37,6 +40,7 @@ export default {
 				</div>
 			</article>
 		</div></section>
-		${related(['chapters', 'gallery', 'letters'])}`;
-	}
+		${related(['distances', 'goals', 'chapters'])}`;
+	},
+	after(main, s) { return wireTree(main, s); }
 };
