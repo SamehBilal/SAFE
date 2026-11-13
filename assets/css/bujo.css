@@ -57,8 +57,8 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .btn--sm.btn--ghost { box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--hl-lime); }
 
 /* ---------- inputs, chips, the whose-phone choice ---------- */
-.f input, .f textarea, .f select, .search, .add input { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); }
-.f input:focus, .f textarea:focus, .f select:focus, .search:focus, .add input:focus { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(150, 87, 132, 0.5); }
+.f input, .f textarea, .f select, .search, .add input, .gate__input { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); }
+.f input:focus, .f textarea:focus, .f select:focus, .search:focus, .add input:focus, .gate__input:focus { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(150, 87, 132, 0.5); }
 .chip { border: 1.5px solid var(--ink); border-radius: var(--sketch-sm); }
 .chip:hover { background: var(--hl-yellow); }
 .chip.is-on { background: var(--coral); border-color: var(--ink); color: #fff; box-shadow: calc(var(--bujo-x) * 2px) 2px 0 0 var(--ink); }

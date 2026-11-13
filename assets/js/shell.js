@@ -290,8 +290,8 @@ function runGate() {
 				<p class="gate__intro">${say('المكان ده بتاعنا إحنا بس. جاوبوا وادخلوا.', 'المكان ده بتاعنا إحنا بس. جاوب وادخل.', 'المكان ده بتاعنا إحنا بس. جاوبي وادخلي.', 'This place is only ours. Answer and come in.')}</p>
 				<div class="gate__who" role="radiogroup" aria-label="${L('مين معانا؟', 'Who’s here?')}">
 					<span class="gate__who-q">${L('مين معانا؟', 'Who’s here?')}</span>
-					<button type="button" role="radio" data-me="him" aria-checked="${me === 'him'}">${doodle('groom', 26)}<span>${L('أنا العريس', 'I’m the groom')}</span></button>
-					<button type="button" role="radio" data-me="her" aria-checked="${me === 'her'}">${doodle('princess', 26)}<span>${L('أنا العروسة', 'I’m the bride')}</span></button>
+					<button type="button" class="chip${me === 'him' ? ' is-on' : ''}" role="radio" data-me="him" aria-checked="${me === 'him'}">${doodle('groom', 26)}<span>${L('أنا العريس', 'I’m the groom')}</span></button>
+					<button type="button" class="chip${me === 'her' ? ' is-on' : ''}" role="radio" data-me="her" aria-checked="${me === 'her'}">${doodle('princess', 26)}<span>${L('أنا العروسة', 'I’m the bride')}</span></button>
 				</div>
 				<ol class="gate__steps" aria-hidden="true">${qsList.map((_, n) => `<li class="${n < i ? 'is-done' : n === i ? 'is-now' : ''}"></li>`).join('')}</ol>
 				<div class="gate__ask ${animate ? 'swap' : ''}">
