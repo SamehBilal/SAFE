@@ -1,4 +1,4 @@
-import { L, Y, T, esc, pageHead, related, App, $, $$, longDate, store } from '../shell.js';
+import { L, Y, T, esc, pageHead, related, App, $, $$, longDate, store, REDUCE } from '../shell.js';
 import { doodle, MOODS, doodleName } from '../doodles.js';
 import * as live from '../live.js';
 import { openSketch } from '../sketch.js';
@@ -15,7 +15,18 @@ export default {
 		${pageHead(L('دفترنا', 'Our journal'), L('هنا بنكتب حكايتنا سوا — كل واحد بقلمه', 'Where we write our story together — each in our own hand'), [{ href: 'journal.html', ar: 'دفترنا', en: 'Our journal' }])}
 		<section class="sec sec--top"><div class="wrap journal-wrap">
 			${ok ? '' : setupNote()}
-			<details class="composer reveal" id="composer"${ok ? '' : ' hidden'}>
+			<div class="toolbar">
+				<div class="chips" role="toolbar" aria-label="${L('مين كتب', 'Written by')}">
+					<button class="chip is-on" type="button" data-by="">${L('الكل', 'All')}</button>
+					<button class="chip" type="button" data-by="him">${T(App.story.him)}</button>
+					<button class="chip" type="button" data-by="her">${T(App.story.her)}</button>
+				</div>
+				<div class="toolbar__end">
+					<input class="search" id="jr-q" type="search" dir="auto" placeholder="${Y('دوّر في الدفتر…', 'دوّري في الدفتر…', 'Search the journal…')}" aria-label="${L('بحث', 'Search')}">
+					${ok ? `<button type="button" class="btn btn--coral btn--sm" id="jr-new" aria-controls="composer" aria-expanded="false">${doodle('pen', 18)} ${Y('اكتب صفحة جديدة', 'اكتبي صفحة جديدة', 'Write a new page')}</button>` : ''}
+				</div>
+			</div>
+			<details class="composer" id="composer"${ok ? '' : ' hidden'}>
 				<summary><span>${doodle('pen', 22)}</span> ${Y('اكتب صفحة جديدة', 'اكتبي صفحة جديدة', 'Write a new page')}</summary>
 				<form id="jr-form" autocomplete="off">
 					<div class="f-row">
@@ -34,15 +45,6 @@ export default {
 					</div>
 				</form>
 			</details>
-
-			<div class="toolbar">
-				<div class="chips" role="toolbar" aria-label="${L('مين كتب', 'Written by')}">
-					<button class="chip is-on" type="button" data-by="">${L('الكل', 'All')}</button>
-					<button class="chip" type="button" data-by="him">${T(App.story.him)}</button>
-					<button class="chip" type="button" data-by="her">${T(App.story.her)}</button>
-				</div>
-				<input class="search" id="jr-q" type="search" dir="auto" placeholder="${Y('دوّر في الدفتر…', 'دوّري في الدفتر…', 'Search the journal…')}" aria-label="${L('بحث', 'Search')}">
-			</div>
 			<div id="jr-list" class="journal" aria-live="polite"><p class="empty">${L('بنفتح الدفتر…', 'Opening the journal…')}</p></div>
 		</div></section>
 		${related(['story', 'music', 'draw'])}`;
@@ -113,6 +115,14 @@ export default {
 			if (blob) { sketchBlob = blob; sketchId = null; showSketch(URL.createObjectURL(blob)); }
 		};
 		$('#jr-cancel', main).onclick = reset;
+		/* «write a new page» beside the search opens the form right under it; the form's own × folds it away */
+		const composer = $('#composer', main);
+		const newBtn = $('#jr-new', main);
+		composer.addEventListener('toggle', () => { newBtn?.classList.toggle('is-on', composer.open); newBtn?.setAttribute('aria-expanded', String(composer.open)); });
+		if (newBtn) newBtn.onclick = () => {
+			composer.open = !composer.open;
+			if (composer.open) { composer.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'nearest' }); form.text.focus({ preventScroll: true }); }
+		};
 
 		list.addEventListener('click', async (e) => {
 			const ed = e.target.closest('[data-edit]');

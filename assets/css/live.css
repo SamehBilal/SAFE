@@ -548,3 +548,13 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 .entry h3, .entry__text { overflow-wrap: anywhere; }
 @media (max-width: 960px) { .journal { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .journal { grid-template-columns: minmax(0, 1fr); } }
+/* the journal's «write a new page» lives beside the search; the form shows only once it's opened (its × folds it) */
+.toolbar__end { display: flex; gap: 10px; align-items: center; }
+.toolbar__end .search { flex: 0 1 240px; min-width: 0; }
+.toolbar__end .btn { flex: none; white-space: nowrap; }
+@media (max-width: 520px) { .toolbar__end { width: 100%; flex-wrap: wrap; } .toolbar__end .search { flex: 1 1 100%; max-width: none; } .toolbar__end .btn { flex: 1; justify-content: center; } }
+.journal-wrap > .composer { margin: 4px auto 34px; }
+.journal-wrap > .composer:not([open]) { display: none; }
+.journal-wrap > .composer[open] { animation: jr-open 0.35s var(--ease-out); }
+@keyframes jr-open { from { opacity: 0; transform: translateY(-12px); } }
+@media (prefers-reduced-motion: reduce) { .journal-wrap > .composer[open] { animation: none; } }
