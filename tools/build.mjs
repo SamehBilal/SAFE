@@ -24,6 +24,7 @@ import { createHash, createHmac } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { library, intoStory, intoMusic } from './library.mjs';
+import { shrinkBig } from './shrink.mjs';
 import { ITERATIONS, deriveKek, importMaster, seal, open, randomBytes, toB64, fromB64 } from '../assets/js/core.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -85,6 +86,8 @@ async function main() {
 	const files = existsSync(mediaDir) ? (await readdir(mediaDir, { recursive: true, withFileTypes: true }))
 		.filter((e) => e.isFile()).map((e) => path.relative(mediaDir, path.join(e.parentPath ?? e.path, e.name)).split(path.sep).join('/')) : [];
 	const byName = new Map(files.map((f) => [f.toLowerCase(), f]));
+	// big camera photos go up as smaller copies (tools/shrink.mjs); the originals stay as they are
+	const smaller = await shrinkBig(mediaDir, files, path.join(PRIV, '.cache', 'shrunk'));
 	// what the folders hold goes into the story before it's sealed
 	const lib = await library(mediaDir);
 	intoStory(story, lib);
@@ -96,8 +99,9 @@ async function main() {
 		const real = byName.get(name.toLowerCase());
 		if (!real) { missing.add(name); return name; }
 		if (used.has(real)) return used.get(real);
-		const ext = path.extname(real).toLowerCase();
-		const bytes = await readFile(path.join(mediaDir, real));
+		const copy = smaller.get(real);
+		const ext = copy ? '.jpg' : path.extname(real).toLowerCase();
+		const bytes = await readFile(copy || path.join(mediaDir, real));
 		const id = createHmac('sha256', Buffer.from(raw)).update(bytes).digest('hex').slice(0, 20);
 		const out = path.join(MEDIA_OUT, id + '.bin');
 		if (!existsSync(out)) await writeFile(out, await seal(key, bytes));
