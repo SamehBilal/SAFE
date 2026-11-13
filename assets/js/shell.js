@@ -389,14 +389,52 @@ async function enter({ key, story }, { intro, loader }) {
 		await leaveStage();
 	}
 
-	if (intro && story.intro?.length) await runIntro(story);
+	const night = intro && story.intro?.length;
+	if (night) await runIntro(story);
 	store.set(SEEN_INTRO, '1');
+	// straight after the intro (or the loader) the site lands instead of just appearing: see land()
+	const dusk = (night || loader) && !REDUCE ? landDusk(night) : null;
 	await leaveStage();
+	if (night || loader) document.body.classList.add('just-in');
 	renderChrome();
-	renderPage();
+	await renderPage();
+	if (dusk) land(dusk);
 	if (qs('intro') !== null) history.replaceState(null, '', location.pathname + location.hash);
 	wireLinks();
 }
+/* The landing. A layer the colour of what we're leaving (the intro's night sky, or the paper after the loader) waits
+   under the fading stage; once the page is drawn beneath it, it opens in a widening circle from the middle while the
+   home builds itself up (CSS under body.just-in: the title comes into focus, the ribbon unrolls, the names slide in to
+   the heart, the occasion drops in, the header slides down), and the heart in the ribbon sends out a little burst. */
+function landDusk(night) {
+	const d = document.createElement('div');
+	d.className = 'dusk' + (night ? '' : ' dusk--day');
+	d.setAttribute('aria-hidden', 'true');
+	document.body.append(d);
+	return d;
+}
+function land(dusk) {
+	requestAnimationFrame(() => dusk.classList.add('go'));
+	dusk.addEventListener('animationend', () => dusk.remove(), { once: true });
+	setTimeout(() => dusk.remove(), 2500);
+	const heart = $('.hero .ribbon .heart');
+	if (heart) setTimeout(() => {
+		const b = heart.getBoundingClientRect();
+		const burst = document.createElement('div');
+		burst.className = 'burst';
+		burst.setAttribute('aria-hidden', 'true');
+		burst.style.cssText = `left:${b.left + b.width / 2}px;top:${b.top + b.height / 2}px`;
+		burst.innerHTML = Array.from({ length: 14 }, (_, k) => {
+			const a = (k / 14) * Math.PI * 2 + rand(-0.2, 0.2), r = rand(60, 130);
+			return `<i style="--x:${(Math.cos(a) * r).toFixed(0)}px;--y:${(Math.sin(a) * r).toFixed(0)}px;--s:${rand(0.6, 1.3)};--d:${rand(0, 0.15)}s">${k % 3 ? '♥' : '✦'}</i>`;
+		}).join('');
+		document.body.append(burst);
+		setTimeout(() => burst.remove(), 1600);
+	}, 1650);
+	// only this once: a language switch or the next page shouldn't play it again
+	setTimeout(() => document.body.classList.remove('just-in'), 3600);
+}
+
 /* A heart made of stars, in the colour of the intro's star dust: dots along the outline and scattered inside,
    each twinkling on its own. Points inside satisfy (x² + y² − 1)³ − x²y³ ≤ 0, the classic heart curve. */
 function starHeart() {
