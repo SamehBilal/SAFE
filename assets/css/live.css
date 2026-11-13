@@ -1011,3 +1011,25 @@ button.cal-d.is-on { box-shadow: 0 0 0 2.5px var(--card), 0 0 0 4.5px var(--k); 
 	.ft1-foot, .ft1-flag { animation: none; opacity: 0.8; }
 }
 .fd-dot { fill: #fffdf8; stroke: none !important; opacity: 0.85; }
+
+/* ---------- every add-something form: a small button, and the form in a window (shell.js composers()) ---------- */
+.composer.is-modal { display: none !important; }
+.composer-btn { display: flex; width: fit-content; margin: 6px auto 26px; gap: 8px; align-items: center; }
+.composer-btn span { display: inline-flex; color: inherit; }
+.cmodal { width: min(640px, 100vw - 24px); max-width: none; max-height: min(88svh, 900px); padding: 0; overflow: visible; color: var(--text); background: transparent; border: 0; }
+.cmodal::backdrop { background: rgba(20, 16, 24, 0.5); backdrop-filter: blur(3px); }
+.cmodal[open] { animation: cmodal-in 0.32s cubic-bezier(0.34, 1.4, 0.5, 1); }
+.cmodal[open]::backdrop { animation: fade 0.25s; }
+@keyframes cmodal-in { from { opacity: 0; transform: translateY(24px) scale(0.96); } }
+.cmodal__in { position: relative; max-height: min(88svh, 900px); overflow: auto; overscroll-behavior: contain; background: var(--card); border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch, 18px); box-shadow: calc(var(--bujo-x, 1) * 6px) 6px 0 0 var(--hl-pink, rgba(252, 139, 147, 0.5)), 0 20px 50px rgba(0, 0, 0, 0.25); }
+.cmodal__hd { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 16px 18px 12px; background: var(--card); border-bottom: 1.5px dashed color-mix(in srgb, var(--ink, #37353f) 30%, transparent); }
+.cmodal__hd h2 { flex: 1; margin: 0; display: flex; gap: 10px; align-items: center; font: 400 1.6rem/1.2 var(--f-hand); color: var(--blue); }
+:lang(ar) .cmodal__hd h2 { font: 800 1.15rem/1.4 var(--f-body); }
+.cmodal__hd h2 span { display: inline-flex; color: var(--coral-deep); }
+.cmodal__x { flex: none; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch-sm, 10px); background: var(--card); color: var(--text); font-size: 1rem; cursor: pointer; }
+.cmodal__x:hover { background: var(--hl-yellow, #fdc830); }
+.cmodal form { padding: 16px 18px 20px; }
+.cmodal .rm-form { flex-wrap: wrap; margin: 0; }
+@media (max-width: 600px) { .cmodal { width: 100vw; max-height: 92svh; margin: auto 0 0; } .cmodal__in { max-height: 92svh; border-radius: 22px 22px 0 0; border-bottom: 0; } .cmodal[open] { animation-name: cmodal-up; } }
+@keyframes cmodal-up { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .cmodal[open], .cmodal[open]::backdrop { animation: none; } }

@@ -1018,8 +1018,51 @@ async function renderPage() {
 	hydrate(main);
 	reveal(main);
 	lightbox(main);
+	composers(main);
 	page.after?.(main, s);
 	if (location.hash) $(location.hash.replace(/[^\w#-]/g, ''))?.scrollIntoView();
+}
+
+/* Every add-something form (a <details class="composer">) is a small button that opens it in a window. The <details>
+   stays where it was, hidden (pages open and close it through .open, and look things up inside <main>); the form
+   moves into a <dialog> right after it, and the two keep in step. The window closes with ✕, a tap outside, Esc, or
+   once the form is cleared after saving. A page with its own opener marks its <details data-own-button>. */
+export function composers(root) {
+	for (const d of root.querySelectorAll('details.composer:not([data-modal])')) {
+		const sum = d.querySelector(':scope > summary'), form = d.querySelector(':scope > form');
+		if (!sum || !form) continue;
+		d.dataset.modal = '1';
+		const title = sum.innerHTML;
+		const dlg = document.createElement('dialog');
+		dlg.className = 'cmodal';
+		dlg.setAttribute('aria-label', sum.textContent.trim());
+		dlg.innerHTML = `<div class="cmodal__in"><header class="cmodal__hd"><h2>${title}</h2><button type="button" class="cmodal__x" aria-label="${Y('اقفل', 'اقفلي', 'Close')}">✕</button></header></div>`;
+		dlg.firstElementChild.append(form);
+		d.after(dlg);
+		if (!d.hasAttribute('data-own-button')) {
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'btn btn--sm composer-btn';
+			btn.innerHTML = title;
+			btn.hidden = d.hidden;
+			btn.onclick = () => { d.open = true; };
+			d.after(btn);
+			new MutationObserver(() => { btn.hidden = d.hidden; }).observe(d, { attributes: true, attributeFilter: ['hidden'] });
+		}
+		const sync = () => {
+			if (d.open && !dlg.open) {
+				dlg.showModal();
+				// straight to the first box on a computer; on a phone, wait for a tap (no keyboard jumping up)
+				if (matchMedia('(hover: hover)').matches) dlg.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=file]), textarea, select')?.focus();
+			} else if (!d.open && dlg.open) dlg.close();
+		};
+		d.addEventListener('toggle', sync);
+		dlg.addEventListener('close', () => { if (d.open) d.open = false; });
+		dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.closest('.cmodal__x')) dlg.close(); });
+		form.addEventListener('reset', () => setTimeout(() => { if (dlg.open) dlg.close(); }, 0));
+		d.classList.add('is-modal');
+		if (d.open) sync();
+	}
 }
 
 /* The top of every inner page: polaroids tossed on the page (after &Toc's «Scattered Polaroids — CSS random()» on CodePen),

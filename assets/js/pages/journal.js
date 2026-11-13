@@ -26,7 +26,7 @@ export default {
 					${ok ? `<button type="button" class="btn btn--coral btn--sm" id="jr-new" aria-controls="composer" aria-expanded="false">${doodle('pen', 18)} ${Y('اكتب صفحة جديدة', 'اكتبي صفحة جديدة', 'Write a new page')}</button>` : ''}
 				</div>
 			</div>
-			<details class="composer" id="composer"${ok ? '' : ' hidden'}>
+			<details class="composer" id="composer" data-own-button${ok ? '' : ' hidden'}>
 				<summary><span>${doodle('pen', 22)}</span> ${Y('اكتب صفحة جديدة', 'اكتبي صفحة جديدة', 'Write a new page')}</summary>
 				<form id="jr-form" autocomplete="off">
 					<div class="f-row">
@@ -106,7 +106,7 @@ export default {
 			$('#jr-save', main).textContent = Y('احفظ في الدفتر ♥', 'احفظي في الدفتر ♥', 'Save to the journal ♥');
 		};
 		reset();
-		try { const d = JSON.parse(store.get(DRAFT) || 'null'); if (d) { form.title.value = d.title || ''; form.text.value = d.text || ''; if (d.text) $('#composer', main).open = true; } } catch { /* no draft */ }
+		try { const d = JSON.parse(store.get(DRAFT) || 'null'); if (d) { form.title.value = d.title || ''; form.text.value = d.text || ''; } } catch { /* no draft */ }
 		form.oninput = () => { if (!editing) store.set(DRAFT, JSON.stringify({ title: form.title.value, text: form.text.value })); };
 
 		const showSketch = (url) => { $('#jr-sketch', main).innerHTML = url ? `<img src="${url}" alt=""><button type="button" class="link link--danger" id="jr-unsketch">${L('شيلي الرسمة', 'Remove sketch')}</button>` : ''; const b = $('#jr-unsketch', main); if (b) b.onclick = () => { sketchBlob = null; sketchId = null; showSketch(''); }; };

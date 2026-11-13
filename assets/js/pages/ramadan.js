@@ -56,32 +56,35 @@ export default {
 			<div class="rm-cols">
 				<section class="rm-col">
 					<h2 class="sec__title">${L('فطرنا مع مين', 'Iftar with')}</h2>
-					<form class="rm-form" id="rm-iftar"${ok ? '' : ' hidden'} autocomplete="off">
+					<details class="composer"${ok ? '' : ' hidden'}><summary><span>${doodle('dinner', 22)}</span> ${Y('ضيف فطار', 'ضيفي فطار', 'Add an iftar')}</summary>
+					<form class="rm-form" id="rm-iftar" autocomplete="off">
 						<input name="who" dir="auto" maxlength="60" required placeholder="${L('عند ماما، مع صحابنا…', 'At Mum’s, with friends…')}" aria-label="${L('مع مين', 'With whom')}">
 						<input name="date" type="date" aria-label="${L('إمتى', 'When')}">
 						<button class="btn btn--sm btn--coral" type="submit">${L('ضيف', 'Add')}</button>
-					</form>
+					</form></details>
 					<ul class="rm-log" id="rm-iftars"></ul>
 				</section>
 				<section class="rm-col">
 					<h2 class="sec__title">${L('العيدية', 'Eid money')}</h2>
-					<form class="rm-form" id="rm-eidia"${ok ? '' : ' hidden'} autocomplete="off">
+					<details class="composer"${ok ? '' : ' hidden'}><summary><span>${doodle('gift', 22)}</span> ${Y('ضيف عيدية', 'ضيفي عيدية', 'Add Eid money')}</summary>
+					<form class="rm-form" id="rm-eidia" autocomplete="off">
 						<select name="kid" aria-label="${L('لمين', 'For whom')}">${kids.map((k) => `<option value="${esc(k.id)}">${esc(App.t(k.name))}</option>`).join('')}<option value="other">${L('حد تاني', 'Someone else')}</option></select>
 						<input name="amount" type="number" min="1" inputmode="numeric" required placeholder="${L('كام؟', 'How much?')}" aria-label="${L('المبلغ', 'Amount')}">
 						<input name="from" dir="auto" maxlength="40" placeholder="${L('من مين؟', 'From whom?')}" aria-label="${L('من مين', 'From whom')}">
 						<button class="btn btn--sm btn--coral" type="submit">${L('ضيف', 'Add')}</button>
-					</form>
+					</form></details>
 					<div id="rm-eidias"></div>
 				</section>
 			</div>
 
 			<h2 class="sec__title">${L('صور العيد', 'Eid photos')}</h2>
-			<form class="rm-form rm-form--photo" id="rm-photo"${ok ? '' : ' hidden'} autocomplete="off">
+			<details class="composer"${ok ? '' : ' hidden'}><summary><span>${doodle('camera', 22)}</span> ${Y('ضيف صورة العيد', 'ضيفي صورة العيد', 'Add an Eid photo')}</summary>
+			<form class="rm-form rm-form--photo" id="rm-photo" autocomplete="off">
 				<select name="occ" aria-label="${L('أنهي مناسبة', 'Which occasion')}">${OCC.map(([id, ar, en]) => `<option value="${id}">${esc(L(ar, en))}</option>`).join('')}</select>
 				<input name="photo" type="file" accept="image/*" required aria-label="${L('الصورة', 'Photo')}">
 				<input name="note" dir="auto" maxlength="80" placeholder="${L('كلمتين (اختياري)', 'A few words (optional)')}" aria-label="${L('كلمتين', 'A few words')}">
 				<button class="btn btn--sm btn--coral" type="submit">${L('ضيف الصورة', 'Add the photo')}</button>
-			</form>
+			</form></details>
 			<p class="form-msg" id="rm-msg" role="status"></p>
 			<div class="rm-photos" id="rm-photos"></div>
 		</div></section>
@@ -155,7 +158,7 @@ export default {
 		const fi = $('#rm-iftar', main);
 		fi.onsubmit = (e) => { e.preventDefault(); const who = fi.who.value.trim(); if (!who) return; save((d) => { (d.items = d.items || []).push({ id: live.newId(), type: 'iftar', who, date: fi.date.value || live.today(), by: live.me(), at: Date.now() }); }).then(() => fi.reset()); };
 		const fe = $('#rm-eidia', main);
-		fe.onsubmit = (e) => { e.preventDefault(); const amount = Math.round(+fe.amount.value); if (!amount) return; save((d) => { (d.items = d.items || []).push({ id: live.newId(), type: 'eidia', kid: fe.kid.value, amount, from: fe.from.value.trim() || undefined, year, by: live.me(), at: Date.now() }); }).then(() => { fe.amount.value = ''; fe.from.value = ''; }); };
+		fe.onsubmit = (e) => { e.preventDefault(); const amount = Math.round(+fe.amount.value); if (!amount) return; save((d) => { (d.items = d.items || []).push({ id: live.newId(), type: 'eidia', kid: fe.kid.value, amount, from: fe.from.value.trim() || undefined, year, by: live.me(), at: Date.now() }); }).then(() => { fe.reset(); }); };
 		const fp = $('#rm-photo', main);
 		fp.onsubmit = async (e) => {
 			e.preventDefault();
