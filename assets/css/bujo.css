@@ -214,4 +214,38 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .related__card:hover > span:last-child { background: var(--hl-yellow); translate: calc(var(--bujo-x) * 3px) 0; }
 .related__card:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
 
-@media (prefers-reduced-motion: reduce) { .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
+/* ---------- «أيام فارقة» (Big days) and the «حكايتنا» timeline: journal cards ---------- */
+.chapter-card { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
+.chapter-card:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-lime); }
+.chapter-card:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 5px) 5px 0 0 var(--hl-yellow); }
+.chapter-card:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px) rotate(-0.4deg); box-shadow: calc(var(--bujo-x) * 8px) 8px 0 0 var(--coral); }
+.chapter-card:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
+.chapter-card__media { border-bottom: 1.5px solid var(--ink); }
+.chapter-card__ic { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #fdc830; color: #133447; border: 1.5px solid #37353f; box-shadow: calc(var(--bujo-x) * 3px) 3px 0 0 #37353f; filter: none; }
+.chapter-card__media img ~ .chapter-card__ic, [data-media-box] + .chapter-card__ic { width: 48px; height: 48px; font-size: 1.4rem; }
+.chapter-card__body time { width: fit-content; padding: 0 8px; font: 1.05rem var(--f-label); letter-spacing: 0.04em; color: var(--blue-ink); background: var(--hl-yellow); border-radius: var(--sketch-sm); }
+.chapter-card__body b { font-size: 1.25rem; }
+.chapter-card__body em { font: 1.2rem var(--f-hand); color: var(--coral-deep); }
+
+.tl__card { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
+.tl__item:nth-child(3n + 2) .tl__card { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.tl__item:nth-child(3n) .tl__card { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.tl__card:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 7px) 7px 0 0 var(--coral); }
+.tl__card:active { transform: translate(calc(var(--bujo-x) * 4px), 4px); box-shadow: none; }
+.tl__card figure { margin: 14px 0 0; padding: 8px 8px 0; background: #fbf8f1; border: 1.5px solid var(--ink); rotate: -1deg; box-shadow: 2px 3px 0 0 rgba(0, 0, 0, 0.12); }
+.tl__item:nth-child(even) .tl__card figure { rotate: 1deg; }
+.tl__card figure img { max-height: 320px; }
+.tl__card figure::after { content: ''; display: block; height: 14px; }
+.tl__card--journal { border-style: dashed; }
+
+@media (prefers-reduced-motion: reduce) { .chapter-card, .tl__card, .related__card, .pnav a, .btn, .tile, .icon-btn, .lang-toggle, .chip, .quick__btn, .deck__btn, .mnav-link, .mnav-btn { transition: none; } }
+
+/* ---------- «أماكننا» cards: journal cards; the photo moves with the mouse only while it's over the card ---------- */
+.places .moment { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-pink); transition: transform 0.15s, box-shadow 0.15s; }
+.places .moment:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-lime); }
+.places .moment:nth-child(3n) { box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--hl-yellow); }
+.places .moment img, .places .moment video, .places .moment h3 { transition: translate 0.45s var(--ease-out), scale 0.45s var(--ease-out), filter 0.3s; }
+.places .moment:hover { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 7px) 7px 0 0 var(--coral); }
+.places .moment:hover img, .places .moment:hover video { scale: 1.06; transition-duration: 0.12s, 0.45s, 0.3s; filter: saturate(1.35) brightness(0.95); }
+.places .moment:hover h3 { transition-duration: 0.12s; }
+.places .moment__blur { inset: 40% 0 0; mask: linear-gradient(transparent, #000 70%); -webkit-mask: linear-gradient(transparent, #000 70%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }

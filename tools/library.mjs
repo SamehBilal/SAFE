@@ -61,7 +61,7 @@ async function list(dir) {
 }
 
 export async function library(mediaDir) {
-	const out = { gallery: [], placePhotos: new Map(), newPlaces: [], songs: [], gifts: [], count: 0 };
+	const out = { gallery: [], placePhotos: new Map(), newPlaces: [], songs: [], gifts: [], timeline: [], count: 0 };
 	if (!existsSync(mediaDir)) return out;
 
 	// images/ and videos/: albums (places/ is handled on its own below)
@@ -83,7 +83,22 @@ export async function library(mediaDir) {
 	}
 	for (const [kind, test] of [['images', IMG], ['videos', VID]]) {
 		const { dirs } = await list(path.join(mediaDir, kind));
-		for (const d of dirs) if (d !== 'places') await album(kind, path.join(mediaDir, kind, d), [d], new RegExp(`${IMG.source}|${VID.source}`, 'i'));
+		for (const d of dirs) if (d !== 'places' && d !== 'timeline') await album(kind, path.join(mediaDir, kind, d), [d], new RegExp(`${IMG.source}|${VID.source}`, 'i'));
+	}
+
+	// images/timeline/<YYYY-MM-DD>[-anything]/ → that date on «حكايتنا»
+	for (const kind of ['images', 'videos']) {
+		const root = path.join(mediaDir, kind, 'timeline');
+		for (const d of (await list(root)).dirs) {
+			const date = (d.match(/^\d{4}-\d{2}-\d{2}/) || [])[0];
+			if (!date) continue;
+			const dir = path.join(root, d);
+			const meta = await info(dir);
+			const files = (await list(dir)).files.filter((f) => IMG.test(f) || VID.test(f));
+			if (!files.length) continue;
+			out.timeline.push({ date, id: d.slice(11), photos: files.map((f) => ({ photo: rel(path.relative(mediaDir, path.join(dir, f))), ...(meta.captions?.[f] ? { caption: meta.captions[f] } : {}) })) });
+			out.count += files.length;
+		}
 	}
 
 	// images/places/<city>/<place-id>/ (and videos/places/… the same way)
@@ -153,6 +168,24 @@ export function intoStory(story, lib) {
 		}
 	}
 	if (lib.gifts.length) story.gifts = [...(story.gifts || []), ...lib.gifts];
+	// the big days («أيام فارقة») show their album's photos too
+	const CHAPTER = { proposal: 'engagement', engagement: 'engagement', wedding: 'wedding', katb: 'katb-ketab', fahd: 'family/fahd', abdulrahman: 'family/abdulrahman', honeymoon: 'honeymoon' };
+	for (const c of story.chapters || []) {
+		const dir = CHAPTER[c.id];
+		if (!dir) continue;
+		const mine = lib.gallery.filter((g) => g.photo.startsWith(`images/${dir}/`) || g.photo.startsWith(`videos/${dir}/`));
+		const have = (c.photos || []).map((p) => (typeof p === 'string' ? p : p.photo));
+		c.photos = [...(c.photos || []), ...mine.filter((g) => !have.includes(g.photo)).map((g) => ({ photo: g.photo, ...(g.caption ? { caption: g.caption } : {}) }))];
+	}
+	// a date's photos: the moment with that date (and that id, when two share a date) shows them
+	for (const t of lib.timeline) {
+		const same = (story.timeline || []).filter((x) => x.date === t.date);
+		const x = same.find((y) => y.id === t.id) || same[0];
+		if (!x) continue;
+		const have = (x.photos || []).map((p) => (typeof p === 'string' ? p : p.photo));
+		x.photos = [...(x.photos || []), ...t.photos.filter((p) => !have.includes(p.photo))];
+		if (!x.photo) x.photo = x.photos.map((p) => (typeof p === 'string' ? p : p.photo))[0];
+	}
 	return story;
 }
 

@@ -86,16 +86,16 @@ export default {
 			points(box, pinned.map(where), pinned.map((m) => names.indexOf(T(m.area))));
 		}
 		if (REDUCE) return;
-		const cards = $$('.moment', main);
-		addEventListener('pointermove', (e) => {
-			if (e.pointerType !== 'mouse') return;
-			for (const c of cards) {
+		// the photo follows the mouse only on the card it's over, and settles back when it leaves
+		for (const c of $$('.moment', main)) {
+			c.addEventListener('pointermove', (e) => {
+				if (e.pointerType !== 'mouse') return;
 				const r = c.getBoundingClientRect();
-				if (r.bottom < 0 || r.top > innerHeight) continue;
 				c.style.setProperty('--x', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
 				c.style.setProperty('--y', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
-			}
-		}, { passive: true });
+			}, { passive: true });
+			c.addEventListener('pointerleave', () => { c.style.setProperty('--x', 0); c.style.setProperty('--y', 0); });
+		}
 	}
 };
 
