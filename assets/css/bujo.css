@@ -319,3 +319,25 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .mg-kind { border: 1.5px solid var(--ink); border-radius: var(--sketch); box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 var(--ink); transition: transform 0.15s, box-shadow 0.15s; }
 .mg-kind:hover, .mg-kind[aria-current='page'] { transform: translate(calc(var(--bujo-x) * -2px), -2px); box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--hl-yellow); }
 .portrait img { padding: 10px 10px 34px; background: #fbf8f1; border: 1.5px solid #37353f; border-radius: 3px; rotate: -1deg; box-shadow: calc(var(--bujo-x) * 6px) 6px 0 0 var(--hl-pink), 0 18px 40px rgba(0, 0, 0, 0.16); }
+
+/* ---------- «بالأرقام» in the occasions menu: a page torn from the journal — cream graph paper, a strip of tape, the
+   years as highlighter bars with an ink outline. Cream in dark mode too, like the polaroids. ---------- */
+.mg-data {
+	--ink: #37353f; --text: #2b2b33; --muted: #6f6a74;
+	background: linear-gradient(rgba(14, 105, 144, 0.08) 1px, transparent 1px) 0 0 / 18px 18px, linear-gradient(90deg, rgba(14, 105, 144, 0.08) 1px, transparent 1px) 0 0 / 18px 18px, #fbf8f1;
+	color: var(--text); overflow: visible; padding: 26px 20px 18px; border: 1.5px solid var(--ink); border-radius: var(--sketch);
+	box-shadow: calc(var(--bujo-x) * 4px) 4px 0 0 rgba(253, 200, 48, 0.75); rotate: -0.8deg;
+}
+.mg-data::before { content: ''; position: absolute; top: -10px; left: 50%; width: 92px; height: 22px; translate: -50% 0; rotate: 3deg; opacity: 0.92; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); background: rgba(233, 228, 240, 0.85) linear-gradient(to bottom, transparent 25%, #feac5e 25% 31%, transparent 31% 52%, #c779d0 52% 57%, transparent 58% 80%, #4bc0c8 80% 85%, transparent 85%); }
+.mg-data:hover { rotate: 0deg; }
+.mg-data .mg-new { top: 16px; padding: 0 6px; border-radius: 0; color: var(--text); font: 400 1.25rem/1.2 var(--f-label); letter-spacing: 0.04em; background: linear-gradient(transparent 35%, rgba(253, 200, 48, 0.85) 35% 90%, transparent 90%); rotate: -2deg; }
+:lang(ar) .mg-data .mg-new { font: 800 0.95rem/1.4 var(--f-body); letter-spacing: 0; }
+.mg-data .mg-bars { gap: 3px; height: 86px; margin-top: 24px; padding-bottom: 2px; border-bottom: 1.5px solid var(--ink); }
+.mg-data .mg-bars i { background: rgba(252, 139, 147, 0.75); border: 1.2px solid var(--ink); border-bottom: 0; border-radius: 3px 5px 0 0 / 3px 4px 0 0; }
+.mg-data .mg-bars i:nth-child(3n + 2) { background: rgba(205, 220, 57, 0.8); }
+.mg-data .mg-bars i:nth-child(3n) { background: rgba(253, 200, 48, 0.8); }
+.mg-data b { font: 400 1.6rem/1.1 var(--f-label); color: var(--coral-deep, #d9534f); letter-spacing: 0.02em; }
+:lang(ar) .mg-data b { font: 800 1.15rem/1.35 var(--f-body); }
+.mg-data small { opacity: 1; color: var(--muted); font: 600 1.15rem/1.2 var(--f-hand); }
+:lang(ar) .mg-data small { font: 600 0.85rem/1.4 var(--f-body); }
+.mg-data .mg-go { color: var(--blue); text-decoration: underline wavy var(--coral) 1px; text-underline-offset: 5px; }

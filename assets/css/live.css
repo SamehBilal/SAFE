@@ -558,3 +558,49 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 .journal-wrap > .composer[open] { animation: jr-open 0.35s var(--ease-out); }
 @keyframes jr-open { from { opacity: 0; transform: translateY(-12px); } }
 @media (prefers-reduced-motion: reduce) { .journal-wrap > .composer[open] { animation: none; } }
+
+/* ---------- Us in numbers (numbers.html): a clock since the first hello, journal counters, a bar for every year, the
+   next round numbers ---------- */
+.nums-clock { position: relative; margin: 10px auto 44px; width: min(860px, 100%); padding: 30px clamp(14px, 3vw, 30px) 24px; text-align: center; color: #2b2b33; background: #fbf8f1; border-radius: 3px; rotate: -0.6deg; box-shadow: 0 10px 26px rgba(30, 20, 10, 0.24), 0 1px 2px rgba(30, 20, 10, 0.2); }
+.nums-clock::before { content: ''; position: absolute; top: -12px; left: 50%; width: 130px; height: 26px; translate: -50% 0; rotate: -3deg; opacity: 0.92; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12); background-color: rgba(252, 139, 147, 0.35); background-image: radial-gradient(circle, #fc8b93 20%, transparent 20%), radial-gradient(circle, #fc8b93 20%, transparent 20%); background-size: 10px 10px; background-position: 0 0, 5px 5px; }
+.nums-clock__k { margin: 0 0 14px; font-weight: 800; color: #6f6a74; }
+.nums-clock__k time { color: var(--coral-deep, #d9534f); }
+.nums-clock__row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(6px, 1.4vw, 14px); }
+.nc { display: grid; gap: 2px; padding: 12px 4px 10px; background: #fffefb; border: 1.5px solid #37353f; border-radius: var(--sketch-sm, 12px); box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 rgba(252, 139, 147, 0.7); }
+.nc:nth-child(3n + 2) { box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 rgba(205, 220, 57, 0.75); }
+.nc:nth-child(3n) { box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 rgba(253, 200, 48, 0.75); }
+.nc b { font: 400 clamp(1.9rem, 5.5vw, 3.4rem)/1 var(--f-label); color: #133447; font-variant-numeric: tabular-nums; }
+.nc small { font-weight: 700; font-size: 0.8rem; color: #6f6a74; }
+.nc--s b { color: var(--coral-deep, #d9534f); }
+.nums-clock__total { margin: 16px 0 0; font: 600 1.35rem/1.4 var(--f-hand); color: #2b2b33; }
+:lang(ar) .nums-clock__total { font: 600 1rem/1.6 var(--f-body); }
+.nums-clock__total b { color: var(--coral-deep, #d9534f); font-family: var(--f-label); font-size: 1.3em; font-weight: 400; }
+@media (max-width: 600px) { .nums-clock__row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.nums-grid { margin-bottom: 48px; }
+.nums-grid .counter i { display: block; color: var(--coral-deep); margin-bottom: 2px; }
+.nums-grid .empty { grid-column: 1 / -1; }
+/* the years: highlighter bars on graph paper, an ink baseline, the big days pinned on top */
+.nums-chart { position: relative; margin: 0 0 48px; padding: 30px 14px 12px; color: #2b2b33; background: linear-gradient(rgba(14, 105, 144, 0.08) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, rgba(14, 105, 144, 0.08) 1px, transparent 1px) 0 0 / 22px 22px, #fbf8f1; border: 1.5px solid #37353f; border-radius: var(--sketch, 18px); box-shadow: calc(var(--bujo-x, 1) * 5px) 5px 0 0 rgba(205, 220, 57, 0.75); overflow-x: auto; }
+.nums-chart__plot { display: grid; grid-template-columns: repeat(var(--n), minmax(26px, 1fr)); align-items: end; gap: 6px; height: 260px; min-width: calc(var(--n) * 32px); margin-bottom: 26px; border-bottom: 2px solid #37353f; }
+.nb { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+.nb__bar { position: relative; display: block; height: var(--h); background: rgba(252, 139, 147, 0.8); border: 1.5px solid #37353f; border-bottom: 0; border-radius: 4px 6px 0 0 / 4px 5px 0 0; transform-origin: bottom; animation: nb-grow 0.8s calc(var(--k) * 0.04s) var(--ease-out, ease-out) both; }
+.nb:nth-child(3n + 2) .nb__bar { background: rgba(205, 220, 57, 0.85); }
+.nb:nth-child(3n) .nb__bar { background: rgba(253, 200, 48, 0.85); }
+.nb__bar em { position: absolute; inset-inline: 0; top: 4px; font: normal 400 0.95rem/1 var(--f-label); text-align: center; color: #2b2b33; }
+.nb__pins { position: absolute; inset-inline: 0; bottom: calc(var(--h) + 4px); display: grid; justify-items: center; gap: 2px; color: var(--coral-deep, #d9534f); }
+.nb small { position: absolute; top: 100%; inset-inline: -8px; margin-top: 6px; text-align: center; font: 400 0.85rem/1 var(--f-label); color: #6f6a74; }
+.nums-chart figcaption { font-size: 0.82rem; font-weight: 700; color: #6f6a74; display: flex; gap: 6px; align-items: center; }
+@keyframes nb-grow { from { transform: scaleY(0); } }
+/* the next round numbers: little notes */
+.nums-next { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 26px 20px; margin-bottom: 20px; }
+.nn { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; padding: 20px 14px 16px; text-align: center; color: #2b2b33; background: #fbf8f1; border-radius: 3px; rotate: -1deg; box-shadow: 0 8px 20px rgba(30, 20, 10, 0.22), 0 1px 2px rgba(30, 20, 10, 0.2); transition: rotate 0.3s; }
+.nn:nth-child(even) { rotate: 1deg; }
+.nn:hover { rotate: 0deg; }
+.nn::before { content: ''; position: absolute; top: -9px; left: 50%; width: 70px; height: 20px; translate: -50% 0; rotate: 2deg; opacity: 0.9; background: repeating-linear-gradient(45deg, rgba(252, 139, 147, 0.7) 0 6px, transparent 6px 12px), rgba(255, 236, 170, 0.9); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.nn__ic { color: var(--coral-deep, #d9534f); }
+.nn__big { font: 400 2.6rem/1 var(--f-label); color: #133447; }
+.nn__what { margin: 0; font-weight: 800; }
+.nn__what small { display: block; color: #6f6a74; font-weight: 600; }
+.nn__when { margin: 6px 0 0; padding: 0 6px; font: 600 1.3rem/1.3 var(--f-hand); background: linear-gradient(transparent 40%, rgba(253, 200, 48, 0.7) 40% 92%, transparent 92%); }
+:lang(ar) .nn__when { font: 700 0.95rem/1.5 var(--f-body); }
+@media (prefers-reduced-motion: reduce) { .nb__bar { animation: none; } .nn { transition: none; } }

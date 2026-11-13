@@ -82,6 +82,7 @@ export default {
 			<div class="wrap">
 				<h2 class="sec__title reveal">${L('إحنا بالأرقام', 'Us in numbers')}</h2>
 				<div class="counters">${stats.map(([n, l], k) => `<div class="counter reveal" style="--delay:${k * 0.06}s"><b>${n}</b><span>${esc(l)}</span></div>`).join('')}</div>
+				<p class="center"><a class="btn" href="numbers.html">${L('كل الأرقام', 'All the numbers')} ${App.arrow}</a></p>
 			</div>
 		</section>
 
