@@ -392,6 +392,52 @@
 .np__screen iframe { width: 240px; aspect-ratio: 16 / 9; border: 1.5px solid var(--ink, #37353f); border-radius: 12px; background: #000; box-shadow: calc(var(--bujo-x, 1) * 4px) 4px 0 0 var(--hl-pink, rgba(252, 139, 147, 0.5)); display: block; }
 .np__screen iframe.is-spotify { width: min(360px, 100%); aspect-ratio: auto; height: 80px; background: transparent; }
 .np.is-embed .np__bar { display: none; }
+/* the small toggles beside back / next: shuffle, repeat, the list. On, they go coral like the chips */
+.np__btn--sm { width: 34px; height: 34px; }
+.np__btn.is-on { --pen-bg: var(--coral); --pen-fg: #fff; }
+.np__btn--mode:not(.is-on) { --pen-fg: var(--muted); }
+/* the playlist, a page of the journal above the bar */
+.np__list { width: min(760px, 100%); display: grid; grid-template-rows: auto auto minmax(0, 1fr); max-height: min(58svh, 520px); background: var(--card); color: var(--text); border: 1.5px solid var(--ink, #37353f); border-radius: var(--sketch, 18px); box-shadow: calc(var(--bujo-x, 1) * 4px) 4px 0 0 var(--hl-lime, var(--blush)), var(--shadow); overflow: hidden; transform-origin: 50% 100%; animation: np-list 0.32s var(--ease-out, ease-out); }
+.np__list[hidden] { display: none; }
+@keyframes np-list { from { opacity: 0; transform: translateY(16px) scale(0.97); } }
+.np__lhd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 14px 16px 8px; }
+.np__lhd > b { font: 400 1.7rem/1 var(--f-script); color: var(--coral); }
+:lang(ar) .np__lhd > b { font: 800 1.15rem/1.2 var(--f-body); }
+.np__count { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
+.np__modes { display: flex; gap: 8px; margin-inline-start: auto; align-self: center; }
+.np__list .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; font: inherit; font-weight: 700; font-size: 0.8rem; }
+.np__sort { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 2px 16px 12px; border-bottom: 1.5px dashed color-mix(in srgb, var(--ink, #37353f) 30%, transparent); }
+.np__sort > span { color: var(--muted); font-weight: 700; font-size: 0.8rem; }
+.np__sort .chip { min-height: 28px; padding: 2px 10px; }
+.np__ol { list-style: none; margin: 0; padding: 6px 8px 10px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.np__row { --c: var(--coral); display: flex; align-items: center; gap: 2px; border-radius: var(--sketch-sm, 12px); transition: background 0.2s; }
+.np__row:hover { background: color-mix(in srgb, var(--hl-yellow, #fdc830) 30%, transparent); }
+.np__row.is-now { background: color-mix(in srgb, var(--c) 14%, transparent); }
+.np__row.is-drag { position: relative; z-index: 1; background: var(--card); outline: 1.5px solid var(--ink, #37353f); box-shadow: calc(var(--bujo-x, 1) * 3px) 3px 0 0 var(--ink, #37353f); scale: 1.02; }
+.np__play { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; border-radius: inherit; }
+.np__n { flex: none; width: 22px; display: grid; place-items: center; font: 1.05rem/1 var(--f-label); color: var(--muted); }
+.np__rw { min-width: 0; display: grid; line-height: 1.3; }
+.np__rw b { font-weight: 800; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.np__rw small { color: var(--muted); font-size: 0.76rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.np__row.is-now .np__rw b { color: var(--c); }
+.np__row.is-out .np__rw { opacity: 0.7; }
+.np__ext { flex: none; color: var(--muted); display: grid; }
+.np__grip, .np__rm { flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1.5px solid transparent; border-radius: var(--sketch-sm, 10px); background: none; color: var(--muted); cursor: pointer; }
+.np__grip { cursor: grab; touch-action: none; }
+.np__row.is-drag .np__grip { cursor: grabbing; color: var(--text); }
+.np__grip:hover, .np__grip:focus-visible { color: var(--text); border-color: var(--ink, #37353f); }
+.np__rm { opacity: 0; transition: opacity 0.2s; }
+.np__row:hover .np__rm, .np__rm:focus-visible { opacity: 1; }
+.np__rm:hover { color: var(--text); background: var(--hl-yellow, #fdc830); border-color: var(--ink, #37353f); }
+@media (hover: none) { .np__rm { opacity: 0.7; } }
+.np__empty { padding: 18px; text-align: center; color: var(--muted); font-weight: 700; }
+/* the little dancing bars on the song that's on */
+.np__eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+.np__eq i { width: 3px; height: 30%; background: var(--c); border-radius: 2px; animation: np-eq 0.9s ease-in-out infinite alternate; animation-play-state: paused; }
+.np__eq i:nth-child(2) { animation-delay: -0.3s; }
+.np__eq i:nth-child(3) { animation-delay: -0.6s; }
+.np.is-playing .np__eq i { animation-play-state: running; }
+@keyframes np-eq { to { height: 100%; } }
 /* room at the foot of the page, and notes sit above the bar */
 body.has-np { padding-bottom: calc(92px + var(--safe-b)); }
 body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
@@ -404,6 +450,13 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 	.np__btn--main { width: 44px; height: 44px; }
 	.np__ctrls { gap: 6px; }
 	.np__screen iframe { width: 200px; }
+	.np__btn--mode { display: none; }   /* shuffle and repeat live in the list on phones */
+	.np__btn--sm { width: 34px; height: 34px; }
+	.np__list { max-height: 62svh; }
+	.np__lhd { padding: 12px 12px 6px; }
+	.np__modes { margin-inline-start: 0; width: 100%; }
+	.np__sort { padding: 2px 12px 10px; }
+	.np__rm { opacity: 0.7; }
 }
-@media (max-width: 359px) { .np__btn:not(.np__btn--main) { display: none; } }
-@media (prefers-reduced-motion: reduce) { .np { animation: none; } .np__lp { animation: none; } }
+@media (max-width: 359px) { .np__btn:not(.np__btn--main):not(.np__btn--list) { display: none; } }
+@media (prefers-reduced-motion: reduce) { .np { animation: none; } .np__lp { animation: none; } .np__list { animation: none; } .np__eq i { animation: none; height: 70%; } }
