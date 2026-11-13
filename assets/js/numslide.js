@@ -1,7 +1,7 @@
 /* The band above the numbers page, after Chris Gannon's «Science Slider» (codepen.io/chrisgannon/pen/rvBMmM): a
    test tube rides along a line, its liquid sloshing behind it, little bubbles streaming up as it goes; when it stops,
    a big bubble carrying the number floats up out of it and pops, and the number lands in the readout above.
-   Here it slides by itself from one of our numbers to the next (a stop on the line for each); tap a stop, or drag
+   Here it always slides by itself from one of our numbers to the next (a stop on the line for each); tap a stop, or drag
    the tube, to go there. Drawn in the journal's ink and highlighters, no background of its own.
    numSlider(box, slides) — slides: [{ n: '٦٬٣٦٥', label: 'يوم من أول سلام' }, …] — returns stop(). */
 import { App, REDUCE } from './shell.js';
@@ -72,7 +72,6 @@ export function numSlider(box, slides) {
 		cur = (i + n) % n;
 		from = x; to = stopX(cur); t0 = now; moving = Math.abs(to - from) > 0.5; held = 0; launched = false;
 		stops.forEach((g, k) => g.classList.toggle('is-on', k === cur));
-		if (REDUCE) { x = to; place(); show(cur); }
 	}
 	function place() {
 		tube.setAttribute('transform', `translate(${x - 150} 0)`);
@@ -122,10 +121,11 @@ export function numSlider(box, slides) {
 		av += (-(x - fx) * 0.9 - ang) * 0.12; av *= 0.86; ang += av;
 		place();
 		const speed = Math.abs(x - px) / Math.max(dt, 0.001);
-		if (speed > 40 && Math.random() < Math.min(0.9, speed / 600)) fizz();
+		if (!REDUCE && speed > 40 && Math.random() < Math.min(0.9, speed / 600)) fizz();
 		if (!moving && !dragging) {
 			held += dt;
-			if (!launched && held > 0.15) { launched = true; carry(cur); }
+			// the number rides up in its bubble (with less motion asked for, it just arrives)
+			if (!launched && held > 0.15) { launched = true; if (REDUCE) show(cur); else carry(cur); }
 			if (held > HOLD) go(cur + 1, now);
 		}
 		for (let k = live.length - 1; k >= 0; k--) {
@@ -173,7 +173,7 @@ export function numSlider(box, slides) {
 		tube.addEventListener('pointercancel', up, { once: true });
 	});
 
-	function start() { if (on || REDUCE) return; on = true; last = 0; raf = requestAnimationFrame(frame); }
+	function start() { if (on) return; on = true; last = 0; raf = requestAnimationFrame(frame); }
 	function pause() { on = false; cancelAnimationFrame(raf); }
 	const io = new IntersectionObserver(([en]) => (en.isIntersecting && !document.hidden ? start() : pause()));
 	io.observe(box);
@@ -182,6 +182,7 @@ export function numSlider(box, slides) {
 
 	place();
 	show(0);
-	if (REDUCE) { const tick = setInterval(() => go(cur + 1), HOLD * 1000); return () => { clearInterval(tick); io.disconnect(); document.removeEventListener('visibilitychange', vis); }; }
+	// it slides on its own from the start; the observer pauses it whenever it's off screen
+	if (!document.hidden) start();
 	return () => { pause(); io.disconnect(); document.removeEventListener('visibilitychange', vis); };
 }
