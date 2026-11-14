@@ -357,3 +357,15 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 .grow__tile--soon { opacity: 0.55; box-shadow: none; border-style: dashed; }
 .grow__tile--soon .grow__blank { border-color: transparent; }
 @media (max-width: 459px) { .grow__grid { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; } }
+
+/* footer: the four link cards two to a row, their links in two columns, so the block is half as tall */
+@media (min-width: 720px) {
+	.ft-wrap, .ft-wrap:has(.ft-links) { grid-template-columns: 1fr 1fr; }
+	.ft-brand, .ft-maker { grid-column: 1 / -1; }
+	.ft-links { grid-template-columns: 1fr 1fr; column-gap: 18px; }
+	.ft-links h2 { grid-column: 1 / -1; }
+}
+@media (min-width: 1040px) {
+	.ft-wrap, .ft-wrap:has(.ft-links) { grid-template-columns: 1.1fr 1.5fr 1.5fr; }
+	.ft-brand { grid-column: 1; grid-row: 1 / span 2; }
+}
