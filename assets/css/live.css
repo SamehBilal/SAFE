@@ -480,7 +480,9 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 
 /* ---------- the Top 10 above the watch stats' headline (movies.js), after Jhey's «Top 10 (Netflix Style)» pen: a row
    that snaps as it scrolls, each poster with a big outlined number tucked behind it on the reading side ---------- */
-.top10 { --h: clamp(168px, 24vw, 250px); --w: calc(var(--h) * 0.6875); --gap: calc(var(--h) * 0.36); width: min(1240px, 100% - 2 * var(--gutter)); margin: clamp(14px, 3vw, 30px) auto 0; text-align: start; }
+.top10 { --h: clamp(168px, 24vw, 250px); --w: calc(var(--h) * 0.6875); --gap: calc(var(--h) * 0.36); width: 100%; margin: clamp(14px, 3vw, 30px) 0 0; text-align: start; }   /* the full width of the page: the row runs edge to edge */
+.top10__title { padding-inline: var(--gutter); }
+.top10__track { padding-inline: var(--gutter) !important; scroll-padding-inline: var(--gutter) !important; }
 .top10[hidden] { display: none; }
 .top10__title { margin: 0 0 10px; font: 400 clamp(1.5rem, 4.5vw, 2.3rem)/1.1 var(--f-label); letter-spacing: 0.03em; color: var(--text); }
 :lang(ar) .top10__title { font: 800 clamp(1.2rem, 3.6vw, 1.7rem)/1.3 var(--f-body); letter-spacing: 0; }
@@ -613,7 +615,7 @@ body.has-np .ns-tray { bottom: calc(96px + var(--safe-b)); }
 @media (prefers-reduced-motion: reduce) { .nb__bar { animation: none; } .nn { transition: none; } }
 
 /* ---------- birthdays: the night sky above the headline (bdsky.js) ---------- */
-.bd-sky { position: relative; width: min(1240px, 100% - 2 * var(--gutter)); height: clamp(250px, 38vw, 430px); margin: clamp(12px, 3vw, 28px) auto 0; overflow: visible; }   /* no box: the fireworks go off on the page itself */
+.bd-sky { position: relative; width: 100%; height: clamp(250px, 38vw, 430px); margin: clamp(12px, 3vw, 28px) auto 0; overflow: visible; }   /* no box: the fireworks go off on the page itself */
 .bd-sky canvas { position: absolute; inset: 0; display: block; cursor: crosshair; touch-action: manipulation; }
 .bd-sky__tip { position: absolute; bottom: 10px; inset-inline-end: 14px; margin: 0; color: var(--muted); font: 600 1.15rem/1 var(--f-hand); pointer-events: none; }
 :lang(ar) .bd-sky__tip { font: 700 0.85rem/1 var(--f-body); }
