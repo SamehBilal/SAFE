@@ -369,3 +369,21 @@ section:nth-of-type(3n) .sec__title { background-image: linear-gradient(to left,
 	.ft-wrap, .ft-wrap:has(.ft-links) { grid-template-columns: 1.1fr 1.5fr 1.5fr; }
 	.ft-brand { grid-column: 1; grid-row: 1 / span 2; }
 }
+
+/* family tree: straight on the page (no card around it), with room to breathe */
+.ftree { margin: 36px 0 56px; }
+.ft__scroll { padding: 6px 0 18px; }
+.ft, :root[data-theme] .ft { background: none; border: 0; box-shadow: none; border-radius: 0; padding: 18px 8px 24px; }
+.ft__rows { gap: 64px; }
+.ft__row--top { justify-content: space-evenly; }
+.ft__row--mid { gap: 28px; }
+.ft__couple { gap: 18px; }
+.ft__sibs { gap: 12px; }
+.ft__node { width: 116px; border: 1.5px solid var(--ink, #37353f); background: var(--card); box-shadow: calc(var(--bujo-x, 1) * 4px) 4px 0 0 var(--c); }
+.ft__node:hover, .ft__node:focus-visible { box-shadow: calc(var(--bujo-x, 1) * 6px) 6px 0 0 var(--c); }
+.ft__node--us { width: 136px; }
+.ft__node--sm { width: 100px; }
+.ft__node--sm .ft__pic { width: 76px; height: 86px; }
+.ft__node.is-empty { border: 1.5px dashed color-mix(in srgb, var(--ink, #37353f) 45%, transparent); background: transparent; box-shadow: none; }
+.ft__lines path { stroke-width: 1.6; opacity: 0.6; }
+.ft__row--kids { justify-content: center; gap: 56px; }
