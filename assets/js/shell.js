@@ -642,14 +642,14 @@ function megaHTML(s) {
 			<span class="mg-go">${Y('شوف الأرقام', 'شوفي الأرقام', 'See the numbers')} ${App.arrow}</span>
 		</a>`);
 
-	// ليالينا — the four draws as coloured cards, then the songs and the journal.
+	// ليالينا — the four draws as coloured cards, then the songs and the rest of the evenings.
 	const kind = qs('k');
 	const nights = panel('nights', L('ليالينا', 'Our nights'),
 		`<div class="mg-kinds">${DRAW_KINDS.map((k) => `
 			<a class="mg-kind" href="draw.html?k=${k.id}" style="--c:${k.color}"${here === 'draw.html' && kind === k.id ? ' aria-current="page"' : ''}>
 				<span class="mg-kind-e" aria-hidden="true">${doodle(k.emoji, 40)}</span><b>${esc(L(k.ar, k.en))}</b><small>${esc(L(k.dar, k.den))}</small>
 			</a>`).join('')}</div>
-		<div class="mg-more"><p class="mg-h">${L('سهراتنا', 'Our evenings')}</p>${pages('nights').map(row).join('')}${row(PAGES.find((p) => p.id === 'journal'))}</div>`);
+		<div class="mg-more"><p class="mg-h">${L('سهراتنا', 'Our evenings')}</p>${pages('nights').map(row).join('')}</div>`);
 
 	const link = (href, ar, en) => `<a class="mnav-link" href="${href}"${cur(href)}>${esc(L(ar, en))}</a>`;
 	return `<nav class="mnav" aria-label="${L('القائمة الرئيسية', 'Main')}">
