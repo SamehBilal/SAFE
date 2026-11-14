@@ -1,7 +1,7 @@
 import { L, T, esc, img, fmtDate, longDate, yearsAgo, pageHead, related, qs, App } from '../shell.js';
 import { doodle } from '../doodles.js';
 
-const photosOf = (x) => [x.photo, ...(x.photos || [])].filter(Boolean).map((p) => (typeof p === 'string' ? { photo: p } : p));
+const photosOf = (x) => [...new Map([x.photo, ...(x.photos || [])].filter(Boolean).map((p) => (typeof p === 'string' ? { photo: p } : p)).map((p) => [p.photo, p])).values()];
 
 export default {
 	title: { ar: 'ذكرى', en: 'A moment' },
