@@ -89,7 +89,7 @@ export default {
 					<div class="fd-card__tx">
 						<h3 dir="auto">${esc(title(f))}</h3>
 						<p>${[f.rel, longDate(f.date).replace(f.noYear ? /\s*\S+$/ : /$^/, '')].filter(Boolean).map(esc).join(' · ')}</p>
-						${yrs > 0 ? `<p class="fd-card__yrs">${f.type === 'wedding' ? L(`${num(yrs)} سنة جواز`, `${yrs} years married`) : f.type === 'birthday' ? L(`هيكمّل ${num(yrs)}`, `turning ${yrs}`) : L(`${num(yrs)} سنة`, `${yrs} years`)}</p>` : ''}
+						${yrs > 0 ? `<p class="fd-card__yrs">${f.type === 'wedding' ? L(`${num(yrs)} سنة جواز`, `${yrs} years married`) : f.type === 'birthday' ? (f.late ? (f.female ? L(`كانت هتكمّل ${num(yrs)}`, `would have turned ${yrs}`) : L(`كان هيكمّل ${num(yrs)}`, `would have turned ${yrs}`)) : L(`هيكمّل ${num(yrs)}`, `turning ${yrs}`)) : L(`${num(yrs)} سنة`, `${yrs} years`)}</p>` : ''}
 						${f.note ? `<p class="fd-card__note" dir="auto">${esc(f.note)}</p>` : ''}
 					</div>
 					<em class="fd-card__in">${esc(inDays(dd))}</em>
