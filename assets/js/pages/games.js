@@ -1,4 +1,4 @@
-import { L, Y, esc, pageHead, related, App, $, $$, num, longDate } from '../shell.js';
+import { L, Y, esc, pageHead, related, App, $, $$, num, longDate, mediaURL } from '../shell.js';
 import { doodle } from '../doodles.js';
 import * as live from '../live.js';
 import { setupNote } from './journal.js';
@@ -50,6 +50,11 @@ export default {
 			<div class="gm-games" id="gm-games"></div>
 			<h2 class="sec__title">${L('آخر السهرات', 'Latest game nights')}</h2>
 			<ul class="gm-log" id="gm-log"></ul>
+			<div class="games" id="gm-played" hidden>
+				<h2 class="sec__title">${L('لعبنا سوا', 'Games we played together')}</h2>
+				<p class="sec__sub">${L('مش كل السهرات أفلام — ساعات كانت دراع في إيد كل واحد فينا', 'Not every night was a film — sometimes it was a controller each')}</p>
+				<div class="games__grid" id="gm-played-grid"></div>
+			</div>
 		</div></section>
 		${related(['draw', 'movies', 'chores'])}`;
 	},
@@ -58,6 +63,19 @@ export default {
 		const kids = (s.family?.members || []).filter((m) => m.kid);
 		const nameOf = (id) => (id === 'him' ? App.t(s.him) : id === 'her' ? App.t(s.her) : id === 'draw' ? L('تعادل', 'Draw') : App.t(kids.find((k) => k.id === id)?.name || ''));
 		const players = ['him', 'her', ...kids.map((k) => k.id)];
+		// the video and PC games we played together (kept with the films, movies.json → games), with their box art
+		live.load('movies').then((mv) => {
+			const list = (mv.games || []).slice().sort((a, b) => (b.year || 0) - (a.year || 0));
+			$('#gm-played', main).hidden = !list.length;
+			$('#gm-played-grid', main).innerHTML = list.map((g) => `
+				<article class="game">
+					${g.cover ? `<img class="game__cover" data-cover="${esc(g.cover)}" alt="" decoding="async">` : '<span class="game__pad" aria-hidden="true">🎮</span>'}
+					<h3 dir="auto">${esc(g.title)}</h3>
+					${g.year ? `<p class="game__year">${num(g.year).replace(/[٬,]/g, '')}</p>` : ''}
+					${g.note ? `<p class="game__note" dir="auto">${esc(g.note)}</p>` : ''}
+				</article>`).join('');
+			for (const im of $$('img[data-cover]', main)) mediaURL(im.dataset.cover).then((u) => { im.src = u; }).catch(() => im.remove());
+		}).catch(() => {});
 		let data = await live.load('games');
 		const thisYear = new Date().getFullYear();
 		let year = thisYear;

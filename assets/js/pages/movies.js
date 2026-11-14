@@ -92,12 +92,6 @@ export default {
 				<p class="empty" id="mv-empty">${L('بنجيب السهرات…', 'Fetching our evenings…')}</p>
 				<div class="binge__field" id="mv-field"></div>
 			</div>
-
-			<div class="games" id="mv-games" hidden>
-				<h2 class="sec__title">${L('لعبنا سوا', 'Games we played together')}</h2>
-				<p class="sec__sub">${L('مش كل السهرات أفلام — ساعات كانت دراع في إيد كل واحد فينا', 'Not every night was a film — sometimes it was a controller each')}</p>
-				<div class="games__grid" id="mv-games-grid"></div>
-			</div>
 		</div></section>
 		${related(['draw', 'music', 'journal'])}`;
 	},
@@ -124,27 +118,23 @@ export default {
 
 			/* the Top 10 above the headline, after Jhey's «Top 10 (Netflix Style)» pen: our hearts first, then the
 			   hours it took; a big outlined number tucked behind each poster */
-			const top = (data.items || []).slice().sort((a, b) => (b.hearts || 0) - (a.hearts || 0) || (b.mins || 0) - (a.mins || 0)).slice(0, 10);
+			// our own order when we've set one (movies.json → top), otherwise our hearts first, then the hours
+			const byId = new Map((data.items || []).map((x) => [x.id, x]));
+			const picked = (data.top || []).map((id) => byId.get(id)).filter(Boolean);
+			const rest = (data.items || []).filter((x) => !picked.includes(x)).sort((a, b) => (b.hearts || 0) - (a.hearts || 0) || (b.mins || 0) - (a.mins || 0));
+			const top = [...picked, ...rest].slice(0, 10);
 			$('#mv-top', main).hidden = !top.length;
-			$('#mv-top-list', main).innerHTML = top.map((x, k) => `
-				<li class="top10__item${k === 9 ? ' is-ten' : ''}" data-n="${k + 1}">
-					<a class="top10__card mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" href="${x.id ? `#${esc(x.id)}` : '#mv-board'}">
+			// twice over, so the row can scroll on its own in an endless loop (the copy is hidden from screen readers)
+			const tile = (x, k, copy) => `
+				<li class="top10__item${k === 9 ? ' is-ten' : ''}" data-n="${k + 1}"${copy ? ' aria-hidden="true"' : ''}>
+					<a class="top10__card mv--${esc(x.kind || 'other')}${x.cover ? ' has-cover' : ''}" href="${x.id ? `#${esc(x.id)}` : '#mv-board'}"${copy ? ' tabindex="-1"' : ''}>
 						${x.cover ? `<img data-cover="${esc(x.cover)}" alt="" decoding="async">` : `<span class="top10__doodle" aria-hidden="true">${doodle('popcorn', 34)}</span>`}
 						<span class="top10__name" dir="auto">${esc(x.title)}</span>
 						${x.hearts ? `<span class="top10__hearts" aria-label="${x.hearts}/5">${'♥'.repeat(x.hearts)}</span>` : ''}
 					</a>
-				</li>`).join('');
-
-			// the games we played together (movies.json → games)
-			const games = (data.games || []).slice().sort((a, b) => (b.year || 0) - (a.year || 0));
-			$('#mv-games', main).hidden = !games.length;
-			$('#mv-games-grid', main).innerHTML = games.map((g) => `
-				<article class="game">
-					${g.cover ? `<img class="game__cover" data-cover="${esc(g.cover)}" alt="" decoding="async">` : '<span class="game__pad" aria-hidden="true">🎮</span>'}
-					<h3 dir="auto">${esc(g.title)}</h3>
-					${g.year ? `<p class="game__year">${num(g.year).replace(/[٬,]/g, '')}</p>` : ''}
-					${g.note ? `<p class="game__note" dir="auto">${esc(g.note)}</p>` : ''}
-				</article>`).join('');
+				</li>`;
+			$('#mv-top-list', main).innerHTML = top.map((x, k) => tile(x, k)).join('') + (top.length > 3 ? top.map((x, k) => tile(x, k, true)).join('') : '');
+			loopTop($('#mv-top-list', main));
 
 			// posters and box art (private/media/covers), decrypted like the photos
 			for (const im of $$('img[data-cover]', main)) mediaURL(im.dataset.cover).then((url) => { im.src = url; }).catch(() => im.closest('.has-cover')?.classList.remove('has-cover') ?? im.remove());
@@ -191,3 +181,43 @@ export default {
 		};
 	}
 };
+
+/* The Top 10 drifts on its own in an endless loop (the list is there twice; past the first copy it jumps back one
+   copy's width, which looks the same). It pauses while a finger or the mouse is on it, and the scrollbar only shows
+   while it's being scrolled by hand. Nothing moves for those who asked for less motion. */
+function loopTop(track) {
+	if (!track || track.dataset.loop) return;
+	track.dataset.loop = '1';
+	const rtl = getComputedStyle(track).direction === 'rtl';
+	let held = false, last = 0, quiet;
+	const hold = (v) => () => { held = v; };
+	track.addEventListener('pointerenter', hold(true));
+	track.addEventListener('pointerleave', hold(false));
+	track.addEventListener('touchstart', hold(true), { passive: true });
+	track.addEventListener('touchend', () => setTimeout(() => { held = false; }, 2500), { passive: true });
+	track.addEventListener('focusin', hold(true));
+	track.addEventListener('focusout', hold(false));
+	track.addEventListener('scroll', () => {
+		if (!held) return;
+		track.classList.add('is-scrolling');
+		clearTimeout(quiet);
+		quiet = setTimeout(() => track.classList.remove('is-scrolling'), 900);
+	}, { passive: true });
+	if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+	let pos = 0;
+	const step = (t) => {
+		if (!track.isConnected) return;
+		const dt = last ? Math.min(64, t - last) : 16;
+		last = t;
+		const half = track.scrollWidth / 2;
+		// keep our own position (the browser rounds scrollLeft); take it back from the row after a hand scroll
+		if (held) pos = Math.abs(track.scrollLeft);
+		else if (half > track.clientWidth) {
+			pos += dt * 0.035;
+			if (pos >= half) pos -= half;
+			track.scrollLeft = rtl ? -pos : pos;
+		}
+		requestAnimationFrame(step);
+	};
+	requestAnimationFrame(step);
+}
