@@ -42,6 +42,27 @@ function feel(k) {
 
 /* The farthest we have ever been from each other (story.json "farthest"): two of us on a fixed night map, one at home
    and the other at one or more spots far away, an arc to each, and the longest one in big numbers. */
+/** The «farthest we have ever been» map, as HTML (distances.js and a moment page both show it). */
+export function farthestMap(s) {
+	if (!s.farthest) return '';
+	return `<h2 class="sec-title" dir="auto">${esc(App.t(s.farthest.title))}</h2>
+	<p class="dm-hint" dir="auto" style="margin:0 auto 18px;max-width:640px">${esc(App.t(s.farthest.text))}</p>
+	<div class="dm dm--far" id="dm-far" style="direction:ltr">
+		<div class="dm__map" aria-hidden="true"></div>
+		<svg class="dm__arcs" aria-hidden="true"></svg>
+		<div class="dm__marks"></div>
+		<div class="dm__read">
+			<p class="dm__pair" id="far-pair" dir="auto"></p>
+			<p class="dm__km" id="far-km"></p>
+			<p class="dm__feel" id="far-feel" dir="auto"></p>
+		</div>
+		<p class="dm__credit">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+	</div>`;
+}
+
+/** Draw it once it is on the page. */
+export function drawFarthest(main, s) { farthest(main, s, people(s), curve); }
+
 function farthest(main, s, ps, curve) {
 	const f = s.farthest, box = $('#dm-far', main);
 	if (!f || !box) return;
@@ -73,6 +94,13 @@ function farthest(main, s, ps, curve) {
 	new ResizeObserver(() => { if (box.isConnected && Math.abs(box.clientWidth - w) > 30) { w = box.clientWidth; draw(); } }).observe(box);
 }
 
+/* an arc that always bows upwards, like a flight */
+const curve = (a, b) => {
+	const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+	const c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - Math.min(120, len * 0.3) };
+	return { d: `M${a.x.toFixed(1)} ${a.y.toFixed(1)}Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`, mid: { x: (a.x + 2 * c.x + b.x) / 4, y: (a.y + 2 * c.y + b.y) / 4 } };
+};
+
 const face = (p) => (p.photo ? img(p.photo, '', 'dm__img') : `<span class="dm__emoji">${doodle(p.emoji || 'heart', 30)}</span>`);
 
 export default {
@@ -103,21 +131,7 @@ export default {
 			<ul class="dm-list" id="dm-list"></ul>
 			<p class="dm-note">${doodle('lock', 18)} ${Y('مكانك بيفضل على الموبايل ده بس، لحد ما تبعت الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'مكانك بيفضل على الموبايل ده بس، لحد ما تبعتي الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'Your spot stays on this phone until you send what’s new from Settings — then the other phone sees it. Only the last spot is kept.')}</p>
 		</div></section>
-		${s.farthest ? `<section class="sec"><div class="wrap">
-			<h2 class="sec-title" dir="auto">${esc(App.t(s.farthest.title))}</h2>
-			<p class="dm-hint" dir="auto" style="margin:0 auto 18px;max-width:640px">${esc(App.t(s.farthest.text))}</p>
-			<div class="dm dm--far" id="dm-far" style="direction:ltr">
-				<div class="dm__map" aria-hidden="true"></div>
-				<svg class="dm__arcs" aria-hidden="true"></svg>
-				<div class="dm__marks"></div>
-				<div class="dm__read">
-					<p class="dm__pair" id="far-pair" dir="auto"></p>
-					<p class="dm__km" id="far-km"></p>
-					<p class="dm__feel" id="far-feel" dir="auto"></p>
-				</div>
-				<p class="dm__credit">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
-			</div>
-		</div></section>` : ''}
+		${s.farthest ? `<section class="sec"><div class="wrap">${farthestMap(s)}</div></section>` : ''}
 		${related(['family', 'trips', 'places'])}`;
 	},
 
@@ -136,12 +150,7 @@ export default {
 			<span class="dm__face">${face(p)}</span><span class="dm__name"><b>${esc(App.t(p.name))}</b><small></small></span></button>`).join('');
 		hydrate(marks);
 
-		const curve = (a, b) => {
-			// always bow upwards, like a flight
-			const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
-			const c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - Math.min(120, len * 0.3) };
-			return { d: `M${a.x.toFixed(1)} ${a.y.toFixed(1)}Q${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`, mid: { x: (a.x + 2 * c.x + b.x) / 4, y: (a.y + 2 * c.y + b.y) / 4 } };
-		};
+
 
 		function layout() {
 			const l = placed();

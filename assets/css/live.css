@@ -245,11 +245,14 @@
 /* the sleeve being handled sits above its neighbours, so the record sliding out goes over the next one, not under it */
 .sleeve.is-on { z-index: 2; }
 .sleeve:hover, .sleeve:focus-within, .sleeve.is-out { z-index: 3; }
-.sleeve.is-edge { --slide: -1; }
-/* at rest (and while it plays) the end CD still peeks out on its own side, a little, so it never sits on the next sleeve */
-.sleeve.is-edge .sleeve__lp, .sleeve.is-edge.is-on .sleeve__lp { transform: translateX(calc(var(--dir, 1) * 8%)); }
-.sleeve.is-edge .sleeve__btn:hover .sleeve__lp, .sleeve.is-edge .sleeve__btn:focus-visible .sleeve__lp { transform: translateX(calc(var(--dir, 1) * -30%)) rotate(40deg); }
-.sleeve.is-edge.is-out .sleeve__lp { transform: translateX(calc(var(--dir, 1) * -70%)) rotate(120deg); }
+/* the last sleeve in a row: its record slides out the same way as all the others, and the sleeve itself steps back
+   over its neighbour just far enough that the record stays on the screen (--room: px free beyond it, set by music.js;
+   the record reaches 95% + 0.9 × its slide past the sleeve's start, so it sticks out 6/15/22/58% at rest/on/hover/out) */
+.sleeve__btn { transition: transform 0.5s var(--ease-out); }
+.sleeve.is-edge .sleeve__btn { transform: translateX(calc(var(--dir, 1) * -1 * max(0px, 6% - var(--room, 0px)))); }
+.sleeve.is-edge.is-on .sleeve__btn { transform: translateX(calc(var(--dir, 1) * -1 * max(0px, 15% - var(--room, 0px)))); }
+.sleeve.is-edge .sleeve__btn:hover, .sleeve.is-edge .sleeve__btn:focus-visible { transform: translateX(calc(var(--dir, 1) * -1 * max(0px, 22% - var(--room, 0px)))); }
+.sleeve.is-edge.is-out .sleeve__btn { transform: translateX(calc(var(--dir, 1) * -1 * max(0px, 58% - var(--room, 0px)))); }
 .sleeve__btn { position: relative; display: block; width: 100%; aspect-ratio: 1; padding: 0; border: 0; background: none; cursor: pointer; text-align: center; color: inherit; }
 .sleeve__lp { position: absolute; inset: 5%; border-radius: 50%; background: repeating-radial-gradient(circle, #1b1b1e 0 2px, #121214 2px 4px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); transform: translateX(calc(var(--dir, 1) * var(--slide, 1) * 12%)); transition: transform 0.5s var(--ease-out); }
 .sleeve__lp i { position: absolute; inset: 34%; border-radius: 50%; background: var(--ink); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25); }

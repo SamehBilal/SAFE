@@ -197,13 +197,17 @@ export default {
 		};
 		const quiet = radio.on(sync);
 		/* the record slides out toward the next sleeve; a sleeve in the last column has no room there (the screen edge
-		   would crop it), so its record slides back the other way, over its neighbour */
+		   would crop it), so the sleeve steps back by what's missing and its record still slides out the same way.
+		   --room: how many px it has beyond its edge before the shelf clips (the shelf lets 16px spill over) */
 		const edges = () => {
 			const box = list.getBoundingClientRect();
 			const rtl = document.documentElement.dir === 'rtl';
 			for (const el of $$('.sleeve', list)) {
 				const r = el.getBoundingClientRect();
-				el.classList.toggle('is-edge', (rtl ? r.left - box.left : box.right - r.right) < r.width / 2);
+				const room = (rtl ? r.left - box.left : box.right - r.right) + 16;
+				const edge = room < r.width * 0.58;
+				el.classList.toggle('is-edge', edge);
+				if (edge) el.style.setProperty('--room', `${Math.max(0, room - 16).toFixed(0)}px`); else el.style.removeProperty('--room');
 			}
 		};
 		const ro = new ResizeObserver(edges);

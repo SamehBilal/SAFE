@@ -1,5 +1,9 @@
 import { L, T, esc, img, fmtDate, longDate, yearsAgo, pageHead, related, qs, App } from '../shell.js';
 import { doodle } from '../doodles.js';
+import { farthestMap, drawFarthest } from './distances.js';
+
+/* a moment named in story.json "farthest.moments" shows the farthest-we've-been map under its photos */
+const isFar = (s, x) => (s.farthest?.moments || []).includes(x?.id);
 
 const photosOf = (x) => [...new Map([x.photo, ...(x.photos || [])].filter(Boolean).map((p) => (typeof p === 'string' ? { photo: p } : p)).map((p) => [p.photo, p])).values()];
 
@@ -23,6 +27,7 @@ export default {
 			${x.text ? `<p class="lede reveal">${T(x.text)}</p>` : ''}
 			${story ? story.split(/\n{2,}/).map((p) => `<p class="prose reveal">${esc(p)}</p>`).join('') : ''}
 			${photos.length ? `<div class="frames ${photos.length === 1 ? 'frames--single' : ''}">${photos.map((p, n) => `<figure class="frame reveal" data-media-box style="--tilt:${n % 2 ? 2 : -2}deg">${img(p.photo, App.t(p.caption), 'zoom')}${p.caption ? `<figcaption>${T(p.caption)}</figcaption>` : ''}</figure>`).join('')}</div>` : ''}
+			${isFar(s, x) ? `<div class="moment-far">${farthestMap(s)}</div>` : ''}
 			${chapter ? `<a class="otd reveal" href="chapter.html?id=${esc(chapter.id)}"><span class="otd__ic">${doodle(chapter.icon, 28)}</span><span><small>${L('الحكاية كاملة', 'The full chapter')}</small><b>${T(chapter.title)}</b></span><span aria-hidden="true">${App.arrow}</span></a>` : ''}
 			<nav class="pager" aria-label="${L('ذكريات تانية', 'Other moments')}">
 				${prev ? `<a class="pager__prev" href="moment.html?id=${esc(prev.id)}"><small>${L('اللي قبلها', 'Before')}</small><b>${doodle(prev.icon, 18)} ${T(prev.title)}</b></a>` : '<span></span>'}
@@ -30,5 +35,9 @@ export default {
 			</nav>
 		</div></article>
 		${related(['story', 'chapters', 'gallery'])}`;
+	},
+	after(main, s) {
+		const x = (s.timeline || []).find((m) => m.id === qs('id'));
+		if (isFar(s, x)) drawFarthest(main, s);
 	}
 };

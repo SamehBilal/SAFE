@@ -352,3 +352,4 @@
 @media (max-width: 960px) and (prefers-reduced-motion: reduce) { .fm { transition: none; } }
 .fm.no-anim, .fm.no-anim * { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .fm__wrap, .fm__wrap > div, .fm__card { transition: none !important; } }
+.moment-far { margin: 34px 0 10px; }
