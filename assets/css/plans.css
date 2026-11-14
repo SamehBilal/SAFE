@@ -11,6 +11,11 @@
 
 /* ---------- distances ---------- */
 .dm { height: clamp(420px, 66vh, 640px); }
+.dm--far { height: clamp(360px, 56vh, 520px); }
+.dm__mark--spot { pointer-events: none; display: block; }
+.dm__mark--spot .dm__dot { display: block; }
+.dm__mark--spot .dm__name { position: absolute; right: 100%; top: 50%; translate: -8px -50%; }
+.dm__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); border: 2px solid #fff; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 35%, transparent); }
 .dm__arcs { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; }
 .dm__arc path { fill: none; stroke-linecap: round; }
 .dm__trail { stroke: rgba(255, 255, 255, 0.14); stroke-width: 2; }

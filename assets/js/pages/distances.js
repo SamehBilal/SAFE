@@ -40,6 +40,39 @@ function feel(k) {
 	return L(`حوالي ${num(Math.round(k / 800 * 10) / 10)} ساعة بالطيارة`, `about ${(Math.round(k / 800 * 10) / 10)} hours by plane`);
 }
 
+/* The farthest we have ever been from each other (story.json "farthest"): two of us on a fixed night map, one at home
+   and the other at one or more spots far away, an arc to each, and the longest one in big numbers. */
+function farthest(main, s, ps, curve) {
+	const f = s.farthest, box = $('#dm-far', main);
+	if (!f || !box) return;
+	const person = (w) => ps.find((p) => p.who === w) || { name: w === 'her' ? s.her : s.him, color: '#0e6990' };
+	const home = { p: person(f.home.who), at: where(f.home), place: f.home.place };
+	const away = f.away.map((a) => ({ p: person(a.who), at: where(a), place: a.place }));
+	const far = away.map((a) => ({ ...a, k: km(home.at, a.at) })).sort((x, y) => y.k - x.k);
+	const marks = $('.dm__marks', box), arcs = $('.dm__arcs', box);
+	const mark = (m, small) => `<div class="dm__mark${small ? ' dm__mark--spot' : ''}" style="--c:${esc(m.p.color || '#0e6990')}">
+		${small ? '<span class="dm__dot"></span>' : `<span class="dm__face">${face(m.p)}</span>`}<span class="dm__name"><b dir="auto">${esc(small ? App.t(m.place) : App.t(m.p.name))}</b>${small ? '' : `<small dir="auto">${esc(App.t(m.place))}</small>`}</span></div>`;
+	marks.innerHTML = mark(home) + far.map((m, i) => mark(m, i > 0)).join('');
+	hydrate(marks);
+	$('#far-pair', main).textContent = `${App.t(home.p.name)} ↔ ${App.t(far[0].p.name)}`;
+	$('#far-km', main).textContent = dist(far[0].k);
+	$('#far-feel', main).textContent = App.t(f.when);
+	const draw = () => {
+		const view = fit($('.dm__map', box), [home.at, ...far.map((a) => a.at)], { pad: 80, padTop: 150, zoom: 5 });
+		arcs.setAttribute('viewBox', `0 0 ${view.W} ${view.H}`);
+		const els = $$('.dm__mark', marks), all = [home, ...far];
+		all.forEach((m, i) => { const xy = view.at(m.at); els[i].style.left = `${xy.x}px`; els[i].style.top = `${xy.y}px`; });
+		const A = view.at(home.at);
+		arcs.innerHTML = far.map((m, i) => {
+			const { d, mid } = curve(A, view.at(m.at));
+			return `<g class="dm__arc${i ? '' : ' is-on'}"><path class="dm__trail" d="${d}"/><path class="dm__dash" d="${d}"/>${!i && !REDUCE ? `<circle class="dm__plane" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="${d}"/></circle>` : ''}${i ? '' : `<text x="${mid.x.toFixed(1)}" y="${(mid.y - 8).toFixed(1)}" text-anchor="middle">${esc(dist(m.k))}</text>`}</g>`;
+		}).join('');
+	};
+	draw();
+	let w = box.clientWidth;
+	new ResizeObserver(() => { if (box.isConnected && Math.abs(box.clientWidth - w) > 30) { w = box.clientWidth; draw(); } }).observe(box);
+}
+
 const face = (p) => (p.photo ? img(p.photo, '', 'dm__img') : `<span class="dm__emoji">${doodle(p.emoji || 'heart', 30)}</span>`);
 
 export default {
@@ -70,6 +103,21 @@ export default {
 			<ul class="dm-list" id="dm-list"></ul>
 			<p class="dm-note">${doodle('lock', 18)} ${Y('مكانك بيفضل على الموبايل ده بس، لحد ما تبعت الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'مكانك بيفضل على الموبايل ده بس، لحد ما تبعتي الجديد من الإعدادات — ساعتها الموبايل التاني يشوفه. بنحفظ آخر مكان بس.', 'Your spot stays on this phone until you send what’s new from Settings — then the other phone sees it. Only the last spot is kept.')}</p>
 		</div></section>
+		${s.farthest ? `<section class="sec"><div class="wrap">
+			<h2 class="sec-title" dir="auto">${esc(App.t(s.farthest.title))}</h2>
+			<p class="dm-hint" dir="auto" style="margin:0 auto 18px;max-width:640px">${esc(App.t(s.farthest.text))}</p>
+			<div class="dm dm--far" id="dm-far" style="direction:ltr">
+				<div class="dm__map" aria-hidden="true"></div>
+				<svg class="dm__arcs" aria-hidden="true"></svg>
+				<div class="dm__marks"></div>
+				<div class="dm__read">
+					<p class="dm__pair" id="far-pair" dir="auto"></p>
+					<p class="dm__km" id="far-km"></p>
+					<p class="dm__feel" id="far-feel" dir="auto"></p>
+				</div>
+				<p class="dm__credit">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+			</div>
+		</div></section>` : ''}
 		${related(['family', 'trips', 'places'])}`;
 	},
 
@@ -179,6 +227,8 @@ export default {
 			const me = meIn(ps), kid = ps.find((p) => p.id === b.dataset.with);
 			put(me ? [me.id, kid.id] : [], L(`${App.t(kid.name)} معاك على الخريطة ♥`, `${App.t(kid.name)} is with you on the map ♥`));
 		};
+
+		farthest(main, s, ps, curve);
 
 		data = await live.load('where');
 		data.people ||= {};
